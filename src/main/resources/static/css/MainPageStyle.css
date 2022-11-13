@@ -1,0 +1,30 @@
+@charset "UTF-8";
+body {
+    background: #212121;
+    color: #666;
+}
+
+h1 {
+    text-align: center;
+    color: #fff;
+}
+
+#box {
+    width: 350px;
+    overflow: auto;
+    margin: 40px auto;
+    background: #666;
+    padding-bottom: 40px;
+    border-radius: 10px;
+}
+
+#login_span {
+	text-align: center;
+}
+
+input {
+	text-align: center;
+	width: 100px;
+	margin: 10px auto;
+	border-radius: 10px;
+}
