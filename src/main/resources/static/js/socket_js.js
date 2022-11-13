@@ -1,6 +1,8 @@
 const url = 'http://localhost:8080';
+let gameId;
 
 function create_game() {
+	let login = document.getElementById("login").value;
 	$.ajax({
             url: url + "/game/start",
             type: 'POST',
@@ -11,7 +13,6 @@ function create_game() {
             }),
             success: function (data) {
                 gameId = data.gameId;
-                playerType = 'X';
                 reset();
                 connectToSocket(gameId);
                 alert("Your created a game. Game id is: " + data.gameId);
