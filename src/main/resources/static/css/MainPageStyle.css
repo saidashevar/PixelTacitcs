@@ -28,3 +28,8 @@ input {
 	margin: 10px auto;
 	border-radius: 10px;
 }
+
+li {
+	margin-left: auto;
+	margin-right: auto;
+}
