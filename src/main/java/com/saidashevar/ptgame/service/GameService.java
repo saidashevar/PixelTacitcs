@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 
 import com.saidashevar.ptgame.model.Game;
 import com.saidashevar.ptgame.model.Player;
+import com.saidashevar.ptgame.storage.GameStorage;
 
 import lombok.AllArgsConstructor;
 
@@ -17,6 +18,7 @@ public class GameService {
 		Game game = new Game();
 		game.setPlayer1(player);
 		game.setGameId(UUID.randomUUID().toString());
+		GameStorage.getInstance().setGame(game);
 		return game;
 	}
 }

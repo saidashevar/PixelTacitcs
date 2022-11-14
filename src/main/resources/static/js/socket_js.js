@@ -13,14 +13,10 @@ function create_game() {
             }),
             success: function (data) {
                 gameId = data.gameId;
-                reset();
-                connectToSocket(gameId);
-                alert("Your created a game. Game id is: " + data.gameId);
-                gameOn = true;
+                document.location.href = url+"/game";
             },
             error: function (error) {
                 console.log(error);
             }
         })
-	document.location.href = url;
 }
