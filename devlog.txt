@@ -1,0 +1,6 @@
+If you want to paritcipate in this project as frontend dev, you are welcome!
+
+This is sum of what i have done.
+14.11.22
+2-nd day of development, hoping i will end main gameplay soon.
+Trying to make connection to another page with saving gameId.
