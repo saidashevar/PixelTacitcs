@@ -12,7 +12,7 @@ function create_game() {
             }),
             success: function (data) {
 				let gameId = data.gameId;
-                document.location.href = url+"/game?gameid="+gameId;
+                document.location.href = url+"/game?gameid="+gameId+"&login="+login;
             },
             error: function (error) {
                 console.log(error);
@@ -32,7 +32,7 @@ function connectToRandomGame() {
         }),
         success: function (data) {
 			let gameId = data.gameId;
-            document.location.href = url+"/game?gameid="+gameId;
+            document.location.href = url+"/game?gameid="+gameId+"&login="+login;
 //            connectToSocket(gameId);
 //            alert("Congrats you're playing with: " + data.player1.login);
         },

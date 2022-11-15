@@ -8,20 +8,23 @@
 <body>
 	<span id="ShowId" style="color: white">Your game ID is: </span>
 	<table>
+		<!-- id in opponent's squad are strangely reversed, but it must work -->
+		<!-- First number means row: 1 - avangard, 2 - flank, 3 - rearward -->
+		<!-- Second number means column. Cards with same second number are in same column in all squads -->
 		<tr>
-			<td>This is opponents' rearward</td>
-			<td>This is opponents' rearward</td>
-			<td>This is opponents' rearward</td>
+			<td class="opponent_squad" class="3_1">This is opponents' rearward</td>
+			<td class="opponent_squad" class="3_2">This is opponents' rearward</td>
+			<td class="opponent_squad" class="3_3">This is opponents' rearward</td>
 		</tr>
 		<tr>
-			<td>This is opponents' flank</td>
-			<td>This is opponents' flank</td>
-			<td>This is opponents' flank</td>
+			<td class="opponent_squad" class="2_1">This is opponents' flank</td>
+			<td class="opponent_squad" class="2_2">This is opponents' flank</td>
+			<td class="opponent_squad" class="2_3">This is opponents' flank</td>
 		</tr>
 		<tr>
-			<td>This is opponents' avangard</td>
-			<td>This is opponents' avangard</td>
-			<td>This is opponents' avangard</td>
+			<td class="opponent_squad" class="1_1">This is opponents' avangard</td>
+			<td class="opponent_squad" class="1_2">This is opponents' avangard</td>
+			<td class="opponent_squad" class="1_3">This is opponents' avangard</td>
 		</tr>
 	</table>
 	<br />
@@ -29,22 +32,22 @@
 	<br />
 	<table>
 		<tr>
-			<td>This is yours avangard</td>
-			<td>This is yours avangard</td>
-			<td>This is yours avangard</td>
+			<td class="your_squad" class="1_1">This is yours avangard</td>
+			<td class="your_squad" class="1_2">This is yours avangard</td>
+			<td class="your_squad" class="1_3">This is yours avangard</td>
 		</tr>
 		<tr>
-			<td>This is yours flank</td>
-			<td>This is yours flank</td>
-			<td>This is yours flank</td>
+			<td class="your_squad" class="2_1">This is yours flank</td>
+			<td class="your_squad" class="2_2">This is yours flank</td>
+			<td class="your_squad" class="2_3">This is yours flank</td>
 		</tr>
 		<tr>
-			<td>This is yours rearward</td>
-			<td>This is yours rearward</td>
-			<td>This is yours rearward</td>
+			<td class="your_squad" class="3_1">This is yours rearward</td>
+			<td class="your_squad" class="3_2">This is yours rearward</td>
+			<td class="your_squad" class="3_3">This is yours rearward</td>
 		</tr>
 	</table>
 </body>
-	<script src="js/mainpage_script.js"></script>
+	<script src="js/script.js"></script>
 	<script src="js/socket_js.js"></script>
 </html>

@@ -11,4 +11,4 @@ public class Game {
 	private Player player2;
 	private String[][] boardPlayer1 = new String[3][3]; // For now, cards will be defined as strings.
 	private String[][] boardPlayer2 = new String[3][3]; // Each player has his own squad
-}
+}														// Maybe it will be better to store boards in Player class

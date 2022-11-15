@@ -1,11 +1,20 @@
-window.onload = getGameID;
+window.onload = loadPage;
+let gameId;
+let login;
+
+function loadPage() {
+	getGameID();
+	connectToSocket(gameId);
+}
 
 function getGameID() {
 	const params = new Proxy(new URLSearchParams(window.location.search), {
   	get: (searchParams, prop) => searchParams.get(prop),
 	});
+	gameId = params.gameid;
+	login = params.login;
 	let paragraph = document.getElementById("ShowId");
-	paragraph.textContent += params.gameid;
+	paragraph.textContent = login+", "+paragraph.textContent+gameId;
 }
 
 function connectToSocket(gameId) {

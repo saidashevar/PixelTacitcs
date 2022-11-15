@@ -4,9 +4,12 @@ import java.util.UUID;
 
 import org.springframework.stereotype.Service;
 
+import com.saidashevar.ptgame.exception.InvalidGameException;
 import com.saidashevar.ptgame.exception.NotFoundException;
 import com.saidashevar.ptgame.model.Game;
+import com.saidashevar.ptgame.model.GamePlay;
 import com.saidashevar.ptgame.model.Player;
+
 import static com.saidashevar.ptgame.model.GameStatus.*;
 import com.saidashevar.ptgame.storage.GameStorage;
 
@@ -34,4 +37,28 @@ public class GameService {
         GameStorage.getInstance().setGame(game);
         return game;
     }
+	
+	public Game gamePlay(GamePlay gamePlay) throws InvalidGameException, NotFoundException {
+		if (!GameStorage.getInstance().getGames().containsKey(gamePlay.getGameId())) {
+            throw new NotFoundException("Game not found");
+        }
+
+        Game game = GameStorage.getInstance().getGames().get(gamePlay.getGameId());
+        
+        if (game.getStatus().equals(FINISHED)) {
+            throw new InvalidGameException("Game is already finished");
+        }
+        
+        String[][] board;
+        if(gamePlay.getRequester().getLogin().equals(game.getPlayer1().getLogin())) {
+        	board = game.getBoardPlayer1();
+        } else {
+        	board = game.getBoardPlayer2();
+        }
+      
+        board[gamePlay.getCoordinateX()][gamePlay.getCoordinateY()] = gamePlay.getCardName();
+
+        GameStorage.getInstance().setGame(game);
+        return game;
+	}
 }
