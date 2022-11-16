@@ -13,7 +13,6 @@ import com.saidashevar.ptgame.exception.NotFoundException;
 
 import com.saidashevar.ptgame.model.Game;
 import com.saidashevar.ptgame.model.GamePlay;
-import com.saidashevar.ptgame.model.GameResponse;
 import com.saidashevar.ptgame.model.Player;
 import com.saidashevar.ptgame.service.GameService;
 
@@ -48,11 +47,18 @@ public class GameController {
 	
 	
 	@PostMapping("/gameplay")
-    public ResponseEntity<GameResponse> gamePlay(@RequestBody GamePlay request) throws NotFoundException, InvalidGameException {
+    public ResponseEntity<Game> gamePlay(@RequestBody GamePlay request) throws NotFoundException, InvalidGameException {
         log.info("gameplay: {}", request);
         Game game = gameService.gamePlay(request);
-        GameResponse gameResponse = gameService.prepareResponse(request);
-        simpMessagingTemplate.convertAndSend("/topic/game-progress/" + game.getGameId(), gameResponse);
-        return ResponseEntity.ok(gameResponse);
+        simpMessagingTemplate.convertAndSend("/topic/game-progress/" + game.getGameId(), game);
+        return ResponseEntity.ok(game);
+    }
+	
+	@PostMapping("/loadgame")
+    public ResponseEntity<Game> loadBoard(@RequestBody String gameId) throws NotFoundException, InvalidGameException {
+        log.info("got game with ID: {}", gameId);
+        Game game = gameService.loadBoardService(gameId);
+        simpMessagingTemplate.convertAndSend("/topic/game-progress/" + game.getGameId(), game);
+        return ResponseEntity.ok(game);
     }
 }

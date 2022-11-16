@@ -8,7 +8,6 @@ import com.saidashevar.ptgame.exception.InvalidGameException;
 import com.saidashevar.ptgame.exception.NotFoundException;
 import com.saidashevar.ptgame.model.Game;
 import com.saidashevar.ptgame.model.GamePlay;
-import com.saidashevar.ptgame.model.GameResponse;
 import com.saidashevar.ptgame.model.Player;
 
 import static com.saidashevar.ptgame.model.GameStatus.*;
@@ -40,37 +39,34 @@ public class GameService {
     }
 	
 	public Game gamePlay(GamePlay gamePlay) throws InvalidGameException, NotFoundException {
-		if (!GameStorage.getInstance().getGames().containsKey(gamePlay.getGameId())) {
-            throw new NotFoundException("Game not found");
-        }
-
-        Game game = GameStorage.getInstance().getGames().get(gamePlay.getGameId());
-        
-        if (game.getStatus().equals(FINISHED)) {
-            throw new InvalidGameException("Game is already finished");
-        }
+		
+        Game game = loadBoardService(gamePlay.getGameId());
         
         String[][] board;
         if(gamePlay.getRequester().equals(game.getPlayer1().getLogin())) {
-        	board = game.getBoardPlayer1();
+        	if (gamePlay.getSquad() == 1) board = game.getBoardPlayer1();
+        	else board = game.getBoardPlayer2();
         } else {
-        	board = game.getBoardPlayer2();
+        	if (gamePlay.getSquad() == 1) board = game.getBoardPlayer2();
+        	else board = game.getBoardPlayer1();
         }
-      
         board[gamePlay.getCoordinateX()-1][gamePlay.getCoordinateY()-1] = "New Card!!!";
 
         GameStorage.getInstance().setGame(game);
         return game;
 	}
 	
-	public GameResponse prepareResponse(GamePlay gamePlay) throws NotFoundException {
-		Game game = GameStorage.getInstance().getGames().get(gamePlay.getGameId());
-		GameResponse gameResponse;
-		if (gamePlay.getRequester().equals(game.getPlayer1().getLogin())) {
-			gameResponse = new GameResponse(game.getBoardPlayer2(), game.getBoardPlayer1());
-		} else if (gamePlay.getRequester().equals(game.getPlayer2().getLogin())) {
-			gameResponse = new GameResponse(game.getBoardPlayer1(), game.getBoardPlayer2());
-		} else throw new NotFoundException("Something went wrong with logins, sorry");
-		return gameResponse;
+	public Game loadBoardService(String gameId) throws NotFoundException, InvalidGameException {
+		if(gameId.contains("\"")) gameId = gameId.substring(1, gameId.length()-1);
+		if (!GameStorage.getInstance().getGames().containsKey(gameId)) {
+            throw new NotFoundException("Game not found");
+        }
+
+        Game game = GameStorage.getInstance().getGames().get(gameId);
+        
+        if (game.getStatus().equals(FINISHED)) {
+            throw new InvalidGameException("Game is already finished");
+        }
+        return game;
 	}
 }

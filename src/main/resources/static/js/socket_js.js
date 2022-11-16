@@ -5,6 +5,7 @@ var login;
 function loadPage() {
 	getGameID();
 	connectToSocket(gameId);
+	requestBoard(gameId);
 }
 
 function getGameID() {
@@ -29,5 +30,22 @@ function connectToSocket(gameId) {
             console.log(data);
             loadBoard(data);
         })
+    })
+}
+
+function requestBoard(gameId) {
+    $.ajax({
+        url: url + "/game/loadgame",
+        type: 'POST',
+        dataType: "json",
+        contentType: "application/json",
+        data: JSON.stringify(gameId),
+        success: function (data) {
+            loadBoard(data);
+            console.log("Successfully loaded board")
+        },
+        error: function (error) {
+            console.log(error);
+        }
     })
 }
