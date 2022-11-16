@@ -27,7 +27,7 @@ function connectToSocket(gameId) {
         stompClient.subscribe("/topic/game-progress/" + gameId, function (response) {
             let data = JSON.parse(response.body);
             console.log(data);
-            displayResponse(data);
+            loadBoard(data);
         })
     })
 }
