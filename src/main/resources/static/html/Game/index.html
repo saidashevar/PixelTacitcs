@@ -11,23 +11,24 @@
 <body>
 	<span id="ShowId" style="color: white">Your game ID is: </span>
 	<table>
-		<!-- id in opponent's squad are strangely reversed, but it must work -->
-		<!-- First number means row: 1 - avangard, 2 - flank, 3 - rearward -->
-		<!-- Second number means column. Cards with same second number are in same column in all squads -->
+		<!-- id in opponent's squad are a bit strangely reversed, but it must work -->
+		<!-- First number means which it is squad: 1 -  Your, 2 - Opponent -->
+		<!-- Second number means row. 1 - Avangard, 2 - Flank, 3 - Rearward -->
+		<!-- Third number means column. Cards with same third number are in same column in all squads -->
 		<tr>
-			<td class="opponent_squad" class="3_1">This is opponents' rearward</td>
-			<td class="opponent_squad" class="3_2">This is opponents' rearward</td>
-			<td class="opponent_squad" class="3_3">This is opponents' rearward</td>
+			<td id="2_3_1">This is opponents' rearward</td>
+			<td id="2_3_2">This is opponents' rearward</td>
+			<td id="2_3_3">This is opponents' rearward</td>
 		</tr>
 		<tr>
-			<td class="opponent_squad" class="2_1">This is opponents' flank</td>
-			<td class="opponent_squad" class="2_2">This is opponents' flank</td>
-			<td class="opponent_squad" class="2_3">This is opponents' flank</td>
+			<td id="2_2_1">This is opponents' flank</td>
+			<td id="2_2_2">This is opponents' flank</td>
+			<td id="2_2_3">This is opponents' flank</td>
 		</tr>
 		<tr>
-			<td class="opponent_squad" class="1_1">This is opponents' avangard</td>
-			<td class="opponent_squad" class="1_2">This is opponents' avangard</td>
-			<td class="opponent_squad" class="1_3">This is opponents' avangard</td>
+			<td id="2_1_1">This is opponents' avangard</td>
+			<td id="2_1_2">This is opponents' avangard</td>
+			<td id="2_1_3">This is opponents' avangard</td>
 		</tr>
 	</table>
 	<br />
@@ -35,19 +36,19 @@
 	<br />
 	<table>
 		<tr>
-			<td class="your_squad" class="1_1"><p>This is yours avangard</p></td>
-			<td class="your_squad" class="1_2"><p>This is yours avangard</p></td>
-			<td class="your_squad" class="1_3"><p>This is yours avangard</p></td>
+			<td id="1_1_1"><p>This is yours avangard</p></td>
+			<td id="1_1_2"><p>This is yours avangard</p></td>
+			<td id="1_1_3"><p>This is yours avangard</p></td>
 		</tr>
 		<tr>
-			<td class="your_squad" class="2_1">This is yours flank</td>
-			<td class="your_squad" class="2_2">This is yours flank</td>
-			<td class="your_squad" class="2_3">This is yours flank</td>
+			<td id="1_2_1">This is yours flank</td>
+			<td id="1_2_2">This is yours flank</td>
+			<td id="1_2_3">This is yours flank</td>
 		</tr>
 		<tr>
-			<td class="your_squad" class="3_1">This is yours rearward</td>
-			<td class="your_squad" class="3_2">This is yours rearward</td>
-			<td class="your_squad" class="3_3">This is yours rearward</td>
+			<td id="1_3_1">This is yours rearward</td>
+			<td id="1_3_2">This is yours rearward</td>
+			<td id="1_3_3">This is yours rearward</td>
 		</tr>
 	</table>
 </body>

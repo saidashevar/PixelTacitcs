@@ -14,16 +14,17 @@ function loadBoard(data) {
     gameOn = true;
 }
 
-function playerTurn(type, xCoordinate, yCoordinate) {
+function playerTurn() {
     $.ajax({
         url: url + "/game/gameplay",
         type: 'POST',
         dataType: "json",
         contentType: "application/json",
         data: JSON.stringify({
-            "type": type,
-            "coordinateX": xCoordinate,
-            "coordinateY": yCoordinate,
+			Player:
+			{
+				"login": login	
+			},
             "gameId": gameId
         }),
         success: function (data) {
@@ -37,6 +38,6 @@ function playerTurn(type, xCoordinate, yCoordinate) {
 }
 
 $(".your_squad,.opponent_squad").click(function () {
-    var slot = $(this).attr('id');
+    var slot = $(this).attr('class');
     playerTurn(slot);
 });
