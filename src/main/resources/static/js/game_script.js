@@ -1,4 +1,5 @@
 let gameOn = false;
+const url = 'http://localhost:8080';
 
 function loadBoard(data) {
 	let opBoard = data.upperBoard;
@@ -12,3 +13,30 @@ function loadBoard(data) {
     }
     gameOn = true;
 }
+
+function playerTurn(type, xCoordinate, yCoordinate) {
+    $.ajax({
+        url: url + "/game/gameplay",
+        type: 'POST',
+        dataType: "json",
+        contentType: "application/json",
+        data: JSON.stringify({
+            "type": type,
+            "coordinateX": xCoordinate,
+            "coordinateY": yCoordinate,
+            "gameId": gameId
+        }),
+        success: function (data) {
+            gameOn = false;
+            loadBoard(data);
+        },
+        error: function (error) {
+            console.log(error);
+        }
+    })
+}
+
+$(".your_squad,.opponent_squad").click(function () {
+    var slot = $(this).attr('id');
+    playerTurn(slot);
+});

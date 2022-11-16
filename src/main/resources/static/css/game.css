@@ -22,4 +22,6 @@ td {
     background: #666;
     padding: 1em;
     border-radius: 1em;
+    z-index: 100;
+    color: white;
 }
