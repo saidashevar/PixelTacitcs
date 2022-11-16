@@ -1,6 +1,6 @@
 window.onload = loadPage;
-let gameId;
-let login;
+var gameId;
+var login;
 
 function loadPage() {
 	getGameID();

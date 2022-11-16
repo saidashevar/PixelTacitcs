@@ -51,13 +51,13 @@ public class GameService {
         }
         
         String[][] board;
-        if(gamePlay.getRequester().getLogin().equals(game.getPlayer1().getLogin())) {
+        if(gamePlay.getRequester().equals(game.getPlayer1().getLogin())) {
         	board = game.getBoardPlayer1();
         } else {
         	board = game.getBoardPlayer2();
         }
       
-        board[gamePlay.getCoordinateX()][gamePlay.getCoordinateY()] = gamePlay.getCardName();
+        board[gamePlay.getCoordinateX()-1][gamePlay.getCoordinateY()-1] = "New Card!!!";
 
         GameStorage.getInstance().setGame(game);
         return game;
@@ -66,9 +66,9 @@ public class GameService {
 	public GameResponse prepareResponse(GamePlay gamePlay) throws NotFoundException {
 		Game game = GameStorage.getInstance().getGames().get(gamePlay.getGameId());
 		GameResponse gameResponse;
-		if (gamePlay.getRequester().getLogin().equals(game.getPlayer1().getLogin())) {
+		if (gamePlay.getRequester().equals(game.getPlayer1().getLogin())) {
 			gameResponse = new GameResponse(game.getBoardPlayer2(), game.getBoardPlayer1());
-		} else if (gamePlay.getRequester().getLogin().equals(game.getPlayer2().getLogin())) {
+		} else if (gamePlay.getRequester().equals(game.getPlayer2().getLogin())) {
 			gameResponse = new GameResponse(game.getBoardPlayer1(), game.getBoardPlayer2());
 		} else throw new NotFoundException("Something went wrong with logins, sorry");
 		return gameResponse;

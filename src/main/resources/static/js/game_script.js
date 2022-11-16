@@ -7,28 +7,26 @@ function loadBoard(data) {
     for (let i = 1; i < 4; i++) {
         for (let j = 1; j < 4; j++) {
             let id = i + "_" + j;
-            $(".opponent_board." + id).text(opBoard[i-1][j-1]);
-            $(".your_board." + id).text(yourBoard[i-1][j-1]);
+            $("#2_" + id).text(opBoard[i-1][j-1]);
+            $("#1_" + id).text(yourBoard[i-1][j-1]);
         }
     }
-    gameOn = true;
 }
 
-function playerTurn() {
+function playerChoice(squadnumber, i, j) {
     $.ajax({
         url: url + "/game/gameplay",
         type: 'POST',
         dataType: "json",
         contentType: "application/json",
         data: JSON.stringify({
-			Player:
-			{
-				"login": login	
-			},
-            "gameId": gameId
+            "gameId": gameId,
+            "requester": login,
+            "squad": squadnumber,
+            "coordinateX": i,
+            "coordinateY": j
         }),
         success: function (data) {
-            gameOn = false;
             loadBoard(data);
         },
         error: function (error) {
@@ -37,7 +35,7 @@ function playerTurn() {
     })
 }
 
-$(".your_squad,.opponent_squad").click(function () {
-    var slot = $(this).attr('class');
-    playerTurn(slot);
+$("[id ^= 1],[id ^= 2]").click(function () {
+    let id = $(this).attr('id');
+    playerChoice(id.split("_")[0], id.split("_")[1], id.split("_")[2]);
 });

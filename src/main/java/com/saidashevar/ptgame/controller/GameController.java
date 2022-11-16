@@ -52,7 +52,7 @@ public class GameController {
         log.info("gameplay: {}", request);
         Game game = gameService.gamePlay(request);
         GameResponse gameResponse = gameService.prepareResponse(request);
-        simpMessagingTemplate.convertAndSend("/topic/game-progress/" + game.getGameId(), game);
+        simpMessagingTemplate.convertAndSend("/topic/game-progress/" + game.getGameId(), gameResponse);
         return ResponseEntity.ok(gameResponse);
     }
 }
