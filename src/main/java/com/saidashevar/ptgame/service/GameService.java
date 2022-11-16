@@ -8,6 +8,7 @@ import com.saidashevar.ptgame.exception.InvalidGameException;
 import com.saidashevar.ptgame.exception.NotFoundException;
 import com.saidashevar.ptgame.model.Game;
 import com.saidashevar.ptgame.model.GamePlay;
+import com.saidashevar.ptgame.model.GameResponse;
 import com.saidashevar.ptgame.model.Player;
 
 import static com.saidashevar.ptgame.model.GameStatus.*;
@@ -60,5 +61,16 @@ public class GameService {
 
         GameStorage.getInstance().setGame(game);
         return game;
+	}
+	
+	public GameResponse prepareResponse(GamePlay gamePlay) throws NotFoundException {
+		Game game = GameStorage.getInstance().getGames().get(gamePlay.getGameId());
+		GameResponse gameResponse;
+		if (gamePlay.getRequester().getLogin().equals(game.getPlayer1().getLogin())) {
+			gameResponse = new GameResponse(game.getBoardPlayer2(), game.getBoardPlayer1());
+		} else if (gamePlay.getRequester().getLogin().equals(game.getPlayer2().getLogin())) {
+			gameResponse = new GameResponse(game.getBoardPlayer1(), game.getBoardPlayer2());
+		} else throw new NotFoundException("Something went wrong with logins, sorry");
+		return gameResponse;
 	}
 }

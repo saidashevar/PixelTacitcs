@@ -26,7 +26,7 @@ import lombok.extern.slf4j.Slf4j;
 public class GameController {
 	
 	private final GameService gameService;
-//	private final SimpMessagingTemplate simpMessagingTemplate;
+	private final SimpMessagingTemplate simpMessagingTemplate;
 	
 	@PostMapping("/start")
 	public ResponseEntity<Game> startGame(@RequestBody Player player) {
@@ -46,11 +46,11 @@ public class GameController {
     }
 	
 	
-//	@PostMapping("/gameplay")
-//    public ResponseEntity<Game> gamePlay(@RequestBody GamePlay request) throws NotFoundException, InvalidGameException {
-//        log.info("gameplay: {}", request);
-//        Game game = gameService.gamePlay(request);
-//        simpMessagingTemplate.convertAndSend("/topic/game-progress/" + game.getGameId(), game);
-//        return ResponseEntity.ok(game);
-//    }
+	@PostMapping("/gameplay")
+    public ResponseEntity<Game> gamePlay(@RequestBody GamePlay request) throws NotFoundException, InvalidGameException {
+        log.info("gameplay: {}", request);
+        Game game = gameService.gamePlay(request);
+        simpMessagingTemplate.convertAndSend("/topic/game-progress/" + game.getGameId(), game);
+        return ResponseEntity.ok(game);
+    }
 }
