@@ -6,3 +6,11 @@ This is sum of what i have done.
 Trying to make connection to another page with saving gameId.
 
 Yes, i made gameId working! now making connection to sockets.
+
+17.11.22
+5-th day. Websockets are confirmed working. Text on cards changes for both players simultaneously.
+Next step is to add some cards working. Players must have ability to take cards from their deck.
+I have to make cards, make their basic abilities, like attack and health.
+Make deck and hand for everyplayer.
+Make ability to take cards from the deck, no more then five.
+That's a long task, so let's go.
