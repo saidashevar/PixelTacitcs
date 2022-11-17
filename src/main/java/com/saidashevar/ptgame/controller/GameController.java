@@ -36,7 +36,7 @@ public class GameController {
 
 	@GetMapping("")
 	public String game() {
-		return "html/Game/index.html";
+		return "templates/Game.html";
 	}
 	
 	@PostMapping("/connect/random")
