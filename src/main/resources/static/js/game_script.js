@@ -1,24 +1,19 @@
 let gameOn = false;
 const url = 'http://localhost:8080';
+var gameStatus;
 
 function loadBoard(data) {
-	let opponent = data.logins[0];
-	alert(data.logins[0]);
-	alert(data.players[0]);
-	alert(data.players);
-	alert(data.players[object]);
-	alert(data.players[Object]);
-	alert(data.players.login);
+	let opponent = getOpponentLogin(data);
 	for (let i = 1; i < 4; i++) {
         for (let j = 1; j < 4; j++) {
             let id = i + "_" + j;
-            $("#1_" + id).text(data.players.Object.login.board[i-1][j-1]);
-            $("#2_" + id).text(data.players.opponent.board[i-1][j-1]);
+            $("#1_" + id).text(data.players[login].board[i-1][j-1]);
+            $("#2_" + id).text(data.players[opponent].board[i-1][j-1]);
         }
     }		
 }
 
-function loadHand(data) {
+function loadHand(game) {
 	
 }
 
@@ -63,9 +58,18 @@ function takeCard() {
 	})
 }
 
+function getOpponentLogin(game) {
+	let opponent = "";
+	if (game.logins[0] == login) opponent = game.logins[1];
+	else opponent = game.logins[0];
+	return opponent;
+}
+
 $("[id ^= 1],[id ^= 2]").click(function () {
-    let id = $(this).attr('id');
-    playerChoice(id.split("_")[0], id.split("_")[1], id.split("_")[2]);
+	if (gameStatus != "NEW") {
+		let id = $(this).attr('id');
+    	playerChoice(id.split("_")[0], id.split("_")[1], id.split("_")[2]);		
+	}
 });
 
 $("#deckPlayer2").click(function () {

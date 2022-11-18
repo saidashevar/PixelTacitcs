@@ -5,12 +5,11 @@ var login;
 function loadPage() {
 	getGameID();
 	connectToSocket(gameId);
-	requestBoard(gameId);
 }
 
 function getGameID() {
 	const params = new Proxy(new URLSearchParams(window.location.search), {
-  	get: (searchParams, prop) => searchParams.get(prop),
+  		get: (searchParams, prop) => searchParams.get(prop),
 	});
 	gameId = params.gameid;
 	login = params.login;
@@ -28,7 +27,7 @@ function connectToSocket(gameId) {
         stompClient.subscribe("/topic/game-progress/" + gameId, function (response) {
             let data = JSON.parse(response.body);
             console.log(data);
-            loadBoard(data);
+            gameStatus = data.status;
         })
     })
 }

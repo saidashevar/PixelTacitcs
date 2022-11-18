@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import com.saidashevar.ptgame.controller.request.ConnectRequest;
 import com.saidashevar.ptgame.controller.request.StringRequest;
 import com.saidashevar.ptgame.exception.InvalidGameException;
 import com.saidashevar.ptgame.exception.NotFoundException;
@@ -50,7 +49,7 @@ public class GameController {
     }
 	
 	
-	@PostMapping("/gameplay")
+	@PostMapping("/gameplay") //This is called everytime
     public ResponseEntity<Game> gamePlay(@RequestBody GamePlay request) throws NotFoundException, InvalidGameException {
         log.info("gameplay: {}", request);
         Game game = gameService.gamePlay(request);
