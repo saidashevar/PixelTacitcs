@@ -39,7 +39,9 @@ function requestBoard(gameId) {
         type: 'POST',
         dataType: "json",
         contentType: "application/json",
-        data: JSON.stringify(gameId),
+        data: JSON.stringify({
+			"string": gameId	
+		}),
         success: function (data) {
             loadBoard(data);
             console.log("Successfully loaded board")

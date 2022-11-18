@@ -8,7 +8,7 @@ function create_game() {
             dataType: "json",
             contentType: "application/json",
             data: JSON.stringify({
-                "login": login
+                "string": login
             }),
             success: function (data) {
 				let gameId = data.gameId;
@@ -28,7 +28,7 @@ function connectToRandomGame() {
         dataType: "json",
         contentType: "application/json",
         data: JSON.stringify({
-            "login": login
+            "string": login
         }),
         success: function (data) {
 			let gameId = data.gameId;

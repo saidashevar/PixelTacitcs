@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import com.saidashevar.ptgame.controller.request.ConnectRequest;
+import com.saidashevar.ptgame.controller.request.StringRequest;
 import com.saidashevar.ptgame.exception.InvalidGameException;
 import com.saidashevar.ptgame.exception.NotFoundException;
 import com.saidashevar.ptgame.exception.game.NoMoreActionsLeftException;
@@ -29,11 +31,11 @@ public class GameController {
 	
 	private final GameService gameService;
 	private final SimpMessagingTemplate simpMessagingTemplate;
-	
+	 
 	@PostMapping("/start")
-	public ResponseEntity<Game> startGame(@RequestBody String login) {
-		log.info("start game request: {}", login);
-		return ResponseEntity.ok(gameService.createGame(login));
+	public ResponseEntity<Game> startGame(@RequestBody StringRequest stringRequest) {
+		log.info("start game request: {}", stringRequest.getString());
+		return ResponseEntity.ok(gameService.createGame(stringRequest.getString()));
 	}
 
 	@GetMapping("")
@@ -42,9 +44,9 @@ public class GameController {
 	}
 	
 	@PostMapping("/connect/random")
-    public ResponseEntity<Game> connectRandom(@RequestBody String login) throws NotFoundException {
-        log.info("connect random {}", login);
-        return ResponseEntity.ok(gameService.connectToRandomGame(login));
+    public ResponseEntity<Game> connectRandom(@RequestBody StringRequest stringRequest) throws NotFoundException {
+		log.info("connect random {}", stringRequest.getString());
+        return ResponseEntity.ok(gameService.connectToRandomGame(stringRequest.getString()));
     }
 	
 	
@@ -56,7 +58,7 @@ public class GameController {
         return ResponseEntity.ok(game);
     }
 	
-	@PostMapping("/loadhand")
+	@PostMapping("/loadhand") //This is called when player takes card from deck
     public ResponseEntity<Player> loadHand(@RequestBody GamePlay request) throws NotFoundException, InvalidGameException, NoMoreActionsLeftException, NoMoreCardInDeckException, TooManyCardsInHandException {
         log.info("Loading hand: {}", request);
         Game game = gameService.loadGameService(request.getGameId());
@@ -65,10 +67,10 @@ public class GameController {
         return ResponseEntity.ok(player);
     }
 	
-	@PostMapping("/loadgame")
-    public ResponseEntity<Game> loadBoard(@RequestBody String gameId) throws NotFoundException, InvalidGameException {
-        log.info("got game with ID: {}", gameId);
-        Game game = gameService.loadGameService(gameId);
+	@PostMapping("/loadgame") //This is called when game page first loading (may be later it will load saved games)  
+    public ResponseEntity<Game> loadBoard(@RequestBody StringRequest request) throws NotFoundException, InvalidGameException {
+        log.info("got game with ID: {}", request);
+        Game game = gameService.loadGameService(request.getString());
         simpMessagingTemplate.convertAndSend("/topic/game-progress/" + game.getGameId(), game);
         return ResponseEntity.ok(game);
     }
