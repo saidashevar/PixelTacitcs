@@ -23,6 +23,10 @@ function loadBoard(data) {
 	}
 }
 
+function loadHand(data) {
+	
+}
+
 function playerChoice(squadnumber, i, j) {
     $.ajax({
         url: url + "/game/gameplay",
@@ -45,7 +49,30 @@ function playerChoice(squadnumber, i, j) {
     })
 }
 
+function takeCard() {
+    $.ajax({
+	    url: url + "/game/takecard",
+	    type: 'POST',
+	    dataType: "json",
+	    contentType: "application/json",
+	    data: JSON.stringify({
+	        "gameId": gameId,
+	        "requester": login,
+	    }),
+	    success: function (data) {
+	        loadHand(data);
+	    },
+	    error: function (error) {
+	        console.log(error);
+	    }
+	})
+}
+
 $("[id ^= 1],[id ^= 2]").click(function () {
     let id = $(this).attr('id');
     playerChoice(id.split("_")[0], id.split("_")[1], id.split("_")[2]);
+});
+
+$("#deckPlayer2").click(function () {
+	takeCard();
 });

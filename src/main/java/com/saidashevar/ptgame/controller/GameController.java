@@ -10,7 +10,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.saidashevar.ptgame.exception.InvalidGameException;
 import com.saidashevar.ptgame.exception.NotFoundException;
-
+import com.saidashevar.ptgame.exception.game.NoMoreActionsLeftException;
+import com.saidashevar.ptgame.exception.game.NoMoreCardInDeckException;
+import com.saidashevar.ptgame.exception.game.TooManyCardsInHandException;
 import com.saidashevar.ptgame.model.Game;
 import com.saidashevar.ptgame.model.GamePlay;
 import com.saidashevar.ptgame.model.Player;
@@ -29,9 +31,9 @@ public class GameController {
 	private final SimpMessagingTemplate simpMessagingTemplate;
 	
 	@PostMapping("/start")
-	public ResponseEntity<Game> startGame(@RequestBody Player player) {
-		log.info("start game request: {}", player);
-		return ResponseEntity.ok(gameService.createGame(player));
+	public ResponseEntity<Game> startGame(@RequestBody String login) {
+		log.info("start game request: {}", login);
+		return ResponseEntity.ok(gameService.createGame(login));
 	}
 
 	@GetMapping("")
@@ -40,9 +42,9 @@ public class GameController {
 	}
 	
 	@PostMapping("/connect/random")
-    public ResponseEntity<Game> connectRandom(@RequestBody Player player) throws NotFoundException {
-        log.info("connect random {}", player);
-        return ResponseEntity.ok(gameService.connectToRandomGame(player));
+    public ResponseEntity<Game> connectRandom(@RequestBody String login) throws NotFoundException {
+        log.info("connect random {}", login);
+        return ResponseEntity.ok(gameService.connectToRandomGame(login));
     }
 	
 	
@@ -54,10 +56,19 @@ public class GameController {
         return ResponseEntity.ok(game);
     }
 	
+	@PostMapping("/loadhand")
+    public ResponseEntity<Player> loadHand(@RequestBody GamePlay request) throws NotFoundException, InvalidGameException, NoMoreActionsLeftException, NoMoreCardInDeckException, TooManyCardsInHandException {
+        log.info("Loading hand: {}", request);
+        Game game = gameService.loadGameService(request.getGameId());
+        Player player = gameService.loadHandService(request);
+        simpMessagingTemplate.convertAndSend("/topic/game-progress/" + game.getGameId(), player);
+        return ResponseEntity.ok(player);
+    }
+	
 	@PostMapping("/loadgame")
     public ResponseEntity<Game> loadBoard(@RequestBody String gameId) throws NotFoundException, InvalidGameException {
         log.info("got game with ID: {}", gameId);
-        Game game = gameService.loadBoardService(gameId);
+        Game game = gameService.loadGameService(gameId);
         simpMessagingTemplate.convertAndSend("/topic/game-progress/" + game.getGameId(), game);
         return ResponseEntity.ok(game);
     }
