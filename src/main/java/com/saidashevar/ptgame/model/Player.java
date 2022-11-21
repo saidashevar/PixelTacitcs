@@ -7,7 +7,7 @@ import lombok.Data;
 
 @Data
 public class Player {
-	private byte actionsLeft;
+	private byte actionsLeft = 5;
 	private ArrayList<Card> discardPile = new ArrayList<>(10);
 	private ArrayList<Card> deck = new ArrayList<>(25);
 	private ArrayList<Card> hand = new ArrayList<>(6);

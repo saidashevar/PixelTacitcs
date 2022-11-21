@@ -6,6 +6,7 @@ import java.util.UUID;
 
 import org.springframework.stereotype.Service;
 
+import com.saidashevar.ptgame.controller.request.ConnectRequest;
 import com.saidashevar.ptgame.exception.InvalidGameException;
 import com.saidashevar.ptgame.exception.game.NoMoreActionsLeftException;
 import com.saidashevar.ptgame.exception.game.NoMoreCardInDeckException;
@@ -44,13 +45,9 @@ public class GameService {
         return game;
     }
 	
-	public Game gamePlay(GamePlay gamePlay) throws InvalidGameException, NotFoundException {
-		Game game = loadGameService(gamePlay.getGameId());
-        String[][] board = game.getPlayers().get(gamePlay.getRequester()).getBoard();
-        board[gamePlay.getCoordinateX()-1][gamePlay.getCoordinateY()-1] = "New Card!";
-        GameStorage.getInstance().setGame(game);
-        return game;
-	}
+	//
+	//Next are service methods that load some part of game or whole game
+	//
 	
 	public Game loadGameService(String gameId) throws NotFoundException, InvalidGameException {
 		if(gameId.contains("\"")) gameId = gameId.substring(1, gameId.length()-1);
@@ -68,24 +65,23 @@ public class GameService {
 	
 	//It's enough to send info about deck and hand here, but I think it's not critical to send all info about player.
 	//Maybe later with Spring Security i will improve this code.
-	public Player loadHandService(GamePlay gamePlay) throws NotFoundException, InvalidGameException,
-															NoMoreActionsLeftException, NoMoreCardInDeckException, 
-															TooManyCardsInHandException {
-		Game game = loadGameService(gamePlay.getGameId());
+	public Game takeCardService(ConnectRequest request) throws NotFoundException, InvalidGameException, NoMoreActionsLeftException, NoMoreCardInDeckException, TooManyCardsInHandException {
+		Game game = loadGameService(request.getGameId());
 		
-		checkForActions(game, gamePlay.getRequester());
-		checkCardsInDeck(game, gamePlay.getRequester());
-		checkIfHandIsFull(game, gamePlay.getRequester());
+		checkForActions(game, request.getLogin());
+		checkCardsInDeck(game, request.getLogin());
+		checkIfHandIsFull(game, request.getLogin());
 		
-		Player player = game.getPlayers().get(gamePlay.getRequester());
+		Player player = game.getPlayers().get(request.getLogin());
 		player.getHand().add(player.getDeck().get(0));
 		player.getDeck().remove(0);
+		player.setActionsLeft((byte)(player.getActionsLeft()-1));
 		GameStorage.getInstance().setGame(game);
-		return player;
+		return game;
 	}
 	
 	//Throwing errors when something simple happens may be a bad practice...
-	//Should check it later.
+	//Should check it later. should change it later!
 	private void checkForActions(Game game, String requester) throws NoMoreActionsLeftException {
 		if (game.getPlayers().get(requester).getActionsLeft() <= 0)
 			throw new NoMoreActionsLeftException(requester + "has no more actions now!");
@@ -99,5 +95,14 @@ public class GameService {
 	private void checkIfHandIsFull(Game game, String requester) throws TooManyCardsInHandException {
 		if (game.getPlayers().get(requester).getHand().size() >= 5)
 			throw new TooManyCardsInHandException(requester + "had no more cards in his deck!");
+	}
+	
+	//This method is obsolete. there will be other methods.
+	public Game gamePlay(GamePlay gamePlay) throws InvalidGameException, NotFoundException {
+		Game game = loadGameService(gamePlay.getGameId());
+        String[][] board = game.getPlayers().get(gamePlay.getRequester()).getBoard();
+        board[gamePlay.getCoordinateX()-1][gamePlay.getCoordinateY()-1] = "New Card!";
+        GameStorage.getInstance().setGame(game);
+        return game;
 	}
 }

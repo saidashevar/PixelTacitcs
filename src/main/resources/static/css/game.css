@@ -74,7 +74,7 @@ table {
   top: 260px;
 }
 
-#hand {
+#cardHolderDiv {
   position: fixed;
   top: 0;
   left: 0;
@@ -83,7 +83,7 @@ table {
   background: #666;
 }
 
-.handCard {
+li[id ^= "hand"] {
   z-index: 1000;
   position: fixed;
   left: 0;
@@ -95,19 +95,18 @@ table {
   height: 19%;
 }
 
-.hand1 {
+#hand0 {
   top: 0;
 }
-
-.hand2 {
+#hand1 {
   top: 20%;
 }
-.hand3 {
+#hand2 {
   top: 40%;
 }
-.hand4 {
+#hand3 {
   top: 60%;
 }
-.hand5 {
+#hand4 {
   top: 80%;
 }

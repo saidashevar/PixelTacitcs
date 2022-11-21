@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import com.saidashevar.ptgame.controller.request.ConnectRequest;
 import com.saidashevar.ptgame.controller.request.StringRequest;
 import com.saidashevar.ptgame.exception.InvalidGameException;
 import com.saidashevar.ptgame.exception.NotFoundException;
@@ -16,7 +17,6 @@ import com.saidashevar.ptgame.exception.game.NoMoreCardInDeckException;
 import com.saidashevar.ptgame.exception.game.TooManyCardsInHandException;
 import com.saidashevar.ptgame.model.Game;
 import com.saidashevar.ptgame.model.GamePlay;
-import com.saidashevar.ptgame.model.Player;
 import com.saidashevar.ptgame.service.GameService;
 
 import lombok.AllArgsConstructor;
@@ -57,13 +57,12 @@ public class GameController {
         return ResponseEntity.ok(game);
     }
 	
-	@PostMapping("/loadhand") //This is called when player takes card from deck
-    public ResponseEntity<Player> loadHand(@RequestBody GamePlay request) throws NotFoundException, InvalidGameException, NoMoreActionsLeftException, NoMoreCardInDeckException, TooManyCardsInHandException {
-        log.info("Loading hand: {}", request);
-        Game game = gameService.loadGameService(request.getGameId());
-        Player player = gameService.loadHandService(request);
-        simpMessagingTemplate.convertAndSend("/topic/game-progress/" + game.getGameId(), player);
-        return ResponseEntity.ok(player);
+	@PostMapping("/takecard") //This is called when player takes card from deck
+    public ResponseEntity<Game> takeHand(@RequestBody ConnectRequest request) throws NotFoundException, InvalidGameException, NoMoreActionsLeftException, NoMoreCardInDeckException, TooManyCardsInHandException {
+        log.info(request.getLogin() + "takes card");
+        Game game = gameService.takeCardService(request);
+        simpMessagingTemplate.convertAndSend("/topic/game-progress/" + game.getGameId(), game);
+        return ResponseEntity.ok(game);
     }
 	
 	@PostMapping("/loadgame") //This is called when game page first loading (may be later it will load saved games)  

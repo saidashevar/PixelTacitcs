@@ -14,7 +14,20 @@ function loadBoard(data) {
 }
 
 function loadHand(game) {
-	
+	let hand = document.getElementById("cardHolderParent");
+	hand.removeChild(hand.firstChild);
+	let cardHolder = document.createElement('ol');
+	cardHolder.id = "cardHolder";
+	hand.append(cardHolder);
+	for (let page = 0; page < Math.ceil(game.players[login].hand.length / 5); page++) {
+		for (let i = 0; i < 5; i++) {
+			let card = document.createElement('li');
+			card.id = "hand"+i;
+			card.innerHTML = game.players[login].hand[i];
+			hand.append(card);
+		}
+		//For future: add code to new button, that will appear if player has more then 5 cards.		
+	}
 }
 
 function playerChoice(squadnumber, i, j) {
@@ -47,10 +60,17 @@ function takeCard() {
 	    contentType: "application/json",
 	    data: JSON.stringify({
 	        "gameId": gameId,
-	        "requester": login,
+	        "login": login,
 	    }),
 	    success: function (data) {
-	        loadHand(data);
+			let cardsInHand = data.players[login].hand.length;
+			if (cardsInHand <= 5) {
+				let hand = document.getElementById("cardHolder");
+				let card = document.createElement('li');
+				card.id = "hand"+(cardsInHand-1);
+				card.innerHTML = data.players[login].hand[cardsInHand-1].name;
+				hand.append(card);
+			}
 	    },
 	    error: function (error) {
 	        console.log(error);
@@ -65,6 +85,7 @@ function getOpponentLogin(game) {
 	return opponent;
 }
 
+//Click functions
 $("[id ^= 1],[id ^= 2]").click(function () {
 	if (gameStatus != "NEW") {
 		let id = $(this).attr('id');
@@ -72,6 +93,6 @@ $("[id ^= 1],[id ^= 2]").click(function () {
 	}
 });
 
-$("#deckPlayer2").click(function () {
+$("#deckPlayer1").click(function () {
 	takeCard();
 });
