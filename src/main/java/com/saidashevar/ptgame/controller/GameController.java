@@ -67,7 +67,7 @@ public class GameController {
 	
 	@PostMapping("/loadgame") //This is called when game page first loading (may be later it will load saved games)  
     public ResponseEntity<Game> loadBoard(@RequestBody StringRequest request) throws NotFoundException, InvalidGameException {
-        log.info("got game with ID: {}", request);
+        log.info("got game with ID: " + request.getString());
         Game game = gameService.loadGameService(request.getString());
         simpMessagingTemplate.convertAndSend("/topic/game-progress/" + game.getGameId(), game);
         return ResponseEntity.ok(game);

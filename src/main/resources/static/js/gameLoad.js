@@ -5,6 +5,7 @@ var login;
 function loadPage() {
 	getGameID();
 	connectToSocket(gameId);
+	requestBoard(gameId);
 }
 
 function getGameID() {
@@ -42,11 +43,35 @@ function requestBoard(gameId) {
 			"string": gameId	
 		}),
         success: function (data) {
-            loadBoard(data);
+            loadHand(data);
             console.log("Successfully loaded board")
         },
         error: function (error) {
             console.log(error);
         }
     })
+}
+
+function loadBoard(data) {
+	let opponent = getOpponentLogin(data);
+	for (let i = 1; i < 4; i++) {
+        for (let j = 1; j < 4; j++) {
+            let id = i + "_" + j;
+            $("#1_" + id).text(data.players[login].board[i-1][j-1]);
+            $("#2_" + id).text(data.players[opponent].board[i-1][j-1]);
+        }
+    }		
+}
+
+function loadHand (data) {
+	let cardsInHand = data.players[login].hand.length;
+	if (cardsInHand <= 5) {
+		let hand = document.getElementById("cardHolder");
+		for (let i = 0; i < cardsInHand; i++) {
+			let card = document.createElement('li');
+			card.id = "hand"+i;
+			card.innerHTML = data.players[login].hand[i].name;
+			hand.append(card);
+		}		
+	}
 }
