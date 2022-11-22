@@ -46,6 +46,7 @@ function requestBoard(gameId) {
 		}),
         success: function (data) {
 			lastGameSave = data;
+			loadBoard(data);
             loadHand(data);
             console.log("Successfully loaded board")
         },
@@ -60,8 +61,13 @@ function loadBoard(data) {
 	for (let i = 1; i < 4; i++) {
         for (let j = 1; j < 4; j++) {
             let id = i + "_" + j;
-            $("#1_" + id).text(data.players[login].board[i-1][j-1]);
-            $("#2_" + id).text(data.players[opponent].board[i-1][j-1]);
+            let place = document.getElementById("1_"+id); 
+            place.textContent = data.players[login].board[i-1][j-1];
+            place.addEventListener('dragenter', dragEnter);
+	    	place.addEventListener('dragover', dragOver);
+    		place.addEventListener('dragleave', dragLeave);
+    		//place.addEventListener('drop', drop);           
+            if (opponent != undefined) $("#2_" + id).text(data.players[opponent].board[i-1][j-1]);
         }
     }		
 }

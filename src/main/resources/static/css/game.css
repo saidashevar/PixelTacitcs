@@ -50,9 +50,15 @@ table {
 }
 
 .readyToDrop {
-	border: solid;
+	border: dashed;
 	border-color: Silver;
 	border-width: 3px;
+}
+
+.drag-over {
+	border: solid;
+	border-color: Silver;
+	border-width: 5px;
 }
 
 #deckPlayer1, #deckPlayer2 {
