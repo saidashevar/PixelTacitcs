@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<link href="css/game.css" rel="stylesheet">
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.4.0/sockjs.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+<title>Fight for your dinner!</title>
+</head>
+<body>
+	<span id="ShowId" style="color: white">Your game ID is: </span>
+    <div id="cardHolderDiv">
+      <ol id="cardHolder">
+      </ol>
+    </div>
+    <div class="cardPlace" id="deckPlayer2">
+      <p>This is deck of other players</p>
+    </div>
+    <div class="cardPlace" id="deckPlayer1">
+      <p>This is your deck</p>
+    </div>
+    <div class="pile" id="pilePlayer2">
+      <p>This is pile2</p>
+    </div>
+    <div class="pile" id="pilePlayer1">
+      <p>This is pile1</p>
+    </div>
+    <!-- id in opponent's squad are a bit strangely reversed, but it must work -->
+	<!-- First number means which it is squad: 1 -  Your, 2 - Opponent -->
+	<!-- Second number means row. 1 - Avangard, 2 - Flank, 3 - Rearward -->
+	<!-- Third number means column. Cards with same third number are in same column in all squads -->
+  	<table>
+		<tbody>
+    		<tr>
+      			<td class="emptyCardPlace"></td>
+				<td class="cardPlace" id="2_3_1">This is opponents' rearward</td>
+				<td class="cardPlace" id="2_3_2">This is opponents' rearward</td>
+				<td class="cardPlace" id="2_3_3">This is opponents' rearward</td>
+			</tr>
+			<tr>
+      			<td class="emptyCardPlace"></td>
+				<td class="cardPlace" id="2_2_1">This is opponents' flank</td>
+				<td class="cardPlace" id="2_2_2">This is opponents' flank</td>
+				<td class="cardPlace" id="2_2_3">This is opponents' flank</td>
+			</tr>
+			<tr>
+      			<td class="emptyCardPlace"></td>
+				<td class="cardPlace" id="2_1_1">This is opponents' avangard</td>
+				<td class="cardPlace" id="2_1_2">This is opponents' avangard</td>
+				<td class="cardPlace" id="2_1_3">This is opponents' avangard</td>
+			</tr>
+		</tbody>
+	</table>
+	<br />
+	<hr />
+	<br />
+	<table>
+		<tbody>
+			<tr>
+      			<td class="emptyCardPlace"></td>
+				<td class="cardPlace" id="1_1_1">This is yours avangard</td>
+				<td class="cardPlace" id="1_1_2">This is yours avangard</td>
+				<td class="cardPlace" id="1_1_3">This is yours avangard</td>
+			</tr>
+			<tr>
+      			<td class="emptyCardPlace"></td>
+				<td class="cardPlace" id="1_2_1">This is yours flank</td>
+				<td class="cardPlace" id="1_2_2">This is yours flank</td>
+				<td class="cardPlace" id="1_2_3">This is yours flank</td>
+			</tr>
+			<tr>
+	   	  		<td class="emptyCardPlace"></td>
+				<td class="cardPlace" id="1_3_1">This is yours rearward</td>
+				<td class="cardPlace" id="1_3_2">This is yours rearward</td>
+				<td class="cardPlace" id="1_3_3">This is yours rearward</td>
+			</tr>
+		</tbody>
+	</table>
+</body>
+	<script src="js/game_script.js"></script>
+	<script src="js/gameLoad.js"></script>
+	<script src="js/CardDragAndDrop.js"></script>
+</html>
