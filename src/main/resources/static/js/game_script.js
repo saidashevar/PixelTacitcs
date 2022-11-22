@@ -23,7 +23,8 @@ function loadHand(game) {
 		for (let i = 0; i < 5; i++) {
 			let card = document.createElement('li');
 			card.id = "hand"+i;
-			card.innerHTML = game.players[login].hand[i];
+			card.setAttribute("draggable", "true");
+			card.textContent = game.players[login].hand[i];
 			hand.append(card);
 		}
 		//For future: add code to new button, that will appear if player has more then 5 cards.		
@@ -68,7 +69,10 @@ function takeCard() {
 				let hand = document.getElementById("cardHolder");
 				let card = document.createElement('li');
 				card.id = "hand"+(cardsInHand-1);
-				card.innerHTML = data.players[login].hand[cardsInHand-1].name;
+				card.setAttribute("draggable", "true");
+				card.textContent = data.players[login].hand[cardsInHand-1].name;
+				//card.addEventListener('mousedown', onmousedown);
+				card.addEventListener('dragstart', onDragStart);
 				hand.append(card);
 			}
 	    },

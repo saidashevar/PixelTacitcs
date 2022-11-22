@@ -45,6 +45,16 @@ table {
   color: white;
 }
 
+.hide {
+	display: none;
+}
+
+.readyToDrop {
+	border: solid;
+	border-color: Silver;
+	border-width: 3px;
+}
+
 #deckPlayer1, #deckPlayer2 {
     width: var(--width);
     height: var(--height);
