@@ -1,6 +1,7 @@
 window.onload = loadPage;
 var gameId;
 var login;
+var lastGameSave;
 
 function loadPage() {
 	getGameID();
@@ -27,6 +28,7 @@ function connectToSocket(gameId) {
         console.log("connected to the frame: " + frame);
         stompClient.subscribe("/topic/game-progress/" + gameId, function (response) {
             let data = JSON.parse(response.body);
+            lastGameSave = data;
             console.log(data);
             gameStatus = data.status;
         })
@@ -43,6 +45,7 @@ function requestBoard(gameId) {
 			"string": gameId	
 		}),
         success: function (data) {
+			lastGameSave = data;
             loadHand(data);
             console.log("Successfully loaded board")
         },
@@ -69,9 +72,15 @@ function loadHand (data) {
 		let hand = document.getElementById("cardHolder");
 		for (let i = 0; i < cardsInHand; i++) {
 			let card = document.createElement('li');
-			card.id = "hand"+i;
-			card.innerHTML = data.players[login].hand[i].name;
-			hand.append(card);
+			addCardInHand(data, hand, i);
 		}		
 	}
+}
+
+function reloadHand(data) {
+	const cardsInHand = document.querySelectorAll('li[id ^= "hand"]');
+	cardsInHand.forEach(card => {
+    	card.remove();
+	});
+	loadHand(data);
 }

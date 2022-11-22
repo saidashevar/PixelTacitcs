@@ -67,19 +67,24 @@ function takeCard() {
 			let cardsInHand = data.players[login].hand.length;
 			if (cardsInHand <= 5) {
 				let hand = document.getElementById("cardHolder");
-				let card = document.createElement('li');
-				card.id = "hand"+(cardsInHand-1);
-				card.setAttribute("draggable", "true");
-				card.textContent = data.players[login].hand[cardsInHand-1].name;
-				//card.addEventListener('mousedown', onmousedown);
-				card.addEventListener('dragstart', onDragStart);
-				hand.append(card);
+				addCardInHand(data, hand, cardsInHand-1);
 			}
 	    },
 	    error: function (error) {
 	        console.log(error);
 	    }
 	})
+}
+
+//Support functions
+function addCardInHand(data, hand, cardId) {
+	let card = document.createElement('li');
+	card.id = "hand"+cardId;
+	card.textContent = data.players[login].hand[cardId].name;
+	card.setAttribute("draggable", "true");
+	card.addEventListener('dragstart', onDragStart);
+	card.addEventListener('dragend', onDragEnd);
+	hand.append(card);
 }
 
 function getOpponentLogin(game) {

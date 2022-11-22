@@ -8,9 +8,7 @@ boxes.forEach(box => {
 });
 */
 
-
-let cardDrag;
-
+//This code id working!
 function onDragStart(e) {
 	//e.dataTransfer.setData('text/plain', e.target.id); To make this work, set id first
 	setTimeout(() => {
@@ -19,10 +17,15 @@ function onDragStart(e) {
     
     const boxes = document.querySelectorAll('td[id ^= "1"]');
 	boxes.forEach(box => {
-    box.classList.add('readyToDrop');
+    	box.classList.add('readyToDrop');
 	});
 }
 
+function onDragEnd(e) {
+	reloadHand(lastGameSave);
+}
+
+let cardDrag;
 function onmousedown(event) {
 	cardDrag = event.target;
 	event.dataTransfer.dropEffect = "move";

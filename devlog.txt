@@ -18,3 +18,6 @@ That's a long task, so let's go.
 21.11.22
 9-th day. Make players' ability to take cards from deck took more than i thought.
 Next step is to make cards drag'n'drop on the battlefield! It must be a bit easer to do...
+
+22.11.22
+10-th day. Drag'n'drop not so easy to make... But dragging cards is possible now
