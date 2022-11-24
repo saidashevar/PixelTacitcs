@@ -10,12 +10,13 @@ boxes.forEach(box => {
 
 //This code id working!
 function onDragStart(e) {
-	//e.dataTransfer.setData('text/plain', e.target.id); To make this work, set id first
+	e.dataTransfer.setData('text/plain', e.target.id.split("")[4]);
 	setTimeout(() => {
         e.target.classList.add('hide');
     }, 0);
     
-    const boxes = document.querySelectorAll('td[id ^= "1"]');
+    let query = 'td[id ^= "1_' + (lastGameSave.wave + 1) + '"]';
+    const boxes = document.querySelectorAll(query);
 	boxes.forEach(box => {
     	box.classList.add('readyToDrop');
 	});
@@ -42,3 +43,11 @@ function dragOver(e) {
 function dragLeave(e) {
     e.target.classList.remove('drag-over');
 }
+
+function dragDrop(e) {
+	e.target.classList.remove('drag-over');
+	let place = e.target.id;
+	let cardInHand = e.dataTransfer.getData('text/plain');
+	placeCard(place.split("_")[2], cardInHand);
+}
+

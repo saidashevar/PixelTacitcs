@@ -7,7 +7,7 @@ import lombok.Data;
 @AllArgsConstructor
 public class Card {
 	
-	private String name;
+	private String name = "";
 	private int attack;
 	private int health;
 }

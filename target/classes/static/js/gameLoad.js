@@ -1,7 +1,4 @@
 window.onload = loadPage;
-var gameId;
-var login;
-var lastGameSave;
 
 function loadPage() {
 	getGameID();
@@ -9,18 +6,8 @@ function loadPage() {
 	requestBoard(gameId);
 }
 
-function getGameID() {
-	const params = new Proxy(new URLSearchParams(window.location.search), {
-  		get: (searchParams, prop) => searchParams.get(prop),
-	});
-	gameId = params.gameid;
-	login = params.login;
-	let paragraph = document.getElementById("ShowId");
-	paragraph.textContent = login+", "+paragraph.textContent+gameId;
-}
-
+//request board
 function connectToSocket(gameId) {
-
     console.log("connecting to the game");
     let socket = new SockJS(url + "/gameplay");
     stompClient = Stomp.over(socket);
@@ -56,17 +43,21 @@ function requestBoard(gameId) {
     })
 }
 
+//load functions
 function loadBoard(data) {
 	let opponent = getOpponentLogin(data);
 	for (let i = 1; i < 4; i++) {
         for (let j = 1; j < 4; j++) {
             let id = i + "_" + j;
             let place = document.getElementById("1_"+id); 
-            place.textContent = data.players[login].board[i-1][j-1];
-            place.addEventListener('dragenter', dragEnter);
-	    	place.addEventListener('dragover', dragOver);
-    		place.addEventListener('dragleave', dragLeave);
-    		//place.addEventListener('drop', drop);           
+            if (data.players[login].board[i-1][j-1] === null) place.textContent = "";
+            else place.textContent = data.players[login].board[i-1][j-1].name;
+            if (data.wave+1 == i) {
+				place.addEventListener('dragenter', dragEnter);
+		    	place.addEventListener('dragover', dragOver);
+	    		place.addEventListener('dragleave', dragLeave);
+	    		place.addEventListener('drop', dragDrop);  
+			}
             if (opponent != undefined) $("#2_" + id).text(data.players[opponent].board[i-1][j-1]);
         }
     }		
@@ -89,4 +80,22 @@ function reloadHand(data) {
     	card.remove();
 	});
 	loadHand(data);
+}
+
+//get functions
+function getGameID() {
+	const params = new Proxy(new URLSearchParams(window.location.search), {
+  		get: (searchParams, prop) => searchParams.get(prop),
+	});
+	gameId = params.gameid;
+	login = params.login;
+	let paragraph = document.getElementById("ShowId");
+	paragraph.textContent = login+", "+paragraph.textContent+gameId;
+}
+
+function getOpponentLogin(game) {
+	let opponent = "";
+	if (game.logins[0] == login) opponent = game.logins[1];
+	else opponent = game.logins[0];
+	return opponent;
 }

@@ -7,11 +7,11 @@ import lombok.Data;
 
 @Data
 public class Player {
-	private byte actionsLeft = 5;
+	private Turn turn = new Turn();;
 	private ArrayList<Card> discardPile = new ArrayList<>(10);
 	private ArrayList<Card> deck = new ArrayList<>(25);
 	private ArrayList<Card> hand = new ArrayList<>(6);
-	private String[][] board = {{"","",""},{"","",""},{"","",""}};
+	private Card[][] board = new Card[3][3];
 	
 	//for some time, while there is no database, cards are added here
 	{

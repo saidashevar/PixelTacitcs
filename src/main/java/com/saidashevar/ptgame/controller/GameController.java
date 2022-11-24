@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.saidashevar.ptgame.controller.request.ConnectRequest;
+import com.saidashevar.ptgame.controller.request.PlaceOperatorRequest;
 import com.saidashevar.ptgame.controller.request.StringRequest;
 import com.saidashevar.ptgame.exception.InvalidGameException;
 import com.saidashevar.ptgame.exception.NotFoundException;
@@ -49,10 +50,10 @@ public class GameController {
     }
 	
 	
-	@PostMapping("/gameplay") //This is called everytime
-    public ResponseEntity<Game> gamePlay(@RequestBody GamePlay request) throws NotFoundException, InvalidGameException {
-        log.info("gameplay: {}", request);
-        Game game = gameService.gamePlay(request);
+	@PostMapping("/placecard") //This is called everytime
+    public ResponseEntity<Game> gamePlay(@RequestBody PlaceOperatorRequest request) throws NotFoundException, InvalidGameException, NoMoreActionsLeftException {
+        log.info(request.getLogin() + "deploys operator");
+        Game game = gameService.placeCardService(request);
         simpMessagingTemplate.convertAndSend("/topic/game-progress/" + game.getGameId(), game);
         return ResponseEntity.ok(game);
     }
