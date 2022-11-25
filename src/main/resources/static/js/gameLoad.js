@@ -51,14 +51,14 @@ function loadBoard(data) {
             let id = i + "_" + j;
             let place = document.getElementById("1_"+id); 
             if (data.players[login].board[i-1][j-1] === null) place.textContent = "";
-            else place.textContent = data.players[login].board[i-1][j-1].name;
+            else place.textContent = prepareName(data.players[login].board[i-1][j-1].name);
             if (data.wave+1 == i) {
 				place.addEventListener('dragenter', dragEnter);
 		    	place.addEventListener('dragover', dragOver);
 	    		place.addEventListener('dragleave', dragLeave);
 	    		place.addEventListener('drop', dragDrop);  
 			}
-            if (opponent != undefined) $("#2_" + id).text(data.players[opponent].board[i-1][j-1]);
+            if (opponent != undefined) $("#2_" + id).text(prepareName(data.players[opponent].board[i-1][j-1].name));
         }
     }		
 }

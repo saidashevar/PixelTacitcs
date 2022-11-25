@@ -54,15 +54,17 @@ function takeCard() {
 }
 
 // Some gameplay functions
-function displayCard() {
+function displayCard(e) {
 	let blackBackground = document.createElement("div");
+	let cardNumber = e.target.id.split("")[4];
 	blackBackground.id = "BB";
 	blackBackground.setAttribute('onclick', 'closeCard()');
 	
 	let cardImage = document.createElement("img");
 	cardImage.id = "displayedCard";
 	cardImage.setAttribute('onclick', 'turnCard()');
-	cardImage.src = "images/CursedKnight.png";
+	
+	cardImage.src = "images/Cards/" + lastGameSave.players[login].hand[cardNumber].name + ".png";
 	
 	document.body.appendChild(blackBackground);
 	document.body.appendChild(cardImage);
@@ -89,12 +91,21 @@ function turnCard() {
 function addCardInHand(data, hand, cardId) {
 	let card = document.createElement('li');
 	card.id = "hand"+cardId;
-	card.textContent = data.players[login].hand[cardId].name;
+	card.textContent = prepareName(data.players[login].hand[cardId].name);
 	card.setAttribute("draggable", "true");
 	card.addEventListener('dragstart', onDragStart);
 	card.addEventListener('dragend', onDragEnd);
 	card.addEventListener('click', onClickShowCard);
 	hand.append(card);
+}
+
+function prepareName(name) { //This function just deletes underscores
+	let oldname = name.split("_");
+	let newname = oldname[0];
+	for (let n = 1; n < oldname.length; n++) {
+		newname += " " + oldname[n];
+	}
+	return newname;
 }
 
 //Click functions

@@ -50,6 +50,6 @@ function dragDrop(e) {
 	placeCard(place.split("_")[2], cardInHand);
 }
 
-function onClickShowCard() {
-	displayCard();
+function onClickShowCard(e) {
+	displayCard(e);
 }

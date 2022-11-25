@@ -15,7 +15,7 @@ public class Player {
 	
 	//for some time, while there is no database, cards are added here
 	{
-		deck.add(new Card("Cursed Knight", 3, 6));
+		deck.add(new Card("Cursed_Knight", 3, 6));
 		deck.add(new Card("Diabolist", 1, 3));
 		deck.add(new Card("Divinity", 2, 4));
 		deck.add(new Card("Druid", 2, 5));
@@ -23,12 +23,12 @@ public class Player {
 		deck.add(new Card("Immortal", 3, 2));
 		deck.add(new Card("Inventor", 1, 5));
 		deck.add(new Card("Lorekeeper", 2, 4));
-		deck.add(new Card("Magical Knight", 2, 4));
+		deck.add(new Card("Magical_Knight", 2, 4));
 		deck.add(new Card("Puppeter", 2, 4));
-		deck.add(new Card("Relic Hunter", 3, 7));
+		deck.add(new Card("Relic_Hunter", 3, 7));
 		deck.add(new Card("Sage", 0, 4));
-		deck.add(new Card("Plague Bearer", 3, 4));
-		deck.add(new Card("Monster Hunter", 3, 5));
+		deck.add(new Card("Plague_Bearer", 3, 4));
+		deck.add(new Card("Monster_Hunter", 3, 5));
 		deck.add(new Card("Mastermind", 3, 6));
 		deck.add(new Card("Planebinder", 2, 5));
 		deck.add(new Card("Operative", 2, 5));
