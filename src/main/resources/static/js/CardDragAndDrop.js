@@ -8,7 +8,6 @@ boxes.forEach(box => {
 });
 */
 
-//This code id working!
 function onDragStart(e) {
 	e.dataTransfer.setData('text/plain', e.target.id.split("")[4]);
 	setTimeout(() => {
@@ -51,3 +50,6 @@ function dragDrop(e) {
 	placeCard(place.split("_")[2], cardInHand);
 }
 
+function onClickShowCard() {
+	displayCard();
+}

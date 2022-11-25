@@ -53,15 +53,36 @@ function takeCard() {
 	})
 }
 
-function show_image(src, width, height, alt) {
-    var img = document.createElement("img");
-    img.src = src;
-    img.width = width;
-    img.height = height;
-    img.alt = alt;
+// Some gameplay functions
+function displayCard() {
+	let blackBackground = document.createElement("div");
+	blackBackground.id = "BB";
+	blackBackground.setAttribute('onclick', 'closeCard()');
+	
+	let cardImage = document.createElement("img");
+	cardImage.id = "displayedCard";
+	cardImage.setAttribute('onclick', 'turnCard()');
+	cardImage.src = "images/CursedKnight.png";
+	
+	document.body.appendChild(blackBackground);
+	document.body.appendChild(cardImage);
+}
 
-    // This next line will just add it to the <body> tag
-    document.body.appendChild(img);
+//Event functions
+function closeCard() {
+	let back = document.getElementById("BB");
+	let card = document.getElementById("displayedCard");
+	back.remove();
+	card.remove();
+}
+
+function turnCard() {
+	let card = document.getElementById('displayedCard');
+	if (card.style.getPropertyValue("transform") == "") {
+		card.style.transform = "scaleY(-1) scaleX(-1)";
+	} else {
+		card.style.removeProperty("transform");
+	}
 }
 
 //Support functions
@@ -72,6 +93,7 @@ function addCardInHand(data, hand, cardId) {
 	card.setAttribute("draggable", "true");
 	card.addEventListener('dragstart', onDragStart);
 	card.addEventListener('dragend', onDragEnd);
+	card.addEventListener('click', onClickShowCard);
 	hand.append(card);
 }
 

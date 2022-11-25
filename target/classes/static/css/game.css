@@ -100,7 +100,7 @@ table {
 }
 
 li[id ^= "hand"] {
-  z-index: 1000;
+  z-index: 10;
   position: fixed;
   left: 0;
   color: black;
@@ -125,4 +125,30 @@ li[id ^= "hand"] {
 }
 #hand4 {
   top: 80%;
+}
+
+#BB {
+  content: "";
+  background-color: #A9A9A9;
+  opacity: .3;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  position: fixed;
+  transition: all 0.3s 0.3s;
+}
+
+#displayedCard{
+	position: fixed;
+  	left: 25%;
+  	top: 10%;
+  	top: 30px;
+  	width: 270px;
+  	height: 400px;
+  	z-index: 100;
+}
+
+#upsideDown{
+  transform: rotateY(180deg);
 }
