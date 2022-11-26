@@ -9,5 +9,5 @@ public class Card {
 	
 	private String name = "";
 	private int attack;
-	private int health;
+	private int maxHealth;
 }

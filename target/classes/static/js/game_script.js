@@ -91,11 +91,14 @@ function turnCard() {
 function addCardInHand(data, hand, cardId) {
 	let card = document.createElement('li');
 	card.id = "hand"+cardId;
-	card.textContent = prepareName(data.players[login].hand[cardId].name);
 	card.setAttribute("draggable", "true");
 	card.addEventListener('dragstart', onDragStart);
 	card.addEventListener('dragend', onDragEnd);
 	card.addEventListener('click', onClickShowCard);
+	card.append(prepareToShow('attack', cardId));
+	card.append(prepareToShow('maxHealth', cardId));
+	card.append(prepareCardInHandName(cardId));
+	
 	hand.append(card);
 }
 
@@ -106,6 +109,34 @@ function prepareName(name) { //This function just deletes underscores
 		newname += " " + oldname[n];
 	}
 	return newname;
+}
+
+function prepareToShow(attribute, cardId) {
+	let container = document.createElement('div');
+	container.classList.add(attribute + 'Mini');
+	container.append(prepareImage(attribute));
+	container.append(prepareText(attribute, cardId));
+	return container;
+}
+
+function prepareText(attribute, cardId) {
+	let text = document.createElement('div');
+	text.textContent = lastGameSave.players[login].hand[cardId][attribute];
+	text.classList.add('centerText');
+	return text;
+}
+
+function prepareImage(attribute) {
+	let image = document.createElement('img');
+	image.src = "images/mini/" + attribute + ".png";
+	return image;
+}
+
+function prepareCardInHandName(cardId) {
+	let cardName = document.createElement('div');
+	cardName.classList.add('cardName');
+	cardName.textContent = prepareName(data.players[login].hand[cardId].name);
+	return cardName;
 }
 
 //Click functions
