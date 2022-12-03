@@ -135,7 +135,7 @@ function prepareImage(attribute) {
 function prepareCardInHandName(cardId) {
 	let cardName = document.createElement('div');
 	cardName.classList.add('cardName');
-	cardName.textContent = prepareName(data.players[login].hand[cardId].name);
+	cardName.textContent = prepareName(lastGameSave.players[login].hand[cardId].name);
 	return cardName;
 }
 
