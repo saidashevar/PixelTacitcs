@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 import com.saidashevar.ptgame.model.Game;
 
+//Getting ready to remove
 public class GameStorage {
 	private static Map<String, Game> games;
 	private static GameStorage instance;
@@ -24,6 +25,6 @@ public class GameStorage {
     }
 
     public void setGame(Game game) {
-        games.put(game.getGameId(), game);
+        games.put(game.getId(), game);
     }
 }

@@ -3,6 +3,7 @@ package com.saidashevar.ptgame.model;
 import java.util.HashSet;
 import java.util.Set;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -24,21 +25,34 @@ public class Card {
 	private String name;
 	private int attack;
 	private int maxHealth;
+
+	@ManyToMany
+	@JoinTable(
+			name = "players_decks",
+			joinColumns = @JoinColumn(name = "card_id"),
+			inverseJoinColumns = @JoinColumn(name = "player_login")
+			)
+	private Set<Player> inDecks = new HashSet<>();
 	
 	@ManyToMany
 	@JoinTable(
-			name = "players_cards",
-			joinColumns = @JoinColumn(name = "card_name"),
+			name = "players_hands",
+			joinColumns = @JoinColumn(name = "card_id"),
 			inverseJoinColumns = @JoinColumn(name = "player_login")
 			)
-	private Set<Player> playedByPlayers = new HashSet<>();
+	private Set<Player> inHands = new HashSet<>();
 	
-	public void connectWithPlayer(Player player) {
-		playedByPlayers.add(player);
-	}
+	@ManyToMany
+	@JoinTable(
+			name = "players_piles",
+			joinColumns = @JoinColumn(name = "card_id"),
+			inverseJoinColumns = @JoinColumn(name = "player_login")
+			)
+	private Set<Player> inPiles = new HashSet<>();
 
-	public Card(String name, int attack, int maxHealth) {
+	public Card(int edition, String name, int attack, int maxHealth) {
 		super();
+		this.edition = edition;
 		this.name = name;
 		this.attack = attack;
 		this.maxHealth = maxHealth;
@@ -46,10 +60,10 @@ public class Card {
 	
 	public Card() {}
 	
-	public Set<Player> getPlayedByPlayers() {
-		return playedByPlayers;
+	public int getEdition() {
+		return edition;
 	}
-
+	
 	public String getName() {
 		return name;
 	}
@@ -58,20 +72,47 @@ public class Card {
 		return attack;
 	}
 
-	public void setAttack(int attack) {
-		this.attack = attack;
-	}
-
 	public int getMaxHealth() {
 		return maxHealth;
 	}
 	
-	public int getEdition() {
-		return edition;
+//	public int getCoordX() {
+//		return coordX;
+//	}
+//
+//	public void setCoordX(int coordX) {
+//		this.coordX = coordX;
+//	}
+//
+//	public int getCoordY() {
+//		return coordY;
+//	}
+//
+//	public void setCoordY(int coordY) {
+//		this.coordY = coordY;
+//	}
+	
+	public void addInDeck(Player player) {
+		inDecks.add(player);
 	}
-
-	public void setMaxHealth(int maxHealth) {
-		this.maxHealth = maxHealth;
+	
+	public void addInHand(Player player) {
+		inHands.add(player);
 	}
-
+	
+	public void addInPile(Player player) {
+		inPiles.add(player);
+	}
+	
+	public Set<Player> getInDecks() {
+		return inDecks;
+	}
+	
+	public Set<Player> getInHands() {
+		return inHands;
+	}
+	
+	public Set<Player> getInPiles() {
+		return inPiles;
+	}
 }

@@ -1,23 +1,56 @@
 package com.saidashevar.ptgame.model;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
 
 @Entity
+@Table(name = "players")
 public class Player {
 	
 	@Id
 	private String login;
 	
+	@OneToOne(cascade = CascadeType.ALL)
+	@JoinColumn(name = "turn", referencedColumnName = "id")
+	private Turn turn = new Turn();
+	
+	@ManyToMany
+	@JoinTable(
+			name = "games_players",
+			joinColumns = @JoinColumn(name = "player_login"),
+			inverseJoinColumns = @JoinColumn(name = "game_id")
+			)
+	private Set<Game> playedGames = new HashSet<>();
+	
 	@JsonIgnore
-	@ManyToMany(mappedBy = "playedByPlayers")
+	@OneToMany(mappedBy = "player")
+	private List<CardPlace> board = new ArrayList<>();
+	
+	@JsonIgnore
+	@ManyToMany(mappedBy = "inDecks")
 	private Set<Card> deck = new HashSet<>();
+	
+	@JsonIgnore
+	@ManyToMany(mappedBy = "inHands")
+	private Set<Card> hand = new HashSet<>();
+	
+	@JsonIgnore
+	@ManyToMany(mappedBy = "inPiles")
+	private Set<Card> pile = new HashSet<>();
 	
 	public String getLogin() {
 		return login;
@@ -27,6 +60,14 @@ public class Player {
 		return deck;
 	}
 	
+	public Set<Card> getHand() {
+		return hand;
+	}
+	
+	public Set<Card> getPile() {
+		return pile;
+	}
+	
 	public Player(String login) {
 		super();
 		this.login = login;
@@ -34,10 +75,19 @@ public class Player {
 	
 	public Player() {}
 	
-//	private Turn turn = new Turn();
-//	private Set<Card> discardPile = new HashSet<>(10);
-//	private Set<Card> deck = new HashSet<>(25);
-//	private Set<Card> hand = new HashSet<>(6);
+	{
+		board.add(new CardPlace(0, 0));
+		board.add(new CardPlace(0, 1));
+		board.add(new CardPlace(0, 2));
+		
+		board.add(new CardPlace(1, 0));
+		board.add(new CardPlace(1, 1));
+		board.add(new CardPlace(1, 2));
+		
+		board.add(new CardPlace(2, 0));
+		board.add(new CardPlace(2, 1));
+		board.add(new CardPlace(2, 2));
+	}
 //	private Card[][] board = new Card[3][3];
 	
 	//for some time, while there is no database, cards are added here

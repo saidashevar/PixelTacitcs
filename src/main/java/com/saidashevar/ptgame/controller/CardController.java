@@ -44,8 +44,7 @@ public class CardController {
 				.orElseThrow(() -> new NotFoundException("card named " + cardId + " wasn't found"));
 		Player player = playerRepository.findById(playerLogin)
 				.orElseThrow(() -> new NotFoundException("player with login: " + playerLogin + "wasn't found"));
-		card.connectWithPlayer(player);
+		card.addInDeck(player);
 		return cardRepository.save(card);
-	}
-	
+	}	
 }
