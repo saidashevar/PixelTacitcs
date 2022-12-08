@@ -50,21 +50,24 @@ public class GameController {
     }
 	
 	
-	@PostMapping("/placecard") //This is called everytime
-    public ResponseEntity<Game> gamePlay(@RequestBody PlaceOperatorRequest request) throws NotFoundException, InvalidGameException, NoMoreActionsLeftException {
-        log.info(request.getLogin() + "deploys operator");
-        Game game = gameService.placeCardService(request);
-        simpMessagingTemplate.convertAndSend("/topic/game-progress/" + game.getGameId(), game);
-        return ResponseEntity.ok(game);
-    }
-	
-	@PostMapping("/takecard") //This is called when player takes card from deck
-    public ResponseEntity<Game> takeHand(@RequestBody ConnectRequest request) throws NotFoundException, InvalidGameException, NoMoreActionsLeftException, NoMoreCardInDeckException, TooManyCardsInHandException {
-        log.info(request.getLogin() + "takes card");
-        Game game = gameService.takeCardService(request);
-        simpMessagingTemplate.convertAndSend("/topic/game-progress/" + game.getGameId(), game);
-        return ResponseEntity.ok(game);
-    }
+	/*
+	 * @PostMapping("/placecard") //This is called everytime public
+	 * ResponseEntity<Game> gamePlay(@RequestBody PlaceOperatorRequest request)
+	 * throws NotFoundException, InvalidGameException, NoMoreActionsLeftException {
+	 * log.info(request.getLogin() + "deploys operator"); Game game =
+	 * gameService.placeCardService(request);
+	 * simpMessagingTemplate.convertAndSend("/topic/game-progress/" +
+	 * game.getGameId(), game); return ResponseEntity.ok(game); }
+	 * 
+	 * @PostMapping("/takecard") //This is called when player takes card from deck
+	 * public ResponseEntity<Game> takeHand(@RequestBody ConnectRequest request)
+	 * throws NotFoundException, InvalidGameException, NoMoreActionsLeftException,
+	 * NoMoreCardInDeckException, TooManyCardsInHandException {
+	 * log.info(request.getLogin() + "takes card"); Game game =
+	 * gameService.takeCardService(request);
+	 * simpMessagingTemplate.convertAndSend("/topic/game-progress/" +
+	 * game.getGameId(), game); return ResponseEntity.ok(game); }
+	 */
 	
 	@PostMapping("/loadgame") //This is called when game page first loading (may be later it will load saved games)  
     public ResponseEntity<Game> loadBoard(@RequestBody StringRequest request) throws NotFoundException, InvalidGameException {

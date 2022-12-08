@@ -46,7 +46,7 @@ public class GameService {
         game.getLogins()[1] = login;
         game.getPlayers().put(login, new Player());
         game.setStatus(IN_PROGRESS);
-        game.getPlayers().get(game.getLogins()[0]).getTurn().setActionsLeft((byte) 2);
+//        game.getPlayers().get(game.getLogins()[0]).getTurn().setActionsLeft((byte) 2);
         GameStorage.getInstance().setGame(game);
         return game;
     }
@@ -73,60 +73,58 @@ public class GameService {
 	// Next are gameplay methods
 	//
 	
-	//It's enough to send info about deck and hand here, but I think it's not critical to send all info about player.
-	//Maybe later with Spring Security i will improve this code.
-	public Game takeCardService(ConnectRequest request) throws NotFoundException, InvalidGameException, NoMoreActionsLeftException, NoMoreCardInDeckException, TooManyCardsInHandException {
-		Game game = loadGameService(request.getGameId());
-		
-		checkForActions(game, request.getLogin());
-		checkCardsInDeck(game, request.getLogin());
-		checkIfHandIsFull(game, request.getLogin());
-		
-		Player player = game.getPlayers().get(request.getLogin());
-		player.getHand().add(player.getDeck().get(0));
-		player.getDeck().remove(0);
-		player.getTurn().setActionsLeft((byte)(player.getTurn().getActionsLeft()-1));
-		GameStorage.getInstance().setGame(game);
-		return game;
-	}
-	
-	public Game placeCardService(PlaceOperatorRequest request) throws InvalidGameException, NotFoundException, NoMoreActionsLeftException {
-		Game game = loadGameService(request.getGameId());
-		checkForActions(game, request.getLogin());
-		
-		Player player = game.getPlayers().get(request.getLogin());
-		Card[][] board = player.getBoard();
-		
-        board[game.getWave()][request.getCoordinateY()-1] = player.getHand().get(request.getCardNumber());
-        player.getHand().remove(request.getCardNumber());
-        player.getTurn().setActionsLeft((byte)(player.getTurn().getActionsLeft()-1));
-        
-        GameStorage.getInstance().setGame(game);
-        return game;
-	}
-	
-	//
-	// Check methods or support methods
-	//
-	
-	//Throwing errors when something simple happens may be a bad practice...
-	//Should check it later. should change it later!
-	private void checkForActions(Game game, String requester) throws NoMoreActionsLeftException {
-		if (game.getPlayers().get(requester).getTurn().getActionsLeft() <= 0)
-			throw new NoMoreActionsLeftException(requester + "has no more actions now!");
-	}
-	
-	private void checkCardsInDeck(Game game, String requester) throws NoMoreCardInDeckException {
-		if (game.getPlayers().get(requester).getDeck().isEmpty())
-			throw new NoMoreCardInDeckException(requester + "had no more cards in his deck!");
-	}
-	
-	private void checkIfHandIsFull(Game game, String requester) throws TooManyCardsInHandException {
-		if (game.getPlayers().get(requester).getHand().size() >= 5)
-			throw new TooManyCardsInHandException(requester + "had no more cards in his deck!");
-	}
-	
-	private void checkToPassTheMove(Game game) {
-		
-	}
+	/*
+	 * //It's enough to send info about deck and hand here, but I think it's not
+	 * critical to send all info about player. //Maybe later with Spring Security i
+	 * will improve this code. public Game takeCardService(ConnectRequest request)
+	 * throws NotFoundException, InvalidGameException, NoMoreActionsLeftException,
+	 * NoMoreCardInDeckException, TooManyCardsInHandException { Game game =
+	 * loadGameService(request.getGameId());
+	 * 
+	 * checkForActions(game, request.getLogin()); checkCardsInDeck(game,
+	 * request.getLogin()); checkIfHandIsFull(game, request.getLogin());
+	 * 
+	 * Player player = game.getPlayers().get(request.getLogin());
+	 * player.getHand().add(player.getDeck().get(0)); player.getDeck().remove(0);
+	 * player.getTurn().setActionsLeft((byte)(player.getTurn().getActionsLeft()-1));
+	 * GameStorage.getInstance().setGame(game); return game; }
+	 * 
+	 * public Game placeCardService(PlaceOperatorRequest request) throws
+	 * InvalidGameException, NotFoundException, NoMoreActionsLeftException { Game
+	 * game = loadGameService(request.getGameId()); checkForActions(game,
+	 * request.getLogin());
+	 * 
+	 * Player player = game.getPlayers().get(request.getLogin()); Card[][] board =
+	 * player.getBoard();
+	 * 
+	 * board[game.getWave()][request.getCoordinateY()-1] =
+	 * player.getHand().get(request.getCardNumber());
+	 * player.getHand().remove(request.getCardNumber());
+	 * player.getTurn().setActionsLeft((byte)(player.getTurn().getActionsLeft()-1));
+	 * 
+	 * GameStorage.getInstance().setGame(game); return game; }
+	 * 
+	 * // // Check methods or support methods //
+	 * 
+	 * //Throwing errors when something simple happens may be a bad practice...
+	 * //Should check it later. should change it later! private void
+	 * checkForActions(Game game, String requester) throws
+	 * NoMoreActionsLeftException { if
+	 * (game.getPlayers().get(requester).getTurn().getActionsLeft() <= 0) throw new
+	 * NoMoreActionsLeftException(requester + "has no more actions now!"); }
+	 * 
+	 * private void checkCardsInDeck(Game game, String requester) throws
+	 * NoMoreCardInDeckException { if
+	 * (game.getPlayers().get(requester).getDeck().isEmpty()) throw new
+	 * NoMoreCardInDeckException(requester + "had no more cards in his deck!"); }
+	 * 
+	 * private void checkIfHandIsFull(Game game, String requester) throws
+	 * TooManyCardsInHandException { if
+	 * (game.getPlayers().get(requester).getHand().size() >= 5) throw new
+	 * TooManyCardsInHandException(requester + "had no more cards in his deck!"); }
+	 * 
+	 * private void checkToPassTheMove(Game game) {
+	 * 
+	 * }
+	 */
 }
