@@ -29,45 +29,39 @@ public class GameService {
 	// First are connection methods
 	//
 	
-	public Game createGame(String login) {
-		Game game = new Game();
-		game.getLogins()[0] = login;
-		game.getPlayers().put(login, new Player());
-		game.setStatus(NEW);
-		game.setGameId(UUID.randomUUID().toString());
-		GameStorage.getInstance().setGame(game);
-		return game;
-	}
+	/*
+	 * public Game createGame(String login) { Game game = new Game();
+	 * game.getLogins()[0] = login; game.getPlayers().put(login, new Player());
+	 * game.setStatus(NEW); game.setGameId(UUID.randomUUID().toString());
+	 * GameStorage.getInstance().setGame(game); return game; }
+	 */
 	
-	public Game connectToRandomGame(String login) throws NotFoundException {
-        Game game = GameStorage.getInstance().getGames().values().stream()
-                .filter(it -> it.getStatus().equals(NEW))
-                .findFirst().orElseThrow(() -> new NotFoundException("Game not found"));
-        game.getLogins()[1] = login;
-        game.getPlayers().put(login, new Player());
-        game.setStatus(IN_PROGRESS);
-//        game.getPlayers().get(game.getLogins()[0]).getTurn().setActionsLeft((byte) 2);
-        GameStorage.getInstance().setGame(game);
-        return game;
-    }
+	/*
+	 * public Game connectToRandomGame(String login) throws NotFoundException { Game
+	 * game = GameStorage.getInstance().getGames().values().stream() .filter(it ->
+	 * it.getStatus().equals(NEW)) .findFirst().orElseThrow(() -> new
+	 * NotFoundException("Game not found")); game.getLogins()[1] = login;
+	 * game.getPlayers().put(login, new Player()); game.setStatus(IN_PROGRESS); //
+	 * game.getPlayers().get(game.getLogins()[0]).getTurn().setActionsLeft((byte)
+	 * 2); GameStorage.getInstance().setGame(game); return game; }
+	 */
 	
 	//
 	//Next are service methods that load some part of game or whole game. Now there is one method, though.
 	//
 	
-	public Game loadGameService(String gameId) throws NotFoundException, InvalidGameException {
-		if(gameId.contains("\"")) gameId = gameId.substring(1, gameId.length()-1);
-		if (!GameStorage.getInstance().getGames().containsKey(gameId)) {
-            throw new NotFoundException("Game not found");
-        }
-
-        Game game = GameStorage.getInstance().getGames().get(gameId);
-        
-        if (game.getStatus().equals(FINISHED)) {
-            throw new InvalidGameException("Game is already finished");
-        }
-        return game;
-	}
+	/*
+	 * public Game loadGameService(String gameId) throws NotFoundException,
+	 * InvalidGameException { if(gameId.contains("\"")) gameId = gameId.substring(1,
+	 * gameId.length()-1); if
+	 * (!GameStorage.getInstance().getGames().containsKey(gameId)) { throw new
+	 * NotFoundException("Game not found"); }
+	 * 
+	 * Game game = GameStorage.getInstance().getGames().get(gameId);
+	 * 
+	 * if (game.getStatus().equals(FINISHED)) { throw new
+	 * InvalidGameException("Game is already finished"); } return game; }
+	 */
 	
 	//
 	// Next are gameplay methods
