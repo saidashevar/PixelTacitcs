@@ -35,10 +35,10 @@ public class GameController {
 	GameRepository gameRepository;
 	
 	@GetMapping
-	List<Game> getCards() {	return gameRepository.findAll(); }
+	List<Game> getGames() {	return gameRepository.findAll(); }
 	
 	@PostMapping
-	Game createCard(@RequestBody Game game) {
+	Game createGame(@RequestBody Game game) {
 		return gameRepository.save(game);
 	}
 	

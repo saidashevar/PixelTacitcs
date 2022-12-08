@@ -20,8 +20,8 @@ public class PlayerController {
 	PlayerRepository playerRepository;
 	
 	@GetMapping
-	List<Player> getCards() { return playerRepository.findAll(); }
+	List<Player> getPlayers() { return playerRepository.findAll(); }
 	
 	@PostMapping
-	Player createCard(@RequestBody Player player) {	return playerRepository.save(player); }
+	Player createPlayer(@RequestBody Player player) { return playerRepository.save(player); }
 }

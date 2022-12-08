@@ -1,17 +1,38 @@
 package com.saidashevar.ptgame.model;
 
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.persistence.ManyToMany;
 
 @Entity
 public class Player {
 	
 	@Id
 	private String login;
+	
+	@JsonIgnore
+	@ManyToMany(mappedBy = "playedByPlayers")
+	private Set<Card> deck = new HashSet<>();
+	
+	public String getLogin() {
+		return login;
+	}
+	
+	public Set<Card> getDeck() {
+		return deck;
+	}
+	
+	public Player(String login) {
+		super();
+		this.login = login;
+	}
+	
+	public Player() {}
 	
 //	private Turn turn = new Turn();
 //	private Set<Card> discardPile = new HashSet<>(10);
