@@ -1,6 +1,7 @@
 package com.saidashevar.ptgame.model;
 
 import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -11,14 +12,17 @@ import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 
 @Entity
-@Table(name = "card_places")
-public class CardPlace {
+@Table(name = "heroes")
+public class Hero {
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private int id;
 	
+	@Column(name = "coord_x", nullable = true)
 	private int coordX;
+	
+	@Column(name = "coord_y", nullable = true)
 	private int coordY;
 
 	@OneToOne(cascade = CascadeType.ALL)
@@ -53,9 +57,9 @@ public class CardPlace {
 		this.card = card;
 	}
 	
-	public CardPlace() {}
+	public Hero() {}
 	
-	public CardPlace(int x, int y) {
+	public Hero(int x, int y) {
 		this.coordX = x;
 		this.coordY = y;
 	}

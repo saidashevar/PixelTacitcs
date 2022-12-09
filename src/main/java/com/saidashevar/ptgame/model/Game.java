@@ -14,7 +14,6 @@ import jakarta.persistence.Table;
 @Table(name = "games")
 public class Game {
 	
-	//private GameStatus status;
 	@Id
 	private String id;
 	
@@ -22,14 +21,29 @@ public class Game {
 	@ManyToMany(mappedBy = "playedGames")
 	private Set<Player> players = new HashSet<>();
 	
-	//private HashMap<String, Player> players = new HashMap<>(2);
-	//private String[] logins = new String[2]; //I need to have access to logins somehow. Need better collections understanding.
 	private int wave = 0;
-	//There must be better solution than keeping hashmap with logins and array with them, but i don't see it now
+	private GameStatus status;
 	
 	public String getId() {
 		return id;
 	}
 	
+	public int getWave() {
+		return wave;
+	}
+
+	public void setWave(int wave) {
+		this.wave = wave;
+	}
+
+	public GameStatus getStatus() {
+		return status;
+	}
+
+	public void setStatus(GameStatus status) {
+		this.status = status;
+	}
+
+
 	public Game() {}
 }

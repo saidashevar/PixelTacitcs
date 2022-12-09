@@ -23,5 +23,6 @@ public class PlayerController {
 	List<Player> getPlayers() { return playerRepository.findAll(); }
 	
 	@PostMapping
-	Player createPlayer(@RequestBody Player player) { return playerRepository.save(player); }
+	Player createPlayer(@RequestBody Player player) {
+		return playerRepository.save(player); }
 }

@@ -1,8 +1,6 @@
 package com.saidashevar.ptgame.model;
 
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -38,7 +36,7 @@ public class Player {
 	
 	@JsonIgnore
 	@OneToMany(mappedBy = "player")
-	private List<CardPlace> board = new ArrayList<>();
+	private Set<Hero> board = new HashSet<>();
 	
 	@JsonIgnore
 	@ManyToMany(mappedBy = "inDecks")
@@ -74,21 +72,6 @@ public class Player {
 	}
 	
 	public Player() {}
-	
-	{
-		board.add(new CardPlace(0, 0));
-		board.add(new CardPlace(0, 1));
-		board.add(new CardPlace(0, 2));
-		
-		board.add(new CardPlace(1, 0));
-		board.add(new CardPlace(1, 1));
-		board.add(new CardPlace(1, 2));
-		
-		board.add(new CardPlace(2, 0));
-		board.add(new CardPlace(2, 1));
-		board.add(new CardPlace(2, 2));
-	}
-//	private Card[][] board = new Card[3][3];
 	
 	//for some time, while there is no database, cards are added here
 //	{
