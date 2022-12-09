@@ -54,12 +54,11 @@ public class GameController {
 		return ResponseEntity.ok(gameService.createGame(player));
 	}
 
-	
-//	@PostMapping("/connect/random")
-//	public ResponseEntity<Game> connectRandom(@RequestBody StringRequest stringRequest) throws NotFoundException { 
-//		log.info("connect random {}", stringRequest.getString());
-//		return ResponseEntity.ok(gameService.connectToRandomGame(stringRequest.getString())); 
-//	}
+	@PostMapping("/connect/random")
+	public ResponseEntity<Game> connectRandom(@RequestBody Player player) throws NotFoundException { 
+		log.info("connect random from {}", player.getLogin());
+		return ResponseEntity.ok(gameService.connectToRandomGame(player)); 
+	}
 
 	/*
 	 * @PostMapping("/placecard") //This is called everytime public

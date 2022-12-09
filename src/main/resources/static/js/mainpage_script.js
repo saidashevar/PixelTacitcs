@@ -5,19 +5,23 @@ function create_game_button() {
 	get_player_and_start_game(login);
 }
 
-function connectToRandomGame() {
+function connect_to_random_game() {
 	let login = document.getElementById("login").value;
     $.ajax({
-        url: url + "/game/connect/random",
+        url: url + "/games/connect/random",
         type: 'POST',
         dataType: "json",
         contentType: "application/json",
         data: JSON.stringify({
-            "string": login
+            "login": login
         }),
         success: function (data) {
-			let gameId = data.gameId;
-            document.location.href = url+"/game?gameid="+gameId+"&login="+login;
+			if (data == null) {
+				alert("no game found");
+			} else {
+				let gameId = data.gameId;
+	            document.location.href = url+"/game?id="+gameId+"&login="+login;
+			}
 //            connectToSocket(gameId);
 //            alert("Congrats you're playing with: " + data.player1.login);
         },

@@ -23,7 +23,9 @@ import com.saidashevar.ptgame.repository.PlayerRepository;
 import com.saidashevar.ptgame.storage.GameStorage;
 
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Service
 @AllArgsConstructor
 public class GameService {
@@ -47,16 +49,24 @@ public class GameService {
 		return game;
 	}
 	
-	
-	/*
-	 * public Game connectToRandomGame(String login) throws NotFoundException { Game
-	 * game = GameStorage.getInstance().getGames().values().stream() .filter(it ->
-	 * it.getStatus().equals(NEW)) .findFirst().orElseThrow(() -> new
-	 * NotFoundException("Game not found")); game.getLogins()[1] = login;
-	 * game.getPlayers().put(login, new Player()); game.setStatus(IN_PROGRESS); //
-	 * game.getPlayers().get(game.getLogins()[0]).getTurn().setActionsLeft((byte)
-	 * 2); GameStorage.getInstance().setGame(game); return game; }
-	 */
+	public Game connectToRandomGame(Player player) {
+		Game game;
+		try {
+			game = gameRepository.findAll().stream()
+					.filter(g -> g.getStatus().equals(NEW)).findFirst()
+					.orElseThrow(() -> new NotFoundException("Game not found"));
+			log.info("Found new game successfully");
+			game.setStatus(IN_PROGRESS);
+			gameRepository.save(game);
+			player.addGame(game);
+			playerRepository.save(player);
+			return game;
+		} catch (NotFoundException e) {
+			log.info("Game wasn't found");
+			return null;
+		} 
+	}
+	 
 	
 	//
 	//Next are service methods that load some part of game or whole game. Now there is one method, though.
