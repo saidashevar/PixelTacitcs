@@ -87,7 +87,7 @@ function getGameID() {
 	const params = new Proxy(new URLSearchParams(window.location.search), {
   		get: (searchParams, prop) => searchParams.get(prop),
 	});
-	gameId = params.gameid;
+	gameId = params.id;
 	login = params.login;
 	let paragraph = document.getElementById("ShowId");
 	paragraph.textContent = login+", "+paragraph.textContent+gameId;

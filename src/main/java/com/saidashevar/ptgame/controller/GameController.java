@@ -16,6 +16,7 @@ import com.saidashevar.ptgame.exception.InvalidGameException;
 import com.saidashevar.ptgame.exception.NotFoundException;
 import com.saidashevar.ptgame.model.Card;
 import com.saidashevar.ptgame.model.Game;
+import com.saidashevar.ptgame.model.Player;
 import com.saidashevar.ptgame.repository.GameRepository;
 import com.saidashevar.ptgame.service.GameService;
 
@@ -27,42 +28,39 @@ import lombok.extern.slf4j.Slf4j;
 @AllArgsConstructor
 @Slf4j
 public class GameController {
-	
+
 	private final GameService gameService;
 	private final SimpMessagingTemplate simpMessagingTemplate;
-	 
-	@Autowired
-	GameRepository gameRepository;
-	
+
+	// Rest methods
 	@GetMapping
-	List<Game> getGames() {	return gameRepository.findAll(); }
-	
+	List<Game> getGames() {
+		return gameService.getGameRepository().findAll();
+	}
+
 	@PostMapping
 	Game createGame(@RequestBody Game game) {
-		return gameRepository.save(game);
+		return gameService.getGameRepository().save(game);
 	}
 	
-	/*
-	 * @PostMapping("/start") public ResponseEntity<Game> startGame(@RequestBody
-	 * StringRequest stringRequest) { log.info("start game request: {}",
-	 * stringRequest.getString()); return
-	 * ResponseEntity.ok(gameService.createGame(stringRequest.getString())); }
-	 */
+	//
+	// Game managing methods, maybe i should unite them with rest methods
+	//
+	
+	
+	@PostMapping("/start")
+	public ResponseEntity<Game> startGame(@RequestBody Player player) {
+		log.info("start game request: {}", player.getLogin());
+		return ResponseEntity.ok(gameService.createGame(player));
+	}
 
-	/*
-	 * @GetMapping("") public String game() { return "templates/Game.html"; }
-	 */
 	
-	/*
-	 * @PostMapping("/connect/random") public ResponseEntity<Game>
-	 * connectRandom(@RequestBody StringRequest stringRequest) throws
-	 * NotFoundException { log.info("connect random {}", stringRequest.getString());
-	 * return
-	 * ResponseEntity.ok(gameService.connectToRandomGame(stringRequest.getString()))
-	 * ; }
-	 */
-	
-	
+//	@PostMapping("/connect/random")
+//	public ResponseEntity<Game> connectRandom(@RequestBody StringRequest stringRequest) throws NotFoundException { 
+//		log.info("connect random {}", stringRequest.getString());
+//		return ResponseEntity.ok(gameService.connectToRandomGame(stringRequest.getString())); 
+//	}
+
 	/*
 	 * @PostMapping("/placecard") //This is called everytime public
 	 * ResponseEntity<Game> gamePlay(@RequestBody PlaceOperatorRequest request)
@@ -81,14 +79,13 @@ public class GameController {
 	 * simpMessagingTemplate.convertAndSend("/topic/game-progress/" +
 	 * game.getGameId(), game); return ResponseEntity.ok(game); }
 	 */
+
 	
-	/*
-	 * @PostMapping("/loadgame") //This is called when game page first loading (may
-	 * be later it will load saved games) public ResponseEntity<Game>
-	 * loadBoard(@RequestBody StringRequest request) throws NotFoundException,
-	 * InvalidGameException { log.info("got game with ID: " + request.getString());
-	 * Game game = gameService.loadGameService(request.getString());
-	 * simpMessagingTemplate.convertAndSend("/topic/game-progress/" +
-	 * game.getGameId(), game); return ResponseEntity.ok(game); }
-	 */
+//	  @PostMapping("/loadgame") //This is called when game page first loading (may be later it will load saved games)
+//	  public ResponseEntity<Game> loadBoard(@RequestBody StringRequest request) throws NotFoundException, InvalidGameException { 
+//		  log.info("got game with ID: " + request.getString());
+//		  Game game = gameService.loadGameService(request.getString());
+//		  simpMessagingTemplate.convertAndSend("/topic/game-progress/" + game.getGameId(), game); 
+//		  return ResponseEntity.ok(game); 
+//	  }
 }

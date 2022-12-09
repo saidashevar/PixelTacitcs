@@ -50,6 +50,12 @@ public class Player {
 	@ManyToMany(mappedBy = "inPiles")
 	private Set<Card> pile = new HashSet<>();
 	
+	//funcitons
+	public void addGame(Game game) {
+		playedGames.add(game);
+	}
+	
+	//Getters and setters
 	public String getLogin() {
 		return login;
 	}
@@ -66,6 +72,7 @@ public class Player {
 		return pile;
 	}
 	
+	//Constructors
 	public Player(String login) {
 		super();
 		this.login = login;

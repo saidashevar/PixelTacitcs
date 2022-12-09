@@ -1,5 +1,7 @@
 package com.saidashevar.ptgame.model;
 
+import static com.saidashevar.ptgame.model.GameStatus.*;
+
 import java.util.HashSet;
 import java.util.Set;
 
@@ -22,7 +24,11 @@ public class Game {
 	private Set<Player> players = new HashSet<>();
 	
 	private int wave = 0;
-	private GameStatus status;
+	private GameStatus status = NEW;
+	
+	public void setId(String id) {
+		this.id = id;
+	}
 	
 	public String getId() {
 		return id;
