@@ -26,9 +26,10 @@ public class Player {
 	@JoinColumn(name = "turn", referencedColumnName = "id")
 	private Turn turn = new Turn();
 	
+	@JsonIgnore
 	@ManyToMany
 	@JoinTable(
-			name = "games_players",
+			name = "players_games",
 			joinColumns = @JoinColumn(name = "player_login"),
 			inverseJoinColumns = @JoinColumn(name = "game_id")
 			)
@@ -72,6 +73,22 @@ public class Player {
 		return pile;
 	}
 	
+	public Set<Hero> getBoard() {
+		return board;
+	}
+
+	public void setBoard(Set<Hero> board) {
+		this.board = board;
+	}
+
+	public Turn getTurn() {
+		return turn;
+	}
+
+	public Set<Game> getPlayedGames() {
+		return playedGames;
+	}
+
 	//Constructors
 	public Player(String login) {
 		super();

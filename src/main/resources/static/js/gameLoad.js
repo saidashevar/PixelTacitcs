@@ -1,13 +1,12 @@
 window.onload = loadPage;
 
 function loadPage() {
-	getGameID();
+	getGameIDandLogin();
 	connectToSocket(gameId);
-	requestBoard(gameId);
 }
 
 //request board
-function connectToSocket(gameId) {
+function connectToSocket() {
     console.log("connecting to the game");
     let socket = new SockJS(url + "/gameplay");
     stompClient = Stomp.over(socket);
@@ -16,15 +15,16 @@ function connectToSocket(gameId) {
         stompClient.subscribe("/topic/game-progress/" + gameId, function (response) {
             let data = JSON.parse(response.body);
             lastGameSave = data;
-            console.log(data);
             gameStatus = data.status;
+            if (gameStatus != "NEW") requestBoard();
+            console.log(data);
         })
     })
 }
 
-function requestBoard(gameId) {
+function requestBoard() {
     $.ajax({
-        url: url + "/game/loadgame",
+        url: url + "/games/loadgame",
         type: 'POST',
         dataType: "json",
         contentType: "application/json",
@@ -83,7 +83,7 @@ function reloadHand(data) {
 }
 
 //get functions
-function getGameID() {
+function getGameIDandLogin() {
 	const params = new Proxy(new URLSearchParams(window.location.search), {
   		get: (searchParams, prop) => searchParams.get(prop),
 	});

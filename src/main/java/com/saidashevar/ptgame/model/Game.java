@@ -19,7 +19,6 @@ public class Game {
 	@Id
 	private String id;
 	
-	@JsonIgnore
 	@ManyToMany(mappedBy = "playedGames")
 	private Set<Player> players = new HashSet<>();
 	
@@ -49,7 +48,10 @@ public class Game {
 	public void setStatus(GameStatus status) {
 		this.status = status;
 	}
-
+	
+	public Set<Player> getPlayers() {
+		return players;
+	}
 
 	public Game() {}
 }

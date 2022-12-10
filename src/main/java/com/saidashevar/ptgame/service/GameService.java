@@ -20,7 +20,6 @@ import com.saidashevar.ptgame.model.GamePlay;
 import com.saidashevar.ptgame.model.Player;
 import com.saidashevar.ptgame.repository.GameRepository;
 import com.saidashevar.ptgame.repository.PlayerRepository;
-import com.saidashevar.ptgame.storage.GameStorage;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -37,7 +36,7 @@ public class GameService {
 	PlayerRepository playerRepository;
 	
 	//
-	// First are connection methods
+	// First are connection and game managing methods
 	//
 	
 	public Game createGame(Player player) {
@@ -65,25 +64,29 @@ public class GameService {
 			log.info("Game wasn't found");
 			return null;
 		} 
-	}
-	 
+	} 
 	
 	//
 	//Next are service methods that load some part of game or whole game. Now there is one method, though.
 	//
 	
-	/*
-	 * public Game loadGameService(String gameId) throws NotFoundException,
-	 * InvalidGameException { if(gameId.contains("\"")) gameId = gameId.substring(1,
-	 * gameId.length()-1); if
-	 * (!GameStorage.getInstance().getGames().containsKey(gameId)) { throw new
-	 * NotFoundException("Game not found"); }
-	 * 
-	 * Game game = GameStorage.getInstance().getGames().get(gameId);
-	 * 
-	 * if (game.getStatus().equals(FINISHED)) { throw new
-	 * InvalidGameException("Game is already finished"); } return game; }
-	 */
+	public Game loadGameService(String gameId) throws InvalidGameException { //This method... is strange a bit 
+		Game game;
+		try {
+			game = gameRepository.findById(gameId)
+					.orElseThrow(() -> new NotFoundException("Game not found"));
+		} catch (NotFoundException e) {
+			log.info("game with id: " + gameId + ", not found");
+			return null;
+		}
+		
+		if (game.getStatus().equals(FINISHED)) { 
+			throw new InvalidGameException("Game is already finished"); 
+		}
+		
+		return game; 
+	}
+	 
 	
 	//
 	// Next are gameplay methods

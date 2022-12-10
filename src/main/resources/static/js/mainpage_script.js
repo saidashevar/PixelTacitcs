@@ -2,37 +2,16 @@ const url = 'http://localhost:8080';
 
 function create_game_button() {
 	let login = document.getElementById("login").value;
-	get_player_and_start_game(login);
+	check_login_and_create_new_game(login);
 }
 
-function connect_to_random_game() {
+function connect_to_random_game_button() {
 	let login = document.getElementById("login").value;
-    $.ajax({
-        url: url + "/games/connect/random",
-        type: 'POST',
-        dataType: "json",
-        contentType: "application/json",
-        data: JSON.stringify({
-            "login": login
-        }),
-        success: function (data) {
-			if (data == null) {
-				alert("no game found");
-			} else {
-				let gameId = data.gameId;
-	            document.location.href = url+"/game?id="+gameId+"&login="+login;
-			}
-//            connectToSocket(gameId);
-//            alert("Congrats you're playing with: " + data.player1.login);
-        },
-        error: function (error) {
-            console.log(error);
-        }
-    })
+	check_login_and_connect_to_random_game(login);
 }
 
-//Checks if player with that login exists. If not, creates new player
-function get_player_and_start_game(login) {
+//Checks if player with that login exists. If not, creates new player and...
+function check_login_and_create_new_game(login) {
 	$.ajax({
         url: url + "/players/checkLogin",
         type: 'POST',
@@ -42,7 +21,7 @@ function get_player_and_start_game(login) {
             "string": login
         }),
         success: function (player) {
-			create_game(player.login);
+			create_new_game(player.login);
         },
         error: function (error) {
             console.log(error);
@@ -50,7 +29,25 @@ function get_player_and_start_game(login) {
     })
 }
 
-function create_game(login) {
+function check_login_and_connect_to_random_game(login) {
+	$.ajax({
+        url: url + "/players/checkLogin",
+        type: 'POST',
+        dataType: "json",
+        contentType: "application/json",
+        data: JSON.stringify({
+            "string": login
+        }),
+        success: function (player) {
+			connect_to_random_game(player.login);
+        },
+        error: function (error) {
+            console.log(error);
+        }
+    })
+}
+
+function create_new_game(login) {
 	$.ajax({
         url: url + "/games/start",
         type: 'POST',
@@ -64,6 +61,28 @@ function create_game(login) {
             document.location.href = url+"/game?id="+gameId+"&login="+login;
         },
         error: function (error) {
+            console.log(error);
+        }
+    })
+}
+
+function connect_to_random_game(login) {
+    $.ajax({
+        url: url + "/games/connect/random",
+        type: 'POST',
+        dataType: "json",
+        contentType: "application/json",
+        data: JSON.stringify({
+            "login": login
+        }),
+        success: function (game) {
+			let gameId = game.id;
+            document.location.href = url+"/game?id="+gameId+"&login="+login;
+//            connectToSocket(gameId);
+//            alert("Congrats you're playing with: " + data.player1.login);
+        },
+        error: function (error) {
+			alert("No game found");
             console.log(error);
         }
     })

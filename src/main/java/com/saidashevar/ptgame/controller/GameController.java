@@ -1,8 +1,9 @@
 package com.saidashevar.ptgame.controller;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
@@ -14,10 +15,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import com.saidashevar.ptgame.controller.request.StringRequest;
 import com.saidashevar.ptgame.exception.InvalidGameException;
 import com.saidashevar.ptgame.exception.NotFoundException;
-import com.saidashevar.ptgame.model.Card;
 import com.saidashevar.ptgame.model.Game;
+import com.saidashevar.ptgame.model.Hero;
 import com.saidashevar.ptgame.model.Player;
-import com.saidashevar.ptgame.repository.GameRepository;
 import com.saidashevar.ptgame.service.GameService;
 
 import lombok.AllArgsConstructor;
@@ -59,6 +59,16 @@ public class GameController {
 		log.info("connect random from {}", player.getLogin());
 		return ResponseEntity.ok(gameService.connectToRandomGame(player)); 
 	}
+	
+	@GetMapping("/loadgame") //This is called when game page first loading (may be later it will load saved games)
+	public ResponseEntity<Game> loadBoard(@RequestBody StringRequest request) throws NotFoundException, InvalidGameException { 
+		log.info("got game with ID: " + request.getString());
+		Game game = gameService.loadGameService(request.getString());
+		Set<Hero> heroes = new HashSet<>();
+		game.getPlayers().forEach(p -> heroes.addAll(p.getBoard()));
+		simpMessagingTemplate.convertAndSend("/topic/game-progress/" + game.getId(), heroes); 
+		return ResponseEntity.ok(game); 
+	}
 
 	/*
 	 * @PostMapping("/placecard") //This is called everytime public
@@ -78,13 +88,4 @@ public class GameController {
 	 * simpMessagingTemplate.convertAndSend("/topic/game-progress/" +
 	 * game.getGameId(), game); return ResponseEntity.ok(game); }
 	 */
-
-	
-//	  @PostMapping("/loadgame") //This is called when game page first loading (may be later it will load saved games)
-//	  public ResponseEntity<Game> loadBoard(@RequestBody StringRequest request) throws NotFoundException, InvalidGameException { 
-//		  log.info("got game with ID: " + request.getString());
-//		  Game game = gameService.loadGameService(request.getString());
-//		  simpMessagingTemplate.convertAndSend("/topic/game-progress/" + game.getGameId(), game); 
-//		  return ResponseEntity.ok(game); 
-//	  }
 }
