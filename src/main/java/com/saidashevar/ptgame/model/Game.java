@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.saidashevar.ptgame.exception.NotFoundException;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -24,6 +25,20 @@ public class Game {
 	
 	private int wave = 0;
 	private GameStatus status = NEW;
+	
+	public Player[] findPlayers(String login) throws NotFoundException { // Returns player with requested login first
+		Player player1 = players.stream().filter(p -> p.getLogin().equals(login)).findAny()
+				.orElseThrow(() -> new NotFoundException("Player with login " + login + " is not playing that game"));
+		Player player2 = players.stream().filter(p -> !p.getLogin().equals(login)).findAny().orElse(null);
+//				.orElseThrow(() -> new NotFoundException("Opponent of " + login + " is out of universe"));
+		Player[] players = {player1, player2}; //new Player[2];
+		return players;
+	}
+	
+//	public Player findOtherPlayerByLogin(String login) throws NotFoundException {
+//		return players.stream().filter(p -> !p.getLogin().equals(login)).findAny()
+//				.orElseThrow(() -> new NotFoundException("Opponent of " + login + "out of universe"));
+//	}
 	
 	public void setId(String id) {
 		this.id = id;

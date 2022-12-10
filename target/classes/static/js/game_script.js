@@ -31,7 +31,7 @@ function placeCard(j, number) {
 
 function takeCard() {
     $.ajax({
-	    url: url + "/game/takecard",
+	    url: url + "/cards/takecard",
 	    type: 'POST',
 	    dataType: "json",
 	    contentType: "application/json",

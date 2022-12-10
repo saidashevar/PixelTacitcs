@@ -12,9 +12,13 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import com.saidashevar.ptgame.controller.request.ConnectRequest;
 import com.saidashevar.ptgame.controller.request.StringRequest;
 import com.saidashevar.ptgame.exception.InvalidGameException;
 import com.saidashevar.ptgame.exception.NotFoundException;
+import com.saidashevar.ptgame.exception.game.NoMoreActionsLeftException;
+import com.saidashevar.ptgame.exception.game.NoMoreCardInDeckException;
+import com.saidashevar.ptgame.exception.game.TooManyCardsInHandException;
 import com.saidashevar.ptgame.model.Game;
 import com.saidashevar.ptgame.model.Hero;
 import com.saidashevar.ptgame.model.Player;
@@ -69,23 +73,13 @@ public class GameController {
 		simpMessagingTemplate.convertAndSend("/topic/game-progress/" + game.getId(), heroes); 
 		return ResponseEntity.ok(game); 
 	}
-
-	/*
-	 * @PostMapping("/placecard") //This is called everytime public
-	 * ResponseEntity<Game> gamePlay(@RequestBody PlaceOperatorRequest request)
-	 * throws NotFoundException, InvalidGameException, NoMoreActionsLeftException {
-	 * log.info(request.getLogin() + "deploys operator"); Game game =
-	 * gameService.placeCardService(request);
-	 * simpMessagingTemplate.convertAndSend("/topic/game-progress/" +
-	 * game.getGameId(), game); return ResponseEntity.ok(game); }
-	 * 
-	 * @PostMapping("/takecard") //This is called when player takes card from deck
-	 * public ResponseEntity<Game> takeHand(@RequestBody ConnectRequest request)
-	 * throws NotFoundException, InvalidGameException, NoMoreActionsLeftException,
-	 * NoMoreCardInDeckException, TooManyCardsInHandException {
-	 * log.info(request.getLogin() + "takes card"); Game game =
-	 * gameService.takeCardService(request);
-	 * simpMessagingTemplate.convertAndSend("/topic/game-progress/" +
-	 * game.getGameId(), game); return ResponseEntity.ok(game); }
-	 */
+	
+//	  @PostMapping("/placecard") //This is called everytime public
+//	  ResponseEntity<Game> gamePlay(@RequestBody PlaceOperatorRequest request)
+//	  throws NotFoundException, InvalidGameException, NoMoreActionsLeftException {
+//	  log.info(request.getLogin() + "deploys operator"); Game game =
+//	  gameService.placeCardService(request);
+//	  simpMessagingTemplate.convertAndSend("/topic/game-progress/" +
+//	  game.getGameId(), game); return ResponseEntity.ok(game); }
+	 
 }

@@ -3,6 +3,8 @@ package com.saidashevar.ptgame.model;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -26,6 +28,7 @@ public class Card {
 	private int attack;
 	private int maxHealth;
 
+	@JsonIgnore
 	@ManyToMany
 	@JoinTable(
 			name = "players_decks",
@@ -34,6 +37,7 @@ public class Card {
 			)
 	private Set<Player> inDecks = new HashSet<>();
 	
+	@JsonIgnore
 	@ManyToMany
 	@JoinTable(
 			name = "players_hands",
@@ -42,6 +46,7 @@ public class Card {
 			)
 	private Set<Player> inHands = new HashSet<>();
 	
+	@JsonIgnore
 	@ManyToMany
 	@JoinTable(
 			name = "players_piles",

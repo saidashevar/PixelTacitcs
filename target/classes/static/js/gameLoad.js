@@ -14,6 +14,8 @@ function connectToSocket() {
         console.log("connected to the frame: " + frame);
         stompClient.subscribe("/topic/game-progress/" + gameId, function (response) {
             let data = JSON.parse(response.body);
+            if (data.type == "Card count") alert("Condition accessed");
+            //load opponent's hand.
             lastGameSave = data;
             gameStatus = data.status;
             if (gameStatus != "NEW") requestBoard();
