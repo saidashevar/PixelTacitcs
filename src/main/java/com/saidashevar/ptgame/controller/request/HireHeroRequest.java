@@ -3,9 +3,9 @@ package com.saidashevar.ptgame.controller.request;
 import lombok.Data;
 
 @Data
-public class PlaceOperatorRequest {
+public class HireHeroRequest {
 	private String gameId;
     private String login;
     private int coordinateY;
-    private int cardNumber;
+    private Long cardId;
 }

@@ -1,3 +1,4 @@
+//Few variables about non gameplay fields.
 const url = 'http://localhost:8080';
 var gameStatus = "NEW";
 var gameId;
@@ -9,13 +10,12 @@ var handSave;
 var turnSave;
 var gameSave;
 var heroesSave;
-//var lastGameSave; //No! Whole game is not available now! Must remove it now!
 
 //Request functions
 //-
-function placeCard(j, number) {
+function placeCard(j, id) {
     $.ajax({
-        url: url + "/game/placecard",
+        url: url + "/heroes/hire-hero",
         type: 'POST',
         dataType: "json",
         contentType: "application/json",
@@ -23,10 +23,9 @@ function placeCard(j, number) {
             "gameId": gameId,
             "login": login,
             "coordinateY": j,
-            "cardNumber": number
+            "cardId": id
         }),
         success: function (data) {
-			lastGameSave = data;
             loadBoard(data);
             reloadHand(data);
         },
@@ -35,7 +34,7 @@ function placeCard(j, number) {
         }
     })
 }
-//+
+
 function takeCard() {
     $.ajax({
 	    url: url + "/cards/takecard",

@@ -8,7 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.saidashevar.ptgame.controller.request.ConnectRequest;
-import com.saidashevar.ptgame.controller.request.PlaceOperatorRequest;
+import com.saidashevar.ptgame.controller.request.HireHeroRequest;
 import com.saidashevar.ptgame.exception.InvalidGameException;
 import com.saidashevar.ptgame.exception.game.NoMoreActionsLeftException;
 import com.saidashevar.ptgame.exception.game.NoMoreCardInDeckException;

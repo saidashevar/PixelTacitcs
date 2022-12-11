@@ -13,13 +13,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.saidashevar.ptgame.controller.request.ConnectRequest;
+import com.saidashevar.ptgame.controller.request.HireHeroRequest;
 import com.saidashevar.ptgame.controller.request.StringRequest;
 import com.saidashevar.ptgame.exception.InvalidGameException;
 import com.saidashevar.ptgame.exception.NotFoundException;
 import com.saidashevar.ptgame.exception.game.NoMoreActionsLeftException;
-import com.saidashevar.ptgame.exception.game.NoMoreCardInDeckException;
-import com.saidashevar.ptgame.exception.game.TooManyCardsInHandException;
 import com.saidashevar.ptgame.model.Game;
 import com.saidashevar.ptgame.model.Hero;
 import com.saidashevar.ptgame.model.Player;
@@ -70,6 +68,7 @@ public class GameController {
 		return ResponseEntity.ok(gameService.connectToRandomGame(player)); 
 	}
 	
+	//needs remade with game service
 	@PostMapping("/loadgame") //This is called when game page first loading (may be later it will load saved games)
 	public ResponseEntity<Game> loadBoard(@RequestBody StringRequest request) throws NotFoundException, InvalidGameException { 
 		log.info("got game with ID: " + request.getString()); //String here is game id;
@@ -79,13 +78,4 @@ public class GameController {
 		simpMessagingTemplate.convertAndSend("/topic/game-progress/" + game.getId(), heroes); 
 		return ResponseEntity.ok(game); 
 	}
-	
-//	  @PostMapping("/placecard") //This is called everytime public
-//	  ResponseEntity<Game> gamePlay(@RequestBody PlaceOperatorRequest request)
-//	  throws NotFoundException, InvalidGameException, NoMoreActionsLeftException {
-//	  log.info(request.getLogin() + "deploys operator"); Game game =
-//	  gameService.placeCardService(request);
-//	  simpMessagingTemplate.convertAndSend("/topic/game-progress/" +
-//	  game.getGameId(), game); return ResponseEntity.ok(game); }
-	 
 }

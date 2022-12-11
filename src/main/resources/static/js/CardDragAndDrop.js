@@ -13,8 +13,7 @@ function onDragStart(e) {
 	setTimeout(() => {
         e.target.classList.add('hide');
     }, 0);
-    
-    let query = 'td[id ^= "1_' + (turnSave.wave + 1) + '"]'; // we use +1 because id of cells are 1, 2, 3. not 0, 1, 2.
+    let query = 'td[id ^= "1_' + turnSave.wave + '"]';
     const boxes = document.querySelectorAll(query);
 	boxes.forEach(box => {
     	box.classList.add('readyToDrop');
@@ -47,7 +46,8 @@ function dragDrop(e) {
 	e.target.classList.remove('drag-over');
 	let place = e.target.id;
 	let cardInHand = e.dataTransfer.getData('text/plain');
-	placeCard(place.split("_")[2], cardInHand);
+	console.log(handSave);
+	placeCard(place.split("_")[2], handSave[cardInHand].id);
 }
 
 function onClickShowCard(e) {

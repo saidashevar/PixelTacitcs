@@ -92,8 +92,8 @@ function loadHeroes(heroesSave) {
 		place.textContent = prepareName(heroesSave[x].card.name);
 	}
 	
-	for (let i = 1; i < 4; i++) {
-        for (let j = 1; j < 4; j++) {
+	for (let i = 0; i < 3; i++) {
+        for (let j = 0; j < 3; j++) {
             let id = i + "_" + j;
             let place = document.getElementById("1_"+id);
             if (i == gameSave.wave && place.textContent != "") {
@@ -107,15 +107,14 @@ function loadHeroes(heroesSave) {
 }
 
 function loadHand (hand) {
-	let cardsInHand = hand.length;
 	if (hand.length <= 5) {
 		let handElement = document.getElementById("cardHolder");
-		for (let i = 0; i < cardsInHand; i++) {
+		for (let i = 0; i < hand.length; i++) {
 			addCardInHand(handElement, i);
 		}		
 	}
 }
-//?
+
 function reloadHand(data) {
 	const cardsInHand = document.querySelectorAll('li[id ^= "hand"]');
 	cardsInHand.forEach(card => {

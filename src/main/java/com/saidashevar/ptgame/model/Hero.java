@@ -21,7 +21,7 @@ public class Hero {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;
 	
-	@Column(name = "coord_x", nullable = true)
+	@Column(name = "coord_x", nullable = true) //Caution! Here is matrix system is used. x means row, y - column.
 	private int coordX;
 	
 	@Column(name = "coord_y", nullable = true)
@@ -71,9 +71,8 @@ public class Hero {
 		this.coordY = y;
 	}
 	
-	public Hero(Long id, int coordX, int coordY, Card card, Player player) {
+	public Hero(int coordX, int coordY, Card card, Player player) {
 		super();
-		this.id = id;
 		this.coordX = coordX;
 		this.coordY = coordY;
 		this.card = card;
