@@ -1,7 +1,6 @@
 package com.saidashevar.ptgame.controller;
 
 import java.util.List;
-import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -12,13 +11,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.saidashevar.ptgame.controller.request.ConnectRequest;
 import com.saidashevar.ptgame.controller.request.StringRequest;
 import com.saidashevar.ptgame.exception.InvalidGameException;
 import com.saidashevar.ptgame.exception.NotFoundException;
 import com.saidashevar.ptgame.model.Card;
 import com.saidashevar.ptgame.model.Game;
 import com.saidashevar.ptgame.model.Player;
+import com.saidashevar.ptgame.model.Turn;
 import com.saidashevar.ptgame.repository.PlayerRepository;
 import com.saidashevar.ptgame.service.GameService;
 
@@ -50,6 +49,7 @@ public class PlayerController {
 	ResponseEntity<Player> checkLogin(@RequestBody StringRequest request) {
 		String login = request.getString();
 		log.info(login + " checks his existance in database");
+		//should add it all in game service
 		try {
 			Player player = playerRepository.findById(login)
 					.orElseThrow(() -> new NotFoundException("Player with login: " + login + " wasn't found"));
@@ -69,5 +69,11 @@ public class PlayerController {
 	ResponseEntity< List<Card> > getHand(@RequestParam("id") String gameId, @RequestParam("login") String login) throws NotFoundException, InvalidGameException {
 		Game game = gameService.loadGameService(gameId);
 		return ResponseEntity.ok(game.findPlayers(login)[0].getHand());
+	}
+	
+	@GetMapping("/get-turn")
+	ResponseEntity<Turn> getTurn(@RequestParam("id") String gameId, @RequestParam("login") String login) throws InvalidGameException, NotFoundException {
+		Game game = gameService.loadGameService(gameId);
+		return ResponseEntity.ok(game.findPlayers(login)[0].getTurn());
 	}
 }

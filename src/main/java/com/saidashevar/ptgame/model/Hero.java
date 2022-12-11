@@ -1,5 +1,7 @@
 package com.saidashevar.ptgame.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -29,10 +31,15 @@ public class Hero {
 	@JoinColumn(name = "card", referencedColumnName = "id", nullable = true)
 	private Card card;
 	
+	@JsonIgnore
 	@ManyToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "player_login", referencedColumnName = "login")
 	private Player player; 
 	
+	public Player getPlayer() {
+		return player;
+	}
+
 	public int getCoordX() {
 		return coordX;
 	}
@@ -62,5 +69,14 @@ public class Hero {
 	public Hero(int x, int y) {
 		this.coordX = x;
 		this.coordY = y;
+	}
+	
+	public Hero(Long id, int coordX, int coordY, Card card, Player player) {
+		super();
+		this.id = id;
+		this.coordX = coordX;
+		this.coordY = coordY;
+		this.card = card;
+		this.player = player;
 	}
 }

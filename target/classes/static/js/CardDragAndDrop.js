@@ -14,7 +14,7 @@ function onDragStart(e) {
         e.target.classList.add('hide');
     }, 0);
     
-    let query = 'td[id ^= "1_' + (lastGameSave.wave + 1) + '"]';
+    let query = 'td[id ^= "1_' + (turnSave.wave + 1) + '"]'; // we use +1 because id of cells are 1, 2, 3. not 0, 1, 2.
     const boxes = document.querySelectorAll(query);
 	boxes.forEach(box => {
     	box.classList.add('readyToDrop');
@@ -22,7 +22,7 @@ function onDragStart(e) {
 }
 
 function onDragEnd(e) {
-	reloadHand(lastGameSave);
+	reloadHand(handSave);
 	let places = document.querySelectorAll('.readyToDrop');
 	places.forEach(place => {
 		place.classList.remove("readyToDrop");

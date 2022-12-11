@@ -4,9 +4,10 @@ function loadPage() {
 	getGameIDandLogin();
 	connectToSocket(gameId);
 	requestHand();
+	requestTurn();
+	requestGame(); //Also requests Heroes if success (hero request depends on game)
 }
 
-//+
 function connectToSocket() {
     console.log("connecting to the game");
     let socket = new SockJS(url + "/gameplay");
@@ -15,30 +16,38 @@ function connectToSocket() {
         console.log("connected to the frame: " + frame);
         stompClient.subscribe("/topic/game-progress/" + gameId, function (response) { // this function works when gets info form socket!
             let data = JSON.parse(response.body);
-            if (gameStatus != "NEW") alert("Something went wrong!");
-            alert("everything is fine!");
+            //add condition for card count
             console.log(data);
         })
     })
 }
-//-
-function requestBoard() {
+
+function requestHeroes() {
     $.ajax({
-        url: url + "/games/loadgame",
-        type: 'POST',
-        dataType: "json",
-        contentType: "application/json",
-        data: JSON.stringify({
-			"string": gameId
-		}),
-        success: function (data) {
-			lastGameSave = data;
-			loadBoard(data);
-            loadHand(data);
-            console.log("Successfully loaded board")
+		url: url + "/heroes/get-heroes?id="+gameId+"&login="+login,
+        type: 'GET',
+        success: function (newHeroes) {
+			heroesSave = newHeroes;
+			loadHeroes(heroesSave);
+            console.log("Successfully loaded board");
         },
         error: function (error) {
             console.log(error);
+        }
+    })
+}
+
+function requestGame() {
+    $.ajax({
+        url: url + "/games/get-game?id="+gameId+"&login="+login,
+        type: 'GET',
+        success: function (newGame) {
+			gameSave = newGame;
+			getOpponentLogin(gameSave);
+			requestHeroes();
+        },
+        error: function (error) {
+            console.log("Game wasn't loaded!" + error);
         }
     })
 }
@@ -48,10 +57,21 @@ function requestHand() {
         url: url + "/players/get-hand?id="+gameId+"&login="+login,
         type: 'GET',
         success: function (newHand) {
-			console.log(newHand);
 			handSave = newHand;
             loadHand(handSave);
-            console.log("Successfully loaded hand");
+        },
+        error: function (error) {
+            console.log("Hand wasn't loaded!" + error);
+        }
+    })
+}
+
+function requestTurn() {
+    $.ajax({
+        url: url + "/players/get-turn?id="+gameId+"&login="+login,
+        type: 'GET',
+        success: function (newTurn) {
+			turnSave = newTurn;
         },
         error: function (error) {
             console.log("Hand wasn't loaded!" + error);
@@ -60,27 +80,32 @@ function requestHand() {
 }
 
 //load functions
-//-
-function loadBoard(data) {
-	let opponent = getOpponentLogin(data);
+function loadHeroes(heroesSave) {
+	for (let x = 0; x < heroesSave.length; x++) {
+		let i = heroesSave[x].coordX;
+		let j = heroesSave[x].coordY;
+		let id = i + "_" + j;
+		let place;
+		if (heroesSave[x].player.login == login) 
+			place = document.getElementById("1_"+id);
+		else place = document.getElementById("2_"+id);
+		place.textContent = prepareName(heroesSave[x].card.name);
+	}
+	
 	for (let i = 1; i < 4; i++) {
         for (let j = 1; j < 4; j++) {
             let id = i + "_" + j;
-            let place = document.getElementById("1_"+id); 
-            if (data.players[login].board[i-1][j-1] === null) place.textContent = "";
-            else place.textContent = prepareName(data.players[login].board[i-1][j-1].name);
-            if (data.wave+1 == i) {
+            let place = document.getElementById("1_"+id);
+            if (i == gameSave.wave && place.textContent != "") {
 				place.addEventListener('dragenter', dragEnter);
 		    	place.addEventListener('dragover', dragOver);
 	    		place.addEventListener('dragleave', dragLeave);
-	    		place.addEventListener('drop', dragDrop);  
+	    		place.addEventListener('drop', dragDrop);
 			}
-            if (opponent != undefined) $("#2_" + id).text(prepareName(data.players[opponent].board[i-1][j-1].name));
         }
-    }		
+    }
 }
 
-//-
 function loadHand (hand) {
 	let cardsInHand = hand.length;
 	if (hand.length <= 5) {
@@ -90,7 +115,7 @@ function loadHand (hand) {
 		}		
 	}
 }
-//-
+//?
 function reloadHand(data) {
 	const cardsInHand = document.querySelectorAll('li[id ^= "hand"]');
 	cardsInHand.forEach(card => {
@@ -100,7 +125,6 @@ function reloadHand(data) {
 }
 
 //get functions
-//+
 function getGameIDandLogin() {
 	const params = new Proxy(new URLSearchParams(window.location.search), {
   		get: (searchParams, prop) => searchParams.get(prop),
@@ -111,10 +135,9 @@ function getGameIDandLogin() {
 	paragraph.textContent = login+", "+paragraph.textContent+gameId;
 }
 
-//-
-function getOpponentLogin(game) {
-	let opponent = "";
-	if (game.logins[0] == login) opponent = game.logins[1];
-	else opponent = game.logins[0];
-	return opponent;
+function getOpponentLogin(gameSave) {
+	if (gameSave.players.length != 1) {//returns zero string, if no opponent now
+		if (gameSave.players[0].login == login) opponentLogin = gameSave.players[1].login;
+		else opponentLogin = gameSave.logins[0].login;
+	}
 }

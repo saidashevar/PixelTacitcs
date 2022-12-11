@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.saidashevar.ptgame.controller.request.ConnectRequest;
 import com.saidashevar.ptgame.controller.request.StringRequest;
@@ -45,6 +46,11 @@ public class GameController {
 	@PostMapping
 	Game createGame(@RequestBody Game game) {
 		return gameService.getGameRepository().save(game);
+	}
+	
+	@GetMapping("/get-game")
+	ResponseEntity<Game> getGame(@RequestParam("id") String gameId) throws NotFoundException, InvalidGameException {
+		return ResponseEntity.ok(gameService.loadGameService(gameId));
 	}
 	
 	//

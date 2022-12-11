@@ -6,6 +6,9 @@ var opponentLogin;
 
 //Next variables save all information about game for that player.
 var handSave;
+var turnSave;
+var gameSave;
+var heroesSave;
 //var lastGameSave; //No! Whole game is not available now! Must remove it now!
 
 //Request functions
