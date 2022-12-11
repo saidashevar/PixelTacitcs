@@ -66,7 +66,7 @@ public class PlayerController {
 	//Gameplay functions
 	
 	@GetMapping("/get-hand")
-	ResponseEntity<Set<Card>> getHand(@RequestParam("id") String gameId, @RequestParam("login") String login) throws NotFoundException, InvalidGameException {
+	ResponseEntity< List<Card> > getHand(@RequestParam("id") String gameId, @RequestParam("login") String login) throws NotFoundException, InvalidGameException {
 		Game game = gameService.loadGameService(gameId);
 		return ResponseEntity.ok(game.findPlayers(login)[0].getHand());
 	}

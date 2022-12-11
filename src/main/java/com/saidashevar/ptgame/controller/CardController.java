@@ -67,7 +67,7 @@ public class CardController {
 	}	
 	
 	@PostMapping("/takecard") //This is called when player takes card from deck
-	public ResponseEntity< Set<Card> > takeCard(@RequestBody ConnectRequest request) throws NotFoundException, InvalidGameException {
+	public ResponseEntity< List<Card> > takeCard(@RequestBody ConnectRequest request) throws NotFoundException, InvalidGameException {
 		log.info(request.getLogin() + "takes card");
 		
 		String requester = request.getLogin();

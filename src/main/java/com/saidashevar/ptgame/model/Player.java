@@ -1,6 +1,9 @@
 package com.saidashevar.ptgame.model;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Random;
 import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -45,19 +48,23 @@ public class Player {
 	
 	@JsonIgnore
 	@ManyToMany(mappedBy = "inDecks", fetch = FetchType.LAZY)
-	private Set<Card> deck = new HashSet<>();
+	private List<Card> deck = new ArrayList<>();
 	
 	@JsonIgnore
 	@ManyToMany(mappedBy = "inHands", fetch = FetchType.LAZY)
-	private Set<Card> hand = new HashSet<>();
+	private List<Card> hand = new ArrayList<>();
 	
 	@JsonIgnore
 	@ManyToMany(mappedBy = "inPiles", fetch = FetchType.LAZY)
-	private Set<Card> pile = new HashSet<>();
+	private List<Card> pile = new ArrayList<>();
 	
 	//gameplay functions
 	public Card findCardToTake() throws NotFoundException {
-		return deck.stream().findAny().orElseThrow(() -> new NotFoundException("There are no more cards in "+login+"'s deck!"));
+		Random rand = new Random();
+//		return deck.stream().findAny().orElseThrow(() -> new NotFoundException("There are no more cards in "+login+"'s deck!")); old way without random
+		int size = rand.nextInt(deck.size());
+		if (size == 0) throw new NotFoundException("There are no more cards in "+login+"'s deck!");
+		else return deck.get(rand.nextInt(deck.size()));
 	}
 	
 	//game management funcitons
@@ -70,15 +77,15 @@ public class Player {
 		return login;
 	}
 	
-	public Set<Card> getDeck() {
+	public List<Card> getDeck() {
 		return deck;
 	}
 	
-	public Set<Card> getHand() {
+	public List<Card> getHand() {
 		return hand;
 	}
 	
-	public Set<Card> getPile() {
+	public List<Card> getPile() {
 		return pile;
 	}
 	

@@ -1,6 +1,7 @@
 package com.saidashevar.ptgame.model;
 
-import java.util.HashSet;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -35,7 +36,7 @@ public class Card {
 			joinColumns = @JoinColumn(name = "card_id"),
 			inverseJoinColumns = @JoinColumn(name = "player_login")
 			)
-	private Set<Player> inDecks = new HashSet<>();
+	private List<Player> inDecks = new ArrayList<>();
 	
 	@JsonIgnore
 	@ManyToMany(fetch = FetchType.LAZY)
@@ -44,7 +45,7 @@ public class Card {
 			joinColumns = @JoinColumn(name = "card_id"),
 			inverseJoinColumns = @JoinColumn(name = "player_login")
 			)
-	private Set<Player> inHands = new HashSet<>();
+	private List<Player> inHands = new ArrayList<>();
 	
 	@JsonIgnore
 	@ManyToMany(fetch = FetchType.LAZY)
@@ -53,7 +54,7 @@ public class Card {
 			joinColumns = @JoinColumn(name = "card_id"),
 			inverseJoinColumns = @JoinColumn(name = "player_login")
 			)
-	private Set<Player> inPiles = new HashSet<>();
+	private List<Player> inPiles = new ArrayList<>();
 	
 	public void takenBy(Player player) {
 		inDecks.remove(player);
@@ -102,15 +103,15 @@ public class Card {
 		inPiles.add(player);
 	}
 	
-	public Set<Player> getInDecks() {
+	public List<Player> getInDecks() {
 		return inDecks;
 	}
 	
-	public Set<Player> getInHands() {
+	public List<Player> getInHands() {
 		return inHands;
 	}
 	
-	public Set<Player> getInPiles() {
+	public List<Player> getInPiles() {
 		return inPiles;
 	}
 }
