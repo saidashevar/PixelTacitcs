@@ -64,9 +64,9 @@ public class GameController {
 		return ResponseEntity.ok(gameService.connectToRandomGame(player)); 
 	}
 	
-	@GetMapping("/loadgame") //This is called when game page first loading (may be later it will load saved games)
+	@PostMapping("/loadgame") //This is called when game page first loading (may be later it will load saved games)
 	public ResponseEntity<Game> loadBoard(@RequestBody StringRequest request) throws NotFoundException, InvalidGameException { 
-		log.info("got game with ID: " + request.getString());
+		log.info("got game with ID: " + request.getString()); //String here is game id;
 		Game game = gameService.loadGameService(request.getString());
 		Set<Hero> heroes = new HashSet<>();
 		game.getPlayers().forEach(p -> heroes.addAll(p.getBoard()));

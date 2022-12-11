@@ -1,11 +1,15 @@
-let gameOn = false;
 const url = 'http://localhost:8080';
-var gameStatus;
+var gameStatus = "NEW";
 var gameId;
 var login;
-var lastGameSave;
+var opponentLogin;
+
+//Next variables save all information about game for that player.
+var handSave;
+//var lastGameSave; //No! Whole game is not available now! Must remove it now!
 
 //Request functions
+//-
 function placeCard(j, number) {
     $.ajax({
         url: url + "/game/placecard",
@@ -28,7 +32,7 @@ function placeCard(j, number) {
         }
     })
 }
-
+//+
 function takeCard() {
     $.ajax({
 	    url: url + "/cards/takecard",
@@ -39,12 +43,11 @@ function takeCard() {
 	        "gameId": gameId,
 	        "login": login,
 	    }),
-	    success: function (data) {
-			lastGameSave = data;
-			let cardsInHand = data.players[login].hand.length;
-			if (cardsInHand <= 5) {
-				let hand = document.getElementById("cardHolder");
-				addCardInHand(data, hand, cardsInHand-1);
+	    success: function (newHand) {
+			handSave = newHand;
+			if (handSave.length <= 5) { //some heroes' abilities can able player to take more than 5 cards...
+				let handElement = document.getElementById("cardHolder");
+				addCardInHand(handElement, handSave.length-1);
 			}
 	    },
 	    error: function (error) {
@@ -54,6 +57,7 @@ function takeCard() {
 }
 
 // Some gameplay functions
+//-
 function displayCard(e) {
 	let blackBackground = document.createElement("div");
 	let cardNumber = e.target.id.split("")[4];
@@ -88,7 +92,7 @@ function turnCard() {
 }
 
 //Support functions
-function addCardInHand(data, hand, cardId) {
+function addCardInHand(hand, cardId) {
 	let card = document.createElement('li');
 	card.id = "hand"+cardId;
 	card.setAttribute("draggable", "true");
@@ -121,7 +125,7 @@ function prepareToShow(attribute, cardId) {
 
 function prepareText(attribute, cardId) {
 	let text = document.createElement('div');
-	text.textContent = lastGameSave.players[login].hand[cardId][attribute];
+	text.textContent = handSave[cardId][attribute];
 	text.classList.add('centerText');
 	return text;
 }
@@ -135,7 +139,7 @@ function prepareImage(attribute) {
 function prepareCardInHandName(cardId) {
 	let cardName = document.createElement('div');
 	cardName.classList.add('cardName');
-	cardName.textContent = prepareName(lastGameSave.players[login].hand[cardId].name);
+	cardName.textContent = prepareName(handSave[cardId].name);
 	return cardName;
 }
 

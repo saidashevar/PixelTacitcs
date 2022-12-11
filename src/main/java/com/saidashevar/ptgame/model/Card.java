@@ -5,8 +5,8 @@ import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -29,7 +29,7 @@ public class Card {
 	private int maxHealth;
 
 	@JsonIgnore
-	@ManyToMany
+	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(
 			name = "players_decks",
 			joinColumns = @JoinColumn(name = "card_id"),
@@ -38,7 +38,7 @@ public class Card {
 	private Set<Player> inDecks = new HashSet<>();
 	
 	@JsonIgnore
-	@ManyToMany
+	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(
 			name = "players_hands",
 			joinColumns = @JoinColumn(name = "card_id"),
@@ -47,13 +47,18 @@ public class Card {
 	private Set<Player> inHands = new HashSet<>();
 	
 	@JsonIgnore
-	@ManyToMany
+	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(
 			name = "players_piles",
 			joinColumns = @JoinColumn(name = "card_id"),
 			inverseJoinColumns = @JoinColumn(name = "player_login")
 			)
 	private Set<Player> inPiles = new HashSet<>();
+	
+	public void takenBy(Player player) {
+		inDecks.remove(player);
+		inHands.add(player);
+	}
 
 	public Card(int edition, String name, int attack, int maxHealth) {
 		super();
@@ -64,6 +69,10 @@ public class Card {
 	}
 	
 	public Card() {}
+	
+	public Long getId() {
+		return id;
+	}
 	
 	public int getEdition() {
 		return edition;

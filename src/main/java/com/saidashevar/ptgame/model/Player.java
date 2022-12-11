@@ -8,6 +8,7 @@ import com.saidashevar.ptgame.exception.NotFoundException;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
@@ -15,7 +16,9 @@ import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Entity
 @Table(name = "players")
 public class Player {
@@ -28,7 +31,7 @@ public class Player {
 	private Turn turn = new Turn();
 	
 	@JsonIgnore
-	@ManyToMany
+	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(
 			name = "players_games",
 			joinColumns = @JoinColumn(name = "player_login"),
@@ -37,26 +40,24 @@ public class Player {
 	private Set<Game> playedGames = new HashSet<>();
 	
 	@JsonIgnore
-	@OneToMany(mappedBy = "player")
+	@OneToMany(mappedBy = "player", fetch = FetchType.LAZY)
 	private Set<Hero> board = new HashSet<>();
 	
 	@JsonIgnore
-	@ManyToMany(mappedBy = "inDecks")
+	@ManyToMany(mappedBy = "inDecks", fetch = FetchType.LAZY)
 	private Set<Card> deck = new HashSet<>();
 	
 	@JsonIgnore
-	@ManyToMany(mappedBy = "inHands")
+	@ManyToMany(mappedBy = "inHands", fetch = FetchType.LAZY)
 	private Set<Card> hand = new HashSet<>();
 	
 	@JsonIgnore
-	@ManyToMany(mappedBy = "inPiles")
+	@ManyToMany(mappedBy = "inPiles", fetch = FetchType.LAZY)
 	private Set<Card> pile = new HashSet<>();
 	
 	//gameplay functions
-	public void takeCard() throws NotFoundException {
-		Card taken = deck.stream().findAny().orElseThrow(() -> new NotFoundException("There are no more cards in "+login+"'s deck!")); 
-		deck.remove(taken);
-		hand.add(taken);
+	public Card findCardToTake() throws NotFoundException {
+		return deck.stream().findAny().orElseThrow(() -> new NotFoundException("There are no more cards in "+login+"'s deck!"));
 	}
 	
 	//game management funcitons

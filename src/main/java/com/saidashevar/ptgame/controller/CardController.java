@@ -73,16 +73,17 @@ public class CardController {
 		String requester = request.getLogin();
 		Game game =	gameService.loadGameService(request.getGameId());
 		Player[] players = game.findPlayers(requester);
-		players[0].takeCard();
-		Set<Card> hand = players[0].getHand(); 
-		playerRepository.save(players[0]);
+		Card card = players[0].findCardToTake();
+		card.takenBy(players[0]);
+		cardRepository.save(card);
+//		playerRepository.save(players[0]);
 		
 		//I need to send to both players info... about сard count
 		Map<String, Integer> cardCount = new HashMap<>();
 		cardCount.put(requester, players[0].getHand().size());
 		if (players[1] != null) cardCount.put(requester, players[1].getHand().size()); //Condition will be always true, when i allow taking cards after second player enters game
 		simpMessagingTemplate.convertAndSend("/topic/game-progress/" + game.getId(), new UniResponse<>("Card count", cardCount)); 
-		return ResponseEntity.ok(hand); 
+		return ResponseEntity.ok(players[0].getHand()); 
 	}
 	
 	@PostMapping("/updateAll") //fast restoring
