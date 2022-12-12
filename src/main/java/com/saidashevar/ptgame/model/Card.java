@@ -2,7 +2,6 @@ package com.saidashevar.ptgame.model;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -59,6 +58,10 @@ public class Card {
 	public void takenBy(Player player) {
 		inDecks.remove(player);
 		inHands.add(player);
+	}
+	
+	public void hiredBy(Player player) {
+		inHands.remove(player);
 	}
 
 	public Card(int edition, String name, int attack, int maxHealth) {

@@ -1,11 +1,8 @@
 package com.saidashevar.ptgame.controller;
 
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -13,13 +10,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.saidashevar.ptgame.controller.request.HireHeroRequest;
-import com.saidashevar.ptgame.controller.request.StringRequest;
 import com.saidashevar.ptgame.exception.InvalidGameException;
 import com.saidashevar.ptgame.exception.NotFoundException;
-import com.saidashevar.ptgame.exception.game.NoMoreActionsLeftException;
 import com.saidashevar.ptgame.model.Game;
-import com.saidashevar.ptgame.model.Hero;
 import com.saidashevar.ptgame.model.Player;
 import com.saidashevar.ptgame.service.GameService;
 
@@ -33,7 +26,7 @@ import lombok.extern.slf4j.Slf4j;
 public class GameController {
 
 	private final GameService gameService;
-	private final SimpMessagingTemplate simpMessagingTemplate;
+//	private final SimpMessagingTemplate simpMessagingTemplate;
 
 	// Rest methods
 	@GetMapping
@@ -48,6 +41,7 @@ public class GameController {
 	
 	@GetMapping("/get-game")
 	ResponseEntity<Game> getGame(@RequestParam("id") String gameId) throws NotFoundException, InvalidGameException {
+		log.info("Game with ID: " + gameId + " is requested");
 		return ResponseEntity.ok(gameService.loadGameService(gameId));
 	}
 	
@@ -68,14 +62,12 @@ public class GameController {
 		return ResponseEntity.ok(gameService.connectToRandomGame(player)); 
 	}
 	
-	//needs remade with game service
-	@PostMapping("/loadgame") //This is called when game page first loading (may be later it will load saved games)
-	public ResponseEntity<Game> loadBoard(@RequestBody StringRequest request) throws NotFoundException, InvalidGameException { 
-		log.info("got game with ID: " + request.getString()); //String here is game id;
-		Game game = gameService.loadGameService(request.getString());
-		Set<Hero> heroes = new HashSet<>();
-		game.getPlayers().forEach(p -> heroes.addAll(p.getBoard()));
-		simpMessagingTemplate.convertAndSend("/topic/game-progress/" + game.getId(), heroes); 
-		return ResponseEntity.ok(game); 
-	}
+	//Looks like this mapping is useless now
+//	@GetMapping("/loadgame") //sends basic info about game
+//	public ResponseEntity<Game> loadBoard(@RequestParam("id") String gameId) throws NotFoundException, InvalidGameException { 
+//		log.info("got game with ID: " + gameId);
+////		simpMessagingTemplate.convertAndSend("/topic/game-progress/" + gameId, 
+////											 gameService.getBoard(gameId)); 
+//		return ResponseEntity.ok(gameService.loadGameService(gameId)); 
+//	}
 }

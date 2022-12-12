@@ -5,6 +5,7 @@ import static com.saidashevar.ptgame.model.GameStatus.*;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
 import com.saidashevar.ptgame.controller.request.ConnectRequest;
@@ -30,8 +31,16 @@ import lombok.extern.slf4j.Slf4j;
 @AllArgsConstructor
 public class CardService {
 	
+	private final PlayerService playerService; //That is prohibited... wow
+//	private final GameService gameService; It is prohibited...
+	private final SimpMessagingTemplate simpMessagingTemplate;
+	
 	@Autowired
 	CardRepository cardRepository;
+	
+	@Autowired
+	PlayerRepository playerRepository;
+	
 	//
 	// Game managment functions
 	//
@@ -39,9 +48,18 @@ public class CardService {
 	public void giveDeck(Player player) {
 		cardRepository.findAll().stream().forEach(card -> {card.addInDeck(player); cardRepository.save(card);});
 	}
+	
 	//
 	// Gameplay methods
 	//
+	
+	public Player cardTakenBy(String requester) throws NotFoundException {
+		Player player = playerService.getPlayer(requester);
+		Card card = player.findCardToTake();
+		card.takenBy(player);
+		cardRepository.save(card);
+		return player;
+	}
 	
 	  //It's enough to send info about deck and hand here, but I think it's not
 //	  critical to send all info about player. //Maybe later with Spring Security i

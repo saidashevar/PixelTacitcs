@@ -3,7 +3,6 @@ package com.saidashevar.ptgame.controller;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import static com.saidashevar.ptgame.config.response.ResponseTypes.*;
 import com.saidashevar.ptgame.config.response.UniResponse;
 import com.saidashevar.ptgame.controller.request.ConnectRequest;
 import com.saidashevar.ptgame.exception.InvalidGameException;
@@ -25,7 +25,9 @@ import com.saidashevar.ptgame.model.Game;
 import com.saidashevar.ptgame.model.Player;
 import com.saidashevar.ptgame.repository.CardRepository;
 import com.saidashevar.ptgame.repository.PlayerRepository;
+import com.saidashevar.ptgame.service.CardService;
 import com.saidashevar.ptgame.service.GameService;
+import com.saidashevar.ptgame.service.PlayerService;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -36,6 +38,8 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("/cards")
 public class CardController {
 	
+	private final CardService cardService;
+	private final PlayerService playerService;
 	private final GameService gameService;
 	private final SimpMessagingTemplate simpMessagingTemplate;
 	
@@ -66,24 +70,14 @@ public class CardController {
 		return cardRepository.save(card);
 	}	
 	
-	@PostMapping("/takecard") //This is called when player takes card from deck
+	@PostMapping("/take-card") //This is called when player takes card from deck
 	public ResponseEntity< List<Card> > takeCard(@RequestBody ConnectRequest request) throws NotFoundException, InvalidGameException {
-		log.info(request.getLogin() + "takes card");
-		
-		String requester = request.getLogin();
-		Game game =	gameService.loadGameService(request.getGameId());
-		Player[] players = game.findPlayers(requester);
-		Card card = players[0].findCardToTake();
-		card.takenBy(players[0]);
-		cardRepository.save(card);
-//		playerRepository.save(players[0]);
-		
-		//I need to send to both players info... about сard count
-		Map<String, Integer> cardCount = new HashMap<>();
-		cardCount.put(requester, players[0].getHand().size());
-		if (players[1] != null) cardCount.put(requester, players[1].getHand().size()); //Condition will be always true, when i allow taking cards after second player enters game
-		simpMessagingTemplate.convertAndSend("/topic/game-progress/" + game.getId(), new UniResponse<>("Card count", cardCount)); 
-		return ResponseEntity.ok(players[0].getHand()); 
+		Player player = cardService.cardTakenBy(request.getLogin());
+		log.info(player.getLogin() + "takes card");
+		//Send info about card count to both players
+		simpMessagingTemplate.convertAndSend("/topic/game-progress/" + request.getGameId(),
+											 gameService.getCardCount(request.getGameId())); 
+		return ResponseEntity.ok(player.getHand()); 
 	}
 	
 	@PostMapping("/updateAll") //fast restoring

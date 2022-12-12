@@ -1,11 +1,10 @@
 package com.saidashevar.ptgame.model;
 
-import static com.saidashevar.ptgame.model.GameStatus.*;
+import static com.saidashevar.ptgame.model.GameStatus.NEW;
 
 import java.util.HashSet;
 import java.util.Set;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.saidashevar.ptgame.exception.NotFoundException;
 
 import jakarta.persistence.Entity;
@@ -26,7 +25,7 @@ public class Game {
 	private int wave = 0;
 	private GameStatus status = NEW;
 	
-	public Player[] findPlayers(String login) throws NotFoundException { // Returns player with requested login first. In very strange way
+	public Player[] findPlayers(String login) throws NotFoundException { // Returns player with requested login first. In very strange way without playerRepository. mmay be very bad
 		Player player1 = players.stream().filter(p -> p.getLogin().equals(login)).findAny()
 				.orElseThrow(() -> new NotFoundException("Player with login " + login + " is not playing that game"));
 		Player player2 = players.stream().filter(p -> !p.getLogin().equals(login)).findAny().orElse(null);

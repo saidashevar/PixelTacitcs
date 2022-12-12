@@ -31,7 +31,6 @@ public class Hero {
 	@JoinColumn(name = "card", referencedColumnName = "id", nullable = true)
 	private Card card;
 	
-	@JsonIgnore
 	@ManyToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "player_login", referencedColumnName = "login")
 	private Player player; 

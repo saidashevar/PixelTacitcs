@@ -16,7 +16,7 @@ function onDragStart(e) {
     let query = 'td[id ^= "1_' + turnSave.wave + '"]';
     const boxes = document.querySelectorAll(query);
 	boxes.forEach(box => {
-    	box.classList.add('readyToDrop');
+		if (box.textContent == "") box.classList.add('readyToDrop'); //bad, i need to make it another way
 	});
 }
 

@@ -16,8 +16,19 @@ function connectToSocket() {
         console.log("connected to the frame: " + frame);
         stompClient.subscribe("/topic/game-progress/" + gameId, function (response) { // this function works when gets info form socket!
             let data = JSON.parse(response.body);
-            //add condition for card count
             console.log(data);
+            switch (data.type) {
+				case "BOARD":
+					heroesSave = data.info;
+					loadHeroes(heroesSave);
+				break;
+				case "CARD_COUNT":
+					cardCountSave = data.info;
+					if (opponentLogin != undefined)
+						console.log("Your opponent has " + cardCountSave[opponentLogin]);
+					else console.log("no opponent now, but you have " + cardCountSave[login] + " cards");
+				break;
+			}
         })
     })
 }
@@ -28,6 +39,7 @@ function requestHeroes() {
         type: 'GET',
         success: function (newHeroes) {
 			heroesSave = newHeroes;
+			console.log(heroesSave);
 			loadHeroes(heroesSave);
             console.log("Successfully loaded board");
         },
@@ -96,7 +108,7 @@ function loadHeroes(heroesSave) {
         for (let j = 0; j < 3; j++) {
             let id = i + "_" + j;
             let place = document.getElementById("1_"+id);
-            if (i == gameSave.wave && place.textContent != "") {
+            if (i == gameSave.wave && place.textContent == "") {
 				place.addEventListener('dragenter', dragEnter);
 		    	place.addEventListener('dragover', dragOver);
 	    		place.addEventListener('dragleave', dragLeave);

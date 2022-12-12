@@ -1,25 +1,29 @@
 package com.saidashevar.ptgame.service;
 
-import static com.saidashevar.ptgame.model.GameStatus.*;
+import static com.saidashevar.ptgame.config.response.ResponseTypes.BOARD;
+import static com.saidashevar.ptgame.config.response.ResponseTypes.CARD_COUNT;
+import static com.saidashevar.ptgame.model.GameStatus.FINISHED;
+import static com.saidashevar.ptgame.model.GameStatus.IN_PROGRESS;
+import static com.saidashevar.ptgame.model.GameStatus.NEW;
 
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.saidashevar.ptgame.controller.request.ConnectRequest;
-import com.saidashevar.ptgame.controller.request.HireHeroRequest;
+import com.saidashevar.ptgame.config.response.UniResponse;
 import com.saidashevar.ptgame.exception.InvalidGameException;
-import com.saidashevar.ptgame.exception.game.NoMoreActionsLeftException;
-import com.saidashevar.ptgame.exception.game.NoMoreCardInDeckException;
-import com.saidashevar.ptgame.exception.game.TooManyCardsInHandException;
 import com.saidashevar.ptgame.exception.NotFoundException;
-import com.saidashevar.ptgame.model.Card;
 import com.saidashevar.ptgame.model.Game;
-import com.saidashevar.ptgame.model.GamePlay;
+import com.saidashevar.ptgame.model.Hero;
 import com.saidashevar.ptgame.model.Player;
 import com.saidashevar.ptgame.repository.CardRepository;
 import com.saidashevar.ptgame.repository.GameRepository;
+import com.saidashevar.ptgame.repository.HeroRepository;
 import com.saidashevar.ptgame.repository.PlayerRepository;
 
 import lombok.AllArgsConstructor;
@@ -40,6 +44,9 @@ public class GameService {
 	
 	@Autowired
 	CardRepository cardRepository;
+	
+	@Autowired
+	HeroRepository heroRepository;
 	
 	//
 	// First are connection and game managing methods
@@ -94,7 +101,19 @@ public class GameService {
 		
 		return game; 
 	}
-	 
+	
+	public UniResponse< Set<Hero> > getBoard(String gameId) throws InvalidGameException {
+		Set<Hero> set = new HashSet<>();
+		loadGameService(gameId).getPlayers().stream().forEach(p -> set.addAll(p.getBoard()));
+		return new UniResponse< Set<Hero> >(BOARD, set);
+	}
+	
+	public UniResponse< Map<String, Integer> > getCardCount(String gameId) throws InvalidGameException {
+		Map<String, Integer> cardCount = new HashMap<>();
+		loadGameService(gameId).getPlayers().stream()
+			.forEach(p -> cardCount.put(p.getLogin(), p.getHand().size()));
+		return new UniResponse< Map<String, Integer> >(CARD_COUNT, cardCount);
+	}
 	
 	//
 	// Next are gameplay methods

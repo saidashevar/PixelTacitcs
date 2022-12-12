@@ -6,13 +6,13 @@ var login;
 var opponentLogin;
 
 //Next variables save all information about game for that player.
-var handSave;
-var turnSave;
-var gameSave;
-var heroesSave;
+var handSave;		//array of cards in your hand
+var cardCountSave;  //two numbers that determine card count of both players (may be badly translated to eng)
+var turnSave;		//info about your turn
+var gameSave;		//info about game
+var heroesSave;		//info about all heroes on board
 
 //Request functions
-//-
 function placeCard(j, id) {
     $.ajax({
         url: url + "/heroes/hire-hero",
@@ -25,9 +25,9 @@ function placeCard(j, id) {
             "coordinateY": j,
             "cardId": id
         }),
-        success: function (data) {
-            loadBoard(data);
-            reloadHand(data);
+        success: function (newHand) {
+			handSave = newHand;
+            reloadHand(handSave);
         },
         error: function (error) {
             console.log(error);
@@ -37,7 +37,7 @@ function placeCard(j, id) {
 
 function takeCard() {
     $.ajax({
-	    url: url + "/cards/takecard",
+	    url: url + "/cards/take-card",
 	    type: 'POST',
 	    dataType: "json",
 	    contentType: "application/json",
@@ -59,7 +59,6 @@ function takeCard() {
 }
 
 // Some gameplay functions
-//-
 function displayCard(e) {
 	let blackBackground = document.createElement("div");
 	let cardNumber = e.target.id.split("")[4];
@@ -70,7 +69,7 @@ function displayCard(e) {
 	cardImage.id = "displayedCard";
 	cardImage.setAttribute('onclick', 'turnCard()');
 	
-	cardImage.src = "images/Cards/" + lastGameSave.players[login].hand[cardNumber].name + ".png";
+	cardImage.src = "images/Cards/" + handSave[cardNumber].name + ".png";
 	
 	document.body.appendChild(blackBackground);
 	document.body.appendChild(cardImage);

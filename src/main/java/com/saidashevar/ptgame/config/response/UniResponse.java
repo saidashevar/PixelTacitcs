@@ -5,11 +5,11 @@ import lombok.Data;
 @Data
 public class UniResponse<T> {
 	
-	private String type;
+	private ResponseTypes type;
 	private T info;
 	
-	public UniResponse(String string, T cardCount) {
-		this.type = string;
+	public UniResponse(ResponseTypes type, T cardCount) {
+		this.type = type;
 		this.info = cardCount;
 	}
 }
