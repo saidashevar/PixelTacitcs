@@ -1,9 +1,11 @@
 package com.saidashevar.ptgame.controller;
 
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -11,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.saidashevar.ptgame.controller.request.ConnectRequest;
 import com.saidashevar.ptgame.controller.request.StringRequest;
 import com.saidashevar.ptgame.exception.InvalidGameException;
 import com.saidashevar.ptgame.exception.NotFoundException;
@@ -20,6 +23,7 @@ import com.saidashevar.ptgame.model.Player;
 import com.saidashevar.ptgame.model.Turn;
 import com.saidashevar.ptgame.repository.PlayerRepository;
 import com.saidashevar.ptgame.service.GameService;
+import com.saidashevar.ptgame.service.PlayerService;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -31,6 +35,9 @@ import lombok.extern.slf4j.Slf4j;
 public class PlayerController {
 
 	private final GameService gameService;
+//	private final CardService cardService;
+	private final PlayerService playerService;
+	private final SimpMessagingTemplate simpMessagingTemplate;
 	
 	@Autowired
 	PlayerRepository playerRepository;
@@ -65,15 +72,25 @@ public class PlayerController {
 	
 	//Gameplay functions
 	
+	@PostMapping("/take-card") //This is called when player takes card from deck
+	public ResponseEntity< Set<Card> > takeCard(@RequestBody ConnectRequest request) throws NotFoundException, InvalidGameException {
+		Player player = playerService.takeCard(request.getLogin());
+		log.info(player.getLogin() + "takes card");
+		//Send info about card count to both players
+		simpMessagingTemplate.convertAndSend("/topic/game-progress/" + request.getGameId(),
+											 gameService.getCardCount(request.getGameId())); 
+		return ResponseEntity.ok(player.getHand()); 
+	}
+	
 	@GetMapping("/get-hand")
-	ResponseEntity< List<Card> > getHand(@RequestParam("id") String gameId, @RequestParam("login") String login) throws NotFoundException, InvalidGameException {
+	ResponseEntity< Set<Card> > getHand(@RequestParam("id") String gameId, @RequestParam("login") String login) throws NotFoundException, InvalidGameException {
 		Game game = gameService.loadGameService(gameId);
 		return ResponseEntity.ok(game.findPlayers(login)[0].getHand());
 	}
 	
 	@GetMapping("/get-turn")
-	ResponseEntity<Turn> getTurn(@RequestParam("id") String gameId, @RequestParam("login") String login) throws InvalidGameException, NotFoundException {
+	ResponseEntity< Set<Player> > getTurn(@RequestParam("id") String gameId, @RequestParam("login") String login) throws InvalidGameException, NotFoundException {
 		Game game = gameService.loadGameService(gameId);
-		return ResponseEntity.ok(game.findPlayers(login)[0].getTurn());
+		return ResponseEntity.ok(game.getPlayers());
 	}
 }

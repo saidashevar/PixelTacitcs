@@ -1,7 +1,8 @@
 package com.saidashevar.ptgame.model;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -10,8 +11,6 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
 
@@ -27,38 +26,18 @@ public class Card {
 	private String name;
 	private int attack;
 	private int maxHealth;
-
-	@JsonIgnore
-	@ManyToMany(fetch = FetchType.LAZY)
-	@JoinTable(
-			name = "players_decks",
-			joinColumns = @JoinColumn(name = "card_id"),
-			inverseJoinColumns = @JoinColumn(name = "player_login")
-			)
-	private List<Player> inDecks = new ArrayList<>();
 	
 	@JsonIgnore
-	@ManyToMany(fetch = FetchType.LAZY)
-	@JoinTable(
-			name = "players_hands",
-			joinColumns = @JoinColumn(name = "card_id"),
-			inverseJoinColumns = @JoinColumn(name = "player_login")
-			)
-	private List<Player> inHands = new ArrayList<>();
+	@ManyToMany(mappedBy = "deck", fetch = FetchType.LAZY)
+	private Set<Player> inDecks = new HashSet<>();
 	
 	@JsonIgnore
-	@ManyToMany(fetch = FetchType.LAZY)
-	@JoinTable(
-			name = "players_piles",
-			joinColumns = @JoinColumn(name = "card_id"),
-			inverseJoinColumns = @JoinColumn(name = "player_login")
-			)
-	private List<Player> inPiles = new ArrayList<>();
+	@ManyToMany(mappedBy = "hand", fetch = FetchType.LAZY)
+	private Set<Player> inHands = new LinkedHashSet<>();
 	
-	public void takenBy(Player player) {
-		inDecks.remove(player);
-		inHands.add(player);
-	}
+	@JsonIgnore
+	@ManyToMany(mappedBy = "pile", fetch = FetchType.LAZY)
+	private Set<Player> inPiles = new LinkedHashSet<>();
 	
 	public void hiredBy(Player player) {
 		inHands.remove(player);
@@ -106,15 +85,15 @@ public class Card {
 		inPiles.add(player);
 	}
 	
-	public List<Player> getInDecks() {
+	public Set<Player> getInDecks() {
 		return inDecks;
 	}
 	
-	public List<Player> getInHands() {
+	public Set<Player> getInHands() {
 		return inHands;
 	}
 	
-	public List<Player> getInPiles() {
+	public Set<Player> getInPiles() {
 		return inPiles;
 	}
 }

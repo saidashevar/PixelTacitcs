@@ -4,11 +4,16 @@ import static com.saidashevar.ptgame.model.GameStatus.NEW;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.UUID;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.saidashevar.ptgame.exception.NotFoundException;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
 
@@ -19,7 +24,12 @@ public class Game {
 	@Id
 	private String id;
 	
-	@ManyToMany(mappedBy = "playedGames")
+	@JsonIgnore
+	@ManyToMany(fetch = FetchType.LAZY)
+	@JoinTable(
+			name = "games_players",
+			joinColumns = @JoinColumn(name = "game_id"),
+			inverseJoinColumns = @JoinColumn(name = "player_login"))
 	private Set<Player> players = new HashSet<>();
 	
 	private int wave = 0;
@@ -38,6 +48,10 @@ public class Game {
 //		return players.stream().filter(p -> !p.getLogin().equals(login)).findAny()
 //				.orElseThrow(() -> new NotFoundException("Opponent of " + login + "out of universe"));
 //	}
+	
+	public void addPlayer(Player player) {
+		players.add(player);
+	}
 	
 	public void setId(String id) {
 		this.id = id;
@@ -67,5 +81,7 @@ public class Game {
 		return players;
 	}
 
-	public Game() {}
+	public Game() { //Empty constructor is not empty
+		this.id = UUID.randomUUID().toString();
+	}
 }

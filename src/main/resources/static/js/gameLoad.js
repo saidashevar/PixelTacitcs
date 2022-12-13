@@ -3,10 +3,14 @@ window.onload = loadPage;
 function loadPage() {
 	getGameIDandLogin();
 	connectToSocket(gameId);
-	requestHand();
 	requestTurn();
 	requestGame(); //Also requests Heroes if success (hero request depends on game)
 }
+
+//Script map for future:
+// 56. function requestGame()
+// 98. function loadHeroes(heroesSave)
+// 124. function loadHand (hand)
 
 function connectToSocket() {
     console.log("connecting to the game");
@@ -56,6 +60,7 @@ function requestGame() {
         success: function (newGame) {
 			gameSave = newGame;
 			getOpponentLogin(gameSave);
+			requestHand();
 			requestHeroes();
         },
         error: function (error) {
@@ -71,6 +76,7 @@ function requestHand() {
         success: function (newHand) {
 			handSave = newHand;
             loadHand(handSave);
+            if (gameSave.status == "NEW") chooseLeader();
         },
         error: function (error) {
             console.log("Hand wasn't loaded!" + error);
@@ -151,4 +157,45 @@ function getOpponentLogin(gameSave) {
 		if (gameSave.players[0].login == login) opponentLogin = gameSave.players[1].login;
 		else opponentLogin = gameSave.logins[0].login;
 	}
+}
+
+//Another support function
+//Creates background and table with two rows with 3 cards each to show player's first cards.
+function chooseLeader(e) {
+	let table = document.createElement("table");
+	let tbody = document.createElement("tbody");
+	
+	let tr1 = document.createElement("tr");
+	for (let i = 0; i < 3; i++) {
+		let td = document.createElement("td");
+		let img = document.createElement("img");
+		img.classList.add("leaderChoise");
+		img.setAttribute('onclick', 'turnCard()');
+		img.src = "images/Cards/" + handSave[i].name + ".png";
+		td.appendChild(img);
+		tr1.appendChild(td);
+	}
+	
+	let tr2 = document.createElement("tr");
+	for (let i = 3; i < 6; i++) {
+		let td = document.createElement("td");
+		let img = document.createElement("img");
+		img.classList.add("leaderChoise");
+		img.setAttribute('onclick', 'turnCard()');
+		img.src = "images/Cards/" + handSave[i].name + ".png";
+		td.appendChild(img);
+		tr2.appendChild(td);
+	}
+	
+	tbody.appendChild(td1);
+	tbody.appendChild(td2);
+	table.appendChild(tbody);
+	
+	//next paragraph is another function
+	let blackBackground = document.createElement("div");
+	//blackBackground.setAttribute('onclick', 'closeCard()'); Need to remake. hmmm maybe no need in this function at all.
+	blackBackground.id = "BB";
+	document.body.appendChild(blackBackground);
+	
+	document.body.appendChild(table);
 }

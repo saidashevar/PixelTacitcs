@@ -41,7 +41,7 @@ public class GameController {
 	
 	@GetMapping("/get-game")
 	ResponseEntity<Game> getGame(@RequestParam("id") String gameId) throws NotFoundException, InvalidGameException {
-		log.info("Game with ID: " + gameId + " is requested");
+		log.info("Requested game with ID: " + gameId);
 		return ResponseEntity.ok(gameService.loadGameService(gameId));
 	}
 	
@@ -49,9 +49,8 @@ public class GameController {
 	// Game managing methods, maybe i should unite them with rest methods
 	//
 	
-	
 	@PostMapping("/start")
-	public ResponseEntity<Game> startGame(@RequestBody Player player) {
+	public ResponseEntity<Game> startGame(@RequestBody Player player) throws NotFoundException {
 		log.info("start game request: {}", player.getLogin());
 		return ResponseEntity.ok(gameService.createGame(player));
 	}
@@ -61,13 +60,4 @@ public class GameController {
 		log.info("connect random from {}", player.getLogin());
 		return ResponseEntity.ok(gameService.connectToRandomGame(player)); 
 	}
-	
-	//Looks like this mapping is useless now
-//	@GetMapping("/loadgame") //sends basic info about game
-//	public ResponseEntity<Game> loadBoard(@RequestParam("id") String gameId) throws NotFoundException, InvalidGameException { 
-//		log.info("got game with ID: " + gameId);
-////		simpMessagingTemplate.convertAndSend("/topic/game-progress/" + gameId, 
-////											 gameService.getBoard(gameId)); 
-//		return ResponseEntity.ok(gameService.loadGameService(gameId)); 
-//	}
 }

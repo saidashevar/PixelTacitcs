@@ -1,9 +1,7 @@
 package com.saidashevar.ptgame.model;
 
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
-import java.util.Random;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -19,9 +17,7 @@ import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
-import lombok.extern.slf4j.Slf4j;
 
-@Slf4j
 @Entity
 @Table(name = "players")
 public class Player {
@@ -29,47 +25,53 @@ public class Player {
 	@Id
 	private String login;
 	
-	@OneToOne(cascade = CascadeType.ALL)
+	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@JoinColumn(name = "turn", referencedColumnName = "id")
 	private Turn turn = new Turn();
+	
+	@ManyToMany(mappedBy = "players", fetch = FetchType.LAZY)
+	private Set<Game> playedGames = new HashSet<>();
 	
 	@JsonIgnore
 	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(
-			name = "players_games",
+			name = "players_decks",
 			joinColumns = @JoinColumn(name = "player_login"),
-			inverseJoinColumns = @JoinColumn(name = "game_id")
-			)
-	private Set<Game> playedGames = new HashSet<>();
+			inverseJoinColumns = @JoinColumn(name = "card_id"))
+	private Set<Card> deck = new HashSet<>();
+	
+	@JsonIgnore
+	@ManyToMany(fetch = FetchType.LAZY)
+	@JoinTable(
+			name = "players_hands",
+			joinColumns = @JoinColumn(name = "player_login"),
+			inverseJoinColumns = @JoinColumn(name = "card_id"))
+	private Set<Card> hand = new LinkedHashSet<>();
 	
 	@JsonIgnore
 	@OneToMany(mappedBy = "player", fetch = FetchType.LAZY)
 	private Set<Hero> board = new HashSet<>();
 	
 	@JsonIgnore
-	@ManyToMany(mappedBy = "inDecks", fetch = FetchType.LAZY)
-	private List<Card> deck = new ArrayList<>();
-	
-	@JsonIgnore
-	@ManyToMany(mappedBy = "inHands", fetch = FetchType.LAZY)
-	private List<Card> hand = new ArrayList<>();
-	
-	@JsonIgnore
-	@ManyToMany(mappedBy = "inPiles", fetch = FetchType.LAZY)
-	private List<Card> pile = new ArrayList<>();
+	@ManyToMany(fetch = FetchType.LAZY)
+	@JoinTable(
+			name = "players_piles",
+			joinColumns = @JoinColumn(name = "player_login"),
+			inverseJoinColumns = @JoinColumn(name = "card_id"))
+	private Set<Card> pile = new LinkedHashSet<>();
 	
 	//gameplay functions
 	public Card findCardToTake() throws NotFoundException {
-		Random rand = new Random();
-//		return deck.stream().findAny().orElseThrow(() -> new NotFoundException("There are no more cards in "+login+"'s deck!")); old way without random
-		int size = rand.nextInt(deck.size());
-		if (size == 0) throw new NotFoundException("There are no more cards in "+login+"'s deck!");
-		else return deck.get(rand.nextInt(deck.size()));
+//		Random rand = new Random();
+		return deck.stream().findAny().orElseThrow(() -> new NotFoundException("There are no more cards in "+login+"'s deck!")); //old way without random
+//		int size = rand.nextInt(deck.size());
+//		if (size == 0) throw new NotFoundException("There are no more cards in "+login+"'s deck!");
+//		else return deck.get(rand.nextInt(deck.size()));
 	}
 	
-	//game management funcitons
-	public void addGame(Game game) {
-		playedGames.add(game);
+	public void takeCard(Card card) {
+		deck.remove(card);
+		hand.add(card);
 	}
 	
 	//Getters and setters
@@ -77,15 +79,15 @@ public class Player {
 		return login;
 	}
 	
-	public List<Card> getDeck() {
+	public Set<Card> getDeck() {
 		return deck;
 	}
 	
-	public List<Card> getHand() {
+	public Set<Card> getHand() {
 		return hand;
 	}
 	
-	public List<Card> getPile() {
+	public Set<Card> getPile() {
 		return pile;
 	}
 	
@@ -93,6 +95,10 @@ public class Player {
 		return board;
 	}
 
+	public void setDeck(Set<Card> deck) {
+		this.deck = deck;
+	}
+	
 	public void setBoard(Set<Hero> board) {
 		this.board = board;
 	}

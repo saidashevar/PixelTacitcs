@@ -1,6 +1,7 @@
 package com.saidashevar.ptgame.controller;
 
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -55,7 +56,7 @@ public class HeroController {
 	}
 	
 	@PostMapping("/hire-hero") //Returns to player his new hand. And sends board and card count to both players by socket
-	public ResponseEntity< List<Card> > hireHero(@RequestBody HireHeroRequest request) throws InvalidGameException, NotFoundException {
+	public ResponseEntity< Set<Card> > hireHero(@RequestBody HireHeroRequest request) throws InvalidGameException, NotFoundException {
 		log.info(request.getLogin() +" hires new Hero!");
 		heroService.hireHero(request);
 		//Now we have to send both players board, second player must know hero his opponent hired and where.

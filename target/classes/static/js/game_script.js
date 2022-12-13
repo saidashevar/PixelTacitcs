@@ -1,3 +1,6 @@
+// Script map
+// 65. function displayCard(e) 
+
 //Few variables about non gameplay fields.
 const url = 'http://localhost:8080';
 var gameStatus = "NEW";
