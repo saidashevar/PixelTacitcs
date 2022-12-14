@@ -24,7 +24,6 @@ public class Game {
 	@Id
 	private String id;
 	
-	@JsonIgnore
 	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(
 			name = "games_players",

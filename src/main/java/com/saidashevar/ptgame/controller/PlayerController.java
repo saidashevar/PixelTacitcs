@@ -56,18 +56,7 @@ public class PlayerController {
 	ResponseEntity<Player> checkLogin(@RequestBody StringRequest request) {
 		String login = request.getString();
 		log.info(login + " checks his existance in database");
-		//should add it all in game service
-		try {
-			Player player = playerRepository.findById(login)
-					.orElseThrow(() -> new NotFoundException("Player with login: " + login + " wasn't found"));
-			log.info("Player with login: " + login + " was found");
-			return ResponseEntity.ok(player);
-//			return ResponseEntity.ok(playerRepository.findAll().stream().filter(p -> p.getLogin().equals(login))
-//					.findAny().orElseThrow(() -> new NotFoundException("Player with login: " + login + " wasn't found")));
-		} catch (NotFoundException e) {
-			log.info("There is no player with login: " + login + ". Creating new one");
-			return ResponseEntity.ok(playerRepository.save(new Player(login)));
-		}
+		return playerService.checkPlayerLogin(request.getString());
 	}
 	
 	//Gameplay functions

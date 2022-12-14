@@ -53,17 +53,38 @@ public class GameService {
 	// First are connection and game managing methods
 	//
 	
+	public synchronized Game saveGame(Game game) {
+		return gameRepository.save(game);
+	}
+	
+//	public synchronized boolean checkGame(String id, Boolean i) {
+//		
+//	}
+	
+	//Here Player is checked. It certainly exists in db.
 	public Game createGame(Player player) throws NotFoundException {
-		playerRepository.save(player);
 		Game game = new Game();
 		game.addPlayer(player);
-		gameRepository.save(game);
-		
-		
 		playerService.takeDeck(player);
-		playerRepository.save(player);
+		saveGame(game);
 		
-		return game;
+		Boolean i = true;
+		while (i) {
+			try {
+				gameRepository.findById(game.getId());
+				i = false;
+				
+				try {
+				    Thread.sleep(2 * 1000);
+				} catch (InterruptedException ie) {
+				    Thread.currentThread().interrupt();
+				}
+			}
+			catch (Exception e) {
+				i = true;
+			}
+		}
+		return game; 
 	}
 	
 	public Game connectToRandomGame(Player player) {
@@ -78,7 +99,6 @@ public class GameService {
 //			cardService.giveDeck(player);
 //			cardService.giveStartHand(player);
 			playerService.takeDeck(player);
-			playerRepository.save(player);
 			return game;
 		} catch (NotFoundException e) {
 			log.info("Game wasn't found");

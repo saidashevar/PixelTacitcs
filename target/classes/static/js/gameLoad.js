@@ -3,8 +3,7 @@ window.onload = loadPage;
 function loadPage() {
 	getGameIDandLogin();
 	connectToSocket(gameId);
-	requestTurn();
-	requestGame(); //Also requests Heroes if success (hero request depends on game)
+	requestFullGame(); //Also requests Heroes if success (hero request depends on game)
 }
 
 //Script map for future:
@@ -53,7 +52,7 @@ function requestHeroes() {
     })
 }
 
-function requestGame() {
+function requestFullGame() {
     $.ajax({
         url: url + "/games/get-game?id="+gameId+"&login="+login,
         type: 'GET',
@@ -62,6 +61,7 @@ function requestGame() {
 			getOpponentLogin(gameSave);
 			requestHand();
 			requestHeroes();
+			requestTurn();
         },
         error: function (error) {
             console.log("Game wasn't loaded!" + error);

@@ -25,10 +25,11 @@ public class Player {
 	@Id
 	private String login;
 	
-	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@OneToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "turn", referencedColumnName = "id")
 	private Turn turn = new Turn();
 	
+	@JsonIgnore
 	@ManyToMany(mappedBy = "players", fetch = FetchType.LAZY)
 	private Set<Game> playedGames = new HashSet<>();
 	
