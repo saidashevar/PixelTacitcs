@@ -20,7 +20,7 @@ function connectToSocket() {
         stompClient.subscribe("/topic/game-progress/" + gameId, function (response) { // this function works when gets info form socket!
             let data = JSON.parse(response.body);
             console.log(data);
-            switch (data.type) {
+            switch (data.type) { //With response there is type of info from server.
 				case "BOARD":
 					heroesSave = data.info;
 					loadHeroes(heroesSave);
@@ -30,6 +30,7 @@ function connectToSocket() {
 					if (opponentLogin != undefined)
 						console.log("Your opponent has " + cardCountSave[opponentLogin]);
 					else console.log("no opponent now, but you have " + cardCountSave[login] + " cards");
+					// Here must be function that loads card count of your opponent
 				break;
 			}
         })
@@ -170,8 +171,10 @@ function chooseLeader(e) {
 		let td = document.createElement("td");
 		let img = document.createElement("img");
 		img.classList.add("leaderChoise");
-		img.setAttribute('onclick', 'turnCard()');
+		img.classList.add("upsideDown");
+		img.setAttribute('onclick', 'chooseLeader()');
 		img.src = "images/Cards/" + handSave[i].name + ".png";
+		img.id = i + "Leader";
 		td.appendChild(img);
 		tr1.appendChild(td);
 	}
@@ -181,14 +184,17 @@ function chooseLeader(e) {
 		let td = document.createElement("td");
 		let img = document.createElement("img");
 		img.classList.add("leaderChoise");
-		img.setAttribute('onclick', 'turnCard()');
+		img.classList.add("upsideDown");
+		img.setAttribute('onclick', 'chooseLeader()');
 		img.src = "images/Cards/" + handSave[i].name + ".png";
+		img.id = i + "Leader";
 		td.appendChild(img);
 		tr2.appendChild(td);
 	}
 	
-	tbody.appendChild(td1);
-	tbody.appendChild(td2);
+	tbody.appendChild(tr1);
+	tbody.appendChild(tr2);
+	table.id = "showLeaders";
 	table.appendChild(tbody);
 	
 	//next paragraph is another function

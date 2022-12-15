@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,7 +21,6 @@ import com.saidashevar.ptgame.exception.NotFoundException;
 import com.saidashevar.ptgame.model.Card;
 import com.saidashevar.ptgame.model.Game;
 import com.saidashevar.ptgame.model.Player;
-import com.saidashevar.ptgame.model.Turn;
 import com.saidashevar.ptgame.repository.PlayerRepository;
 import com.saidashevar.ptgame.service.GameService;
 import com.saidashevar.ptgame.service.PlayerService;
@@ -45,6 +45,11 @@ public class PlayerController {
 	@GetMapping
 	List<Player> getPlayers() { return playerRepository.findAll(); }
 	
+	@GetMapping("/{login}")
+	Player getPlayer(@PathVariable String login) throws NotFoundException {
+		return playerService.getPlayer(login);
+	}
+	
 	@PostMapping
 	Player createPlayer(@RequestBody Player player) {
 		return playerRepository.save(player); }
@@ -56,7 +61,7 @@ public class PlayerController {
 	ResponseEntity<Player> checkLogin(@RequestBody StringRequest request) {
 		String login = request.getString();
 		log.info(login + " checks his existance in database");
-		return playerService.checkPlayerLogin(request.getString());
+		return ResponseEntity.ok(playerService.checkPlayerLogin(request.getString()));
 	}
 	
 	//Gameplay functions

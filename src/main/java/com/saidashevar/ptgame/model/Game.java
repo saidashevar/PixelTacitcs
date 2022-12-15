@@ -83,4 +83,9 @@ public class Game {
 	public Game() { //Empty constructor is not empty
 		this.id = UUID.randomUUID().toString();
 	}
+	
+	public Game(Player player) {
+		this.id = UUID.randomUUID().toString();
+		players.add(player);
+	}
 }

@@ -32,20 +32,21 @@ public class PlayerService {
 	}
 	
 	public synchronized Player savePlayer(Player player) {
-		return playerRepository.save(player);
+		return playerRepository.save(player); // We use flush, because we often need that player in the next moment, for creating game. 
 	}
 	
-	public synchronized ResponseEntity<Player> checkPlayerLogin(String login) {
+	public synchronized Player checkPlayerLogin(String login) {
 		try {
 			Player player = playerRepository.findById(login)
 					.orElseThrow(() -> new NotFoundException("Player with login: " + login + " wasn't found"));
 			log.info("Player with login: " + login + " was found");
-			return ResponseEntity.ok(player);
+			return player;
 //			return ResponseEntity.ok(playerRepository.findAll().stream().filter(p -> p.getLogin().equals(login))
 //					.findAny().orElseThrow(() -> new NotFoundException("Player with login: " + login + " wasn't found")));
 		} catch (NotFoundException e) {
 			log.info("There is no player with login: " + login + ". Creating new one");
-			return ResponseEntity.ok(savePlayer(new Player(login)));
+			Player player = savePlayer(new Player(login));
+			return player;
 		}
 	}
 	
@@ -55,7 +56,6 @@ public class PlayerService {
 		for (int i = 0; i < 6; i++) { //at start of the game we give player 6 cards.
 			Card card = player.findCardToTake();
 			player.takeCard(card);
-			playerRepository.save(player);
 		}
 	} 
 	
@@ -67,18 +67,9 @@ public class PlayerService {
 		return player;
 	}
 	
-	public void takeDeck(Player player) throws NotFoundException {
+	public void takeDeckAndHand(Player player) throws NotFoundException {
 		player.setDeck(new HashSet<>(cardRepository.findAll()));
-		savePlayer(player);
-//		playerRepository.save(player);
+		takeStartHand(player);
 //		cardRepository.findAll().stream().forEach(card -> { card.addInDeck(player); cardRepository.save(card);});
-		
-//		synchronized (player) {
-//			while (player.getDeck().size() <= 15)
-//				try {
-//					player.wait();
-//				} catch (InterruptedException e) {}
-//		}
-//		takeStartHand(player);
 	}
 }

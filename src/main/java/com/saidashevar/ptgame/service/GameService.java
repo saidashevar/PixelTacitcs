@@ -14,9 +14,11 @@ import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.saidashevar.ptgame.MyDebug;
 import com.saidashevar.ptgame.config.response.UniResponse;
 import com.saidashevar.ptgame.exception.InvalidGameException;
 import com.saidashevar.ptgame.exception.NotFoundException;
+import com.saidashevar.ptgame.model.Card;
 import com.saidashevar.ptgame.model.Game;
 import com.saidashevar.ptgame.model.Hero;
 import com.saidashevar.ptgame.model.Player;
@@ -62,29 +64,28 @@ public class GameService {
 //	}
 	
 	//Here Player is checked. It certainly exists in db.
-	public Game createGame(Player player) throws NotFoundException {
-		Game game = new Game();
-		game.addPlayer(player);
-		playerService.takeDeck(player);
-		saveGame(game);
-		
-		Boolean i = true;
-		while (i) {
-			try {
-				gameRepository.findById(game.getId());
-				i = false;
-				
-				try {
-				    Thread.sleep(2 * 1000);
-				} catch (InterruptedException ie) {
-				    Thread.currentThread().interrupt();
-				}
-			}
-			catch (Exception e) {
-				i = true;
-			}
-		}
-		return game; 
+	public Game createGame(String login) throws NotFoundException {
+		Player player = playerService.checkPlayerLogin(login);
+		Game game = new Game(player);
+		playerService.takeDeckAndHand(player);
+		playerService.savePlayer(player);
+		return saveGame(game);
+//		Boolean i = true; //this was used for debugging, i will erase it later
+//		while (i) {
+//			try {
+//				gameRepository.findById(game.getId());
+//				i = false;
+//				
+//				try {
+//				    Thread.sleep(2 * 1000);
+//				} catch (InterruptedException ie) {
+//				    Thread.currentThread().interrupt();
+//				}
+//			}
+//			catch (Exception e) {
+//				i = true;
+//			}
+//		}
 	}
 	
 	public Game connectToRandomGame(Player player) {
@@ -98,7 +99,7 @@ public class GameService {
 			gameRepository.save(game);
 //			cardService.giveDeck(player);
 //			cardService.giveStartHand(player);
-			playerService.takeDeck(player);
+			playerService.takeDeckAndHand(player);
 			return game;
 		} catch (NotFoundException e) {
 			log.info("Game wasn't found");
@@ -140,6 +141,12 @@ public class GameService {
 		loadGameService(gameId).getPlayers().stream()
 			.forEach(p -> cardCount.put(p.getLogin(), p.getHand().size()));
 		return new UniResponse< Map<String, Integer> >(CARD_COUNT, cardCount);
+	}
+	
+	public String readSet (Set<Card> hand) {
+		MyDebug myDebug = new MyDebug(); 
+		hand.stream().forEach(c -> myDebug.string += c.getId().toString() + " ");
+		return myDebug.string;
 	}
 	  
 	//

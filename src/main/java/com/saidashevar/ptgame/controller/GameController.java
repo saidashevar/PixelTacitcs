@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.saidashevar.ptgame.controller.request.StringRequest;
 import com.saidashevar.ptgame.exception.InvalidGameException;
 import com.saidashevar.ptgame.exception.NotFoundException;
 import com.saidashevar.ptgame.model.Game;
@@ -52,7 +53,7 @@ public class GameController {
 	@PostMapping("/start")
 	public ResponseEntity<Game> startGame(@RequestBody Player player) throws NotFoundException {
 		log.info("start game request: {}", player.getLogin());
-		return ResponseEntity.ok(gameService.createGame(player));
+		return ResponseEntity.ok(gameService.createGame(player.getLogin()));
 	}
 
 	@PostMapping("/connect/random")

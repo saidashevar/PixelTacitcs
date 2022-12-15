@@ -3,6 +3,7 @@ package com.saidashevar.ptgame.model;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
+import java.util.TreeSet;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.saidashevar.ptgame.exception.NotFoundException;
@@ -47,7 +48,7 @@ public class Player {
 			name = "players_hands",
 			joinColumns = @JoinColumn(name = "player_login"),
 			inverseJoinColumns = @JoinColumn(name = "card_id"))
-	private Set<Card> hand = new LinkedHashSet<>();
+	private Set<Card> hand = new TreeSet<>();
 	
 	@JsonIgnore
 	@OneToMany(mappedBy = "player", fetch = FetchType.LAZY)

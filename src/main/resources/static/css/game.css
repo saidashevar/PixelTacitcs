@@ -186,6 +186,15 @@ li[id ^= "hand"] {
   	z-index: 100;
 }
 
-#upsideDown{
-  transform: rotateY(180deg);
+#showLeaders {
+	position: fixed;
+	left: 50px;
+  	top: 20px;
+  	width: 193px;
+  	height: 285px;
+  	z-index: 100;
+}
+
+.upsideDown{
+	transform: scaleY(-1) scaleX(-1);
 }

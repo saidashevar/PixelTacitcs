@@ -3,6 +3,7 @@ package com.saidashevar.ptgame.model;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
+import java.util.TreeSet;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -16,7 +17,7 @@ import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "cards")
-public class Card {
+public class Card implements Comparable<Card>{
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -33,11 +34,11 @@ public class Card {
 	
 	@JsonIgnore
 	@ManyToMany(mappedBy = "hand", fetch = FetchType.LAZY)
-	private Set<Player> inHands = new LinkedHashSet<>();
+	private Set<Player> inHands = new TreeSet<>();
 	
 	@JsonIgnore
 	@ManyToMany(mappedBy = "pile", fetch = FetchType.LAZY)
-	private Set<Player> inPiles = new LinkedHashSet<>();
+	private Set<Player> inPiles = new HashSet<>();
 	
 	public void hiredBy(Player player) {
 		inHands.remove(player);
@@ -95,5 +96,10 @@ public class Card {
 	
 	public Set<Player> getInPiles() {
 		return inPiles;
+	}
+
+	@Override 
+	public int compareTo(Card card) {
+		return (int)(card.getId() - this.id); //oh my god
 	}
 }

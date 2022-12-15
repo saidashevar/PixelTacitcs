@@ -57,7 +57,7 @@ public class CardController {
 		return cardRepository.save(card);
 	}	
 	
-	@PostMapping("/updateAll") //fast restoring
+	@GetMapping("/updateAll") //fast restoring
 	void createCards() {
 		cardRepository.save(new Card(2, "Cursed_Knight", 3, 6));
 		cardRepository.save(new Card(2, "Diabolist", 1, 3));
@@ -78,7 +78,7 @@ public class CardController {
 		cardRepository.save(new Card(2, "Operative", 2, 5));
 		cardRepository.save(new Card(2, "Necromancer", 2, 6));
 		cardRepository.save(new Card(2, "Warmage", 4, 3));
-		cardRepository.save(new Card(2, "Tactitian", 0, 4));
+		cardRepository.save(new Card(2, "Tactician", 0, 4));
 		cardRepository.save(new Card(2, "Supervillain", 0, 3));
 		cardRepository.save(new Card(2, "Warlock", 2, 3));
 		cardRepository.save(new Card(2, "Technologist", 3, 3));

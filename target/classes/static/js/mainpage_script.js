@@ -2,12 +2,12 @@ const url = 'http://localhost:8080';
 
 function create_game_button() {
 	let login = document.getElementById("login").value;
-	check_login(login, create_new_game(login));
+	create_new_game(login);
 }
 
 function connect_to_random_game_button() {
 	let login = document.getElementById("login").value;
-	check_login(login, connect_to_random_game(login));
+	connect_to_random_game(login);
 }
 
 //Checks if player with that login exists. If not, creates new player and...
@@ -21,6 +21,7 @@ function check_login(login, fun) {
             "string": login
         }),
         success: function (player) {
+			if (typeof fun == 'function')
 			fun(player.login);
         },
         error: function (error) {

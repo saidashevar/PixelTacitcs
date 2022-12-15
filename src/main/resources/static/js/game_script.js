@@ -61,6 +61,30 @@ function takeCard() {
 	})
 }
 
+function chooseLeader (e) {
+	let chosenCard = e.target.id.split("")[0];
+	let cardId = handSave[chosenCard].id;
+	$.ajax({
+        url: url + "/heroes/hire-leader",
+        type: 'POST',
+        dataType: "json",
+        contentType: "application/json",
+        data: JSON.stringify({
+            "gameId": gameId,
+            "login": login,
+            "coordinateY": 2,
+            "cardId": cardId
+        }),
+        success: function (newHand) {
+			handSave = newHand;
+            reloadHand(handSave);
+        },
+        error: function (error) {
+            console.log(error);
+        }
+    })
+}
+
 // Some gameplay functions
 function displayCard(e) {
 	let blackBackground = document.createElement("div");
@@ -94,6 +118,7 @@ function turnCard() {
 		card.style.removeProperty("transform");
 	}
 }
+//chooseLeader is also event function...
 
 //Support functions
 function addCardInHand(hand, cardId) {
