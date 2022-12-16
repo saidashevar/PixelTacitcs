@@ -16,8 +16,9 @@ import org.springframework.web.bind.annotation.RestController;
 import com.saidashevar.ptgame.controller.request.HireHeroRequest;
 import com.saidashevar.ptgame.exception.InvalidGameException;
 import com.saidashevar.ptgame.exception.NotFoundException;
-import com.saidashevar.ptgame.model.Card;
-import com.saidashevar.ptgame.model.Hero;
+import com.saidashevar.ptgame.model.Player;
+import com.saidashevar.ptgame.model.cards.Card;
+import com.saidashevar.ptgame.model.cards.Hero;
 import com.saidashevar.ptgame.repository.CardRepository;
 import com.saidashevar.ptgame.repository.HeroRepository;
 import com.saidashevar.ptgame.service.GameService;
@@ -67,4 +68,13 @@ public class HeroController {
 				 							 gameService.getCardCount(request.getGameId()));
 		return ResponseEntity.ok(playerService.getPlayer(request.getLogin()).getHand());
 	}
+	
+	@PostMapping("/hire-leader") //returns hand after choosing leader
+	public ResponseEntity< Set<Card> > hireLeader(@RequestBody HireHeroRequest request) throws NotFoundException {
+		log.info(request.getLogin() +" hires new Leader!");
+		Player player = playerService.savePlayer(
+				heroService.hireLeader(playerService.getPlayer(request.getLogin()), request.getCardId()));
+		return ResponseEntity.ok(player.getHand());
+	}
+	
 }

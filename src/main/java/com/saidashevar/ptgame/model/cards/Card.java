@@ -1,11 +1,11 @@
-package com.saidashevar.ptgame.model;
+package com.saidashevar.ptgame.model.cards;
 
 import java.util.HashSet;
-import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.TreeSet;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.saidashevar.ptgame.model.Player;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -17,16 +17,11 @@ import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "cards")
-public class Card implements Comparable<Card>{
+public class Card extends CardBasis implements Comparable<Card>{
 	
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
-	
-	private int edition;
-	private String name;
-	private int attack;
-	private int maxHealth;
+//	@Id
+//	@GeneratedValue(strategy = GenerationType.IDENTITY)
+//	private int id;
 	
 	@JsonIgnore
 	@ManyToMany(mappedBy = "deck", fetch = FetchType.LAZY)
@@ -39,39 +34,31 @@ public class Card implements Comparable<Card>{
 	@JsonIgnore
 	@ManyToMany(mappedBy = "pile", fetch = FetchType.LAZY)
 	private Set<Player> inPiles = new HashSet<>();
-	
-	public void hiredBy(Player player) {
-		inHands.remove(player);
-	}
 
 	public Card(int edition, String name, int attack, int maxHealth) {
-		super();
-		this.edition = edition;
-		this.name = name;
-		this.attack = attack;
-		this.maxHealth = maxHealth;
+		super(edition, name, attack, maxHealth);
 	}
 	
 	public Card() {}
 	
-	public Long getId() {
-		return id;
+	public int getId() {
+		return super.getId();
 	}
 	
 	public int getEdition() {
-		return edition;
+		return super.getEdition();
 	}
 	
 	public String getName() {
-		return name;
+		return super.getName();
 	}
 	
 	public int getAttack() {
-		return attack;
+		return super.getAttack();
 	}
 
 	public int getMaxHealth() {
-		return maxHealth;
+		return super.getMaxHealth();
 	}
 	
 	public void addInDeck(Player player) {
@@ -100,6 +87,6 @@ public class Card implements Comparable<Card>{
 
 	@Override 
 	public int compareTo(Card card) {
-		return (int)(card.getId() - this.id); //oh my god
+		return card.getId() - super.getId(); //oh my god
 	}
 }

@@ -18,10 +18,10 @@ import com.saidashevar.ptgame.MyDebug;
 import com.saidashevar.ptgame.config.response.UniResponse;
 import com.saidashevar.ptgame.exception.InvalidGameException;
 import com.saidashevar.ptgame.exception.NotFoundException;
-import com.saidashevar.ptgame.model.Card;
 import com.saidashevar.ptgame.model.Game;
-import com.saidashevar.ptgame.model.Hero;
 import com.saidashevar.ptgame.model.Player;
+import com.saidashevar.ptgame.model.cards.Card;
+import com.saidashevar.ptgame.model.cards.Hero;
 import com.saidashevar.ptgame.repository.CardRepository;
 import com.saidashevar.ptgame.repository.GameRepository;
 import com.saidashevar.ptgame.repository.HeroRepository;
@@ -145,7 +145,7 @@ public class GameService {
 	
 	public String readSet (Set<Card> hand) {
 		MyDebug myDebug = new MyDebug(); 
-		hand.stream().forEach(c -> myDebug.string += c.getId().toString() + " ");
+		hand.stream().forEach(c -> myDebug.string += c.getId() + " ");
 		return myDebug.string;
 	}
 	  

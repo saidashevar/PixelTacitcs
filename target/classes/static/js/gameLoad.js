@@ -77,7 +77,7 @@ function requestHand() {
         success: function (newHand) {
 			handSave = newHand;
             loadHand(handSave);
-            if (gameSave.status == "NEW") chooseLeader();
+            if (gameSave.status == "NEW") shawLeaders();
         },
         error: function (error) {
             console.log("Hand wasn't loaded!" + error);
@@ -162,7 +162,8 @@ function getOpponentLogin(gameSave) {
 
 //Another support function
 //Creates background and table with two rows with 3 cards each to show player's first cards.
-function chooseLeader(e) {
+//And this function is too big
+function shawLeaders(e) {
 	let table = document.createElement("table");
 	let tbody = document.createElement("tbody");
 	
@@ -172,7 +173,7 @@ function chooseLeader(e) {
 		let img = document.createElement("img");
 		img.classList.add("leaderChoise");
 		img.classList.add("upsideDown");
-		img.setAttribute('onclick', 'chooseLeader()');
+		img.addEventListener('click', chooseLeader);
 		img.src = "images/Cards/" + handSave[i].name + ".png";
 		img.id = i + "Leader";
 		td.appendChild(img);
@@ -185,7 +186,7 @@ function chooseLeader(e) {
 		let img = document.createElement("img");
 		img.classList.add("leaderChoise");
 		img.classList.add("upsideDown");
-		img.setAttribute('onclick', 'chooseLeader()');
+		img.addEventListener('click', chooseLeader);
 		img.src = "images/Cards/" + handSave[i].name + ".png";
 		img.id = i + "Leader";
 		td.appendChild(img);

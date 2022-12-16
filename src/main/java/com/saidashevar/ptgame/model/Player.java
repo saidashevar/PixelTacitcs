@@ -7,6 +7,9 @@ import java.util.TreeSet;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.saidashevar.ptgame.exception.NotFoundException;
+import com.saidashevar.ptgame.model.cards.Card;
+import com.saidashevar.ptgame.model.cards.Hero;
+import com.saidashevar.ptgame.model.cards.Leader;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
@@ -25,6 +28,10 @@ public class Player {
 	
 	@Id
 	private String login;
+	
+	@OneToOne(cascade = CascadeType.ALL)
+	@JoinColumn(name = "leader", referencedColumnName = "id")
+	private Leader leader;
 	
 	@OneToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "turn", referencedColumnName = "id")
@@ -76,6 +83,12 @@ public class Player {
 		hand.add(card);
 	}
 	
+	public void removeLeaderCardFromHand(int id) throws NotFoundException { //Just removes card wtih leader from hand
+		Card futureLeader = hand.stream().filter(card -> card.getId() == id).findAny()
+			.orElseThrow(() -> new NotFoundException(this.login + " tries to make leader somebody else"));
+		hand.remove(futureLeader);
+	}
+	
 	//Getters and setters
 	public String getLogin() {
 		return login;
@@ -113,6 +126,14 @@ public class Player {
 		return playedGames;
 	}
 
+	public Leader getLeader() {
+		return leader;
+	}
+
+	public void setLeader(Leader leader) {
+		this.leader = leader;
+	}
+
 	//Constructors
 	public Player(String login) {
 		super();
@@ -120,33 +141,4 @@ public class Player {
 	}
 	
 	public Player() {}
-	
-	//for some time, while there is no database, cards are added here
-//	{
-//		deck.add(new Card(2, "Cursed_Knight", 3, 6));
-//		deck.add(new Card(2, "Diabolist", 1, 3));
-//		deck.add(new Card(2, "Divinity", 2, 4));
-//		deck.add(new Card(2, "Druid", 2, 5));
-//		deck.add(new Card(2, "Chronicler", 1, 4));
-//		deck.add(new Card(2, "Immortal", 3, 2));
-//		deck.add(new Card(2, "Inventor", 1, 5));
-//		deck.add(new Card(2, "Lorekeeper", 2, 4));
-//		deck.add(new Card(2, "Magical_Knight", 2, 4));
-//		deck.add(new Card(2, "Puppeter", 2, 4));
-//		deck.add(new Card(2, "Relic_Hunter", 3, 7));
-//		deck.add(new Card(2, "Sage", 0, 4));
-//		deck.add(new Card(2, "Plague_Bearer", 3, 4));
-//		deck.add(new Card(2, "Monster_Hunter", 3, 5));
-//		deck.add(new Card(2, "Mastermind", 3, 6));
-//		deck.add(new Card(2, "Planebinder", 2, 5));
-//		deck.add(new Card(2, "Operative", 2, 5));
-//		deck.add(new Card(2, "Necromancer", 2, 6));
-//		deck.add(new Card(2, "Warmage", 4, 3));
-//		deck.add(new Card(2, "Tactitian", 0, 4));
-//		deck.add(new Card(2, "Supervillain", 0, 3));
-//		deck.add(new Card(2, "Warlock", 2, 3));
-//		deck.add(new Card(2, "Technologist", 3, 3));
-//		deck.add(new Card(2, "Sniper", 6, 3));
-//		deck.add(new Card(2, "Werewolf", 3, 5));
-//	}
 }

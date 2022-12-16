@@ -7,5 +7,5 @@ public class HireHeroRequest {
 	private String gameId;
     private String login;
     private int coordinateY;
-    private Long cardId;
+    private int cardId;
 }

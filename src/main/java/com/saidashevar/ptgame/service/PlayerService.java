@@ -3,12 +3,11 @@ package com.saidashevar.ptgame.service;
 import java.util.HashSet;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.saidashevar.ptgame.exception.NotFoundException;
-import com.saidashevar.ptgame.model.Card;
 import com.saidashevar.ptgame.model.Player;
+import com.saidashevar.ptgame.model.cards.Card;
 import com.saidashevar.ptgame.repository.CardRepository;
 import com.saidashevar.ptgame.repository.PlayerRepository;
 

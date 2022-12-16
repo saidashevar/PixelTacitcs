@@ -76,6 +76,10 @@ function chooseLeader (e) {
             "cardId": cardId
         }),
         success: function (newHand) {
+			let background = document.getElementById("BB");
+			let leadersTable = document.getElementById("showLeaders");
+			document.body.removeChild(background);
+			document.body.removeChild(leadersTable);
 			handSave = newHand;
             reloadHand(handSave);
         },

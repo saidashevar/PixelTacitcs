@@ -2,6 +2,6 @@ package com.saidashevar.ptgame.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import com.saidashevar.ptgame.model.Hero;
+import com.saidashevar.ptgame.model.cards.Hero;
 
 public interface HeroRepository extends JpaRepository<Hero, Long> {}

@@ -6,7 +6,6 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.saidashevar.ptgame.exception.NotFoundException;
 
 import jakarta.persistence.Entity;
