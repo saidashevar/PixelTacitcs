@@ -1,5 +1,11 @@
 package com.saidashevar.ptgame.service;
 
+//import static com.saidashevar.ptgame.model.GameStatus.CHOOSING_LEADERS;
+//import static com.saidashevar.ptgame.model.GameStatus.CHOOSING_LEADERS_1LEADER_CHOSEN;
+//import static com.saidashevar.ptgame.model.GameStatus.NO2PLAYER;
+//import static com.saidashevar.ptgame.model.GameStatus.NO2PLAYER_1LEADER_CHOSEN;
+//import static com.saidashevar.ptgame.model.GameStatus.PEACE;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -55,10 +61,11 @@ public class HeroService {
 	}
 	
 	public Player hireLeader(Player player, int leaderId) throws NotFoundException { //this is not necessary to return anything
-		LeaderBasis leaderBasis = leaderBasisRepository.findById(leaderId + 25)
-				.orElseThrow(() -> new NotFoundException("Leader with that id: " + leaderId + " doesn't exist")); //I won't create LeaderService for this
+		LeaderBasis leaderBasis = leaderBasisRepository.findById(leaderId + 25) 									//For now leaders have id of connected cards +25. It may be changed many ways, so this line with !CAUTION!
+				.orElseThrow(() -> new NotFoundException("Leader with that id: " + leaderId + " doesn't exist")); 	//I won't create LeaderService for this
 		player.setLeader(new Leader(leaderBasis, player));
 		player.removeLeaderCardFromHand(leaderId);
+		
 		return player;
 	}
 }

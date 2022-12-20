@@ -2,6 +2,7 @@ package com.saidashevar.ptgame.model;
 
 import java.util.HashSet;
 import java.util.LinkedHashSet;
+import java.util.Random;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -29,6 +30,9 @@ public class Player {
 	@Id
 	private String login;
 	
+	private Boolean isRed; //this Boolean just shows cards' shirts color. Red or blue.
+	
+	@JsonIgnore //It must be hidden before 2-nd round
 	@OneToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "leader", referencedColumnName = "id")
 	private Leader leader;
@@ -89,6 +93,10 @@ public class Player {
 		hand.remove(futureLeader);
 	}
 	
+	public void setColor(Player player) {
+		setRed(!player.isRed());
+	}
+	
 	//Getters and setters
 	public String getLogin() {
 		return login;
@@ -134,11 +142,29 @@ public class Player {
 		this.leader = leader;
 	}
 
+	public boolean isRed() {
+		return isRed;
+	}
+
+	public void setRed() {
+		Random rd = new Random();
+		isRed = rd.nextBoolean();
+	}
+	
+	public void setRed(boolean isRed) {
+		this.isRed = isRed;
+	}
+
 	//Constructors
+	public Player() {}
+	
 	public Player(String login) {
 		super();
 		this.login = login;
 	}
 	
-	public Player() {}
+	public Player(String login, boolean isRed) {
+		this(login);
+		this.isRed = isRed;
+	}
 }

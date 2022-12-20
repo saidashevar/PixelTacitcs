@@ -1,5 +1,14 @@
 package com.saidashevar.ptgame.controller;
 
+//eclipse don't want to import static automatically so i just save this here
+//nothing bad happens, right?
+//import static com.saidashevar.ptgame.model.GameStatus.CHOOSING_LEADERS;
+//import static com.saidashevar.ptgame.model.GameStatus.CHOOSING_LEADERS_1LEADER_CHOSEN;
+//import static com.saidashevar.ptgame.model.GameStatus.FINISHED;
+//import static com.saidashevar.ptgame.model.GameStatus.NO2PLAYER;
+//import static com.saidashevar.ptgame.model.GameStatus.NO2PLAYER_1LEADER_CHOSEN;
+//import static com.saidashevar.ptgame.model.GameStatus.PEACE;
+
 import java.util.List;
 import java.util.Set;
 
@@ -16,6 +25,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.saidashevar.ptgame.controller.request.HireHeroRequest;
 import com.saidashevar.ptgame.exception.InvalidGameException;
 import com.saidashevar.ptgame.exception.NotFoundException;
+import com.saidashevar.ptgame.model.Game;
 import com.saidashevar.ptgame.model.Player;
 import com.saidashevar.ptgame.model.cards.Card;
 import com.saidashevar.ptgame.model.cards.Hero;
@@ -69,11 +79,26 @@ public class HeroController {
 		return ResponseEntity.ok(playerService.getPlayer(request.getLogin()).getHand());
 	}
 	
-	@PostMapping("/hire-leader") //returns hand after choosing leader
-	public ResponseEntity< Set<Card> > hireLeader(@RequestBody HireHeroRequest request) throws NotFoundException {
+	@PostMapping("/hire-leader") //returns hand after choosing leader and sends message that both players have chosen leader
+	public ResponseEntity< Set<Card> > hireLeader(@RequestBody HireHeroRequest request) throws NotFoundException, InvalidGameException {
 		log.info(request.getLogin() +" hires new Leader!");
-		Player player = playerService.savePlayer(
-				heroService.hireLeader(playerService.getPlayer(request.getLogin()), request.getCardId()));
+		
+		Game game = gameService.loadGameService(request.getGameId());
+		game.nextLeaderStatus();
+		
+		Player player = 
+		playerService.savePlayer(
+			heroService.hireLeader(
+				playerService.getPlayer(request.getLogin()),
+				request.getCardId()
+			)
+		);
+		
+		//Now send players new info about leaders
+		simpMessagingTemplate.convertAndSend("/topic/game-progress/" + request.getGameId(),
+												 gameService.getGame(game));
+		
+		//As response - new player's hand
 		return ResponseEntity.ok(player.getHand());
 	}
 	

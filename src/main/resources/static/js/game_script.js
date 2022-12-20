@@ -3,10 +3,11 @@
 
 //Few variables about non gameplay fields.
 const url = 'http://localhost:8080';
-var gameStatus = "NEW";
+//var gameStatus;
 var gameId;
 var login;
-var opponentLogin;
+var opponentSave;
+var youSave;
 
 //Next variables save all information about game for that player.
 var handSave;		//array of cards in your hand
@@ -75,13 +76,12 @@ function chooseLeader (e) {
             "coordinateY": 2,
             "cardId": cardId
         }),
-        success: function (newHand) {
-			let background = document.getElementById("BB");
+        success: function (newHand) { //all the logic in gameload.js
+			//removeBackgroundAndText()
 			let leadersTable = document.getElementById("showLeaders");
-			document.body.removeChild(background);
 			document.body.removeChild(leadersTable);
 			handSave = newHand;
-            reloadHand(handSave);
+			//reloadHand(handSave);
         },
         error: function (error) {
             console.log(error);

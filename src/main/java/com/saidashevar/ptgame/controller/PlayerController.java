@@ -21,6 +21,7 @@ import com.saidashevar.ptgame.exception.NotFoundException;
 import com.saidashevar.ptgame.model.Game;
 import com.saidashevar.ptgame.model.Player;
 import com.saidashevar.ptgame.model.cards.Card;
+import com.saidashevar.ptgame.model.cards.Leader;
 import com.saidashevar.ptgame.repository.PlayerRepository;
 import com.saidashevar.ptgame.service.GameService;
 import com.saidashevar.ptgame.service.PlayerService;
@@ -86,5 +87,12 @@ public class PlayerController {
 	ResponseEntity< Set<Player> > getTurn(@RequestParam("id") String gameId, @RequestParam("login") String login) throws InvalidGameException, NotFoundException {
 		Game game = gameService.loadGameService(gameId);
 		return ResponseEntity.ok(game.getPlayers());
+	}
+	
+	@GetMapping("/get-leader")
+	ResponseEntity<Leader> getLeader(@RequestParam("id") String gameId, @RequestParam("login") String login) throws InvalidGameException, NotFoundException {
+		Game game = gameService.loadGameService(gameId);
+		Leader leader = game.findPlayers(login)[0].getLeader();
+		return ResponseEntity.ok(leader);
 	}
 }

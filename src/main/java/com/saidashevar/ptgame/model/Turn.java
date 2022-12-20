@@ -17,8 +17,8 @@ public class Turn {
 	private Long id;
 	
 	private int wave = 0;
-	private boolean Attacking; // Player who attacks, makes his move first
-	private byte actionsLeft = 10; //For experiments only, by rules there are only 2.
+	private boolean Attacking = false; // Player who attacks, makes his move first
+	private byte actionsLeft = 2;
 	
 	public int getWave() {
 		return wave;

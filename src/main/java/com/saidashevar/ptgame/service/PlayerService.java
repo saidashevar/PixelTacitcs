@@ -1,11 +1,13 @@
 package com.saidashevar.ptgame.service;
 
 import java.util.HashSet;
+import java.util.Random;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.saidashevar.ptgame.exception.NotFoundException;
+import com.saidashevar.ptgame.model.Game;
 import com.saidashevar.ptgame.model.Player;
 import com.saidashevar.ptgame.model.cards.Card;
 import com.saidashevar.ptgame.repository.CardRepository;
@@ -25,6 +27,8 @@ public class PlayerService {
 	@Autowired
 	CardRepository cardRepository;
 	
+	//RESTful functions
+	
 	public Player getPlayer(String login) throws NotFoundException {
 		return playerRepository.findById(login)
 				.orElseThrow(() -> new NotFoundException("Player with login; " + login + " wasn't found")); 
@@ -34,14 +38,14 @@ public class PlayerService {
 		return playerRepository.save(player); // We use flush, because we often need that player in the next moment, for creating game. 
 	}
 	
-	public synchronized Player checkPlayerLogin(String login) {
+	//Game management functions
+	
+	public synchronized Player checkPlayerLogin(String login) { //Check if this login exists, if not creates new one and defines his color.
 		try {
 			Player player = playerRepository.findById(login)
 					.orElseThrow(() -> new NotFoundException("Player with login: " + login + " wasn't found"));
 			log.info("Player with login: " + login + " was found");
 			return player;
-//			return ResponseEntity.ok(playerRepository.findAll().stream().filter(p -> p.getLogin().equals(login))
-//					.findAny().orElseThrow(() -> new NotFoundException("Player with login: " + login + " wasn't found")));
 		} catch (NotFoundException e) {
 			log.info("There is no player with login: " + login + ". Creating new one");
 			Player player = savePlayer(new Player(login));

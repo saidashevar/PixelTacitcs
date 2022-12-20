@@ -2,9 +2,12 @@ package com.saidashevar.ptgame.service;
 
 import static com.saidashevar.ptgame.config.response.ResponseTypes.BOARD;
 import static com.saidashevar.ptgame.config.response.ResponseTypes.CARD_COUNT;
+import static com.saidashevar.ptgame.config.response.ResponseTypes.STATUS;
+import static com.saidashevar.ptgame.model.GameStatus.CHOOSING_LEADERS;
+import static com.saidashevar.ptgame.model.GameStatus.CHOOSING_LEADERS_1LEADER_CHOSEN;
 import static com.saidashevar.ptgame.model.GameStatus.FINISHED;
-import static com.saidashevar.ptgame.model.GameStatus.IN_PROGRESS;
-import static com.saidashevar.ptgame.model.GameStatus.NEW;
+import static com.saidashevar.ptgame.model.GameStatus.NO2PLAYER;
+import static com.saidashevar.ptgame.model.GameStatus.NO2PLAYER_1LEADER_CHOSEN;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -59,52 +62,31 @@ public class GameService {
 		return gameRepository.save(game);
 	}
 	
-//	public synchronized boolean checkGame(String id, Boolean i) {
-//		
-//	}
-	
-	//Here Player is checked. It certainly exists in db.
 	public Game createGame(String login) throws NotFoundException {
 		Player player = playerService.checkPlayerLogin(login);
-		Game game = new Game(player);
+		Game game = new Game(player); //Creates new game with NO2PLAYER status and this player added.
 		playerService.takeDeckAndHand(player);
+		player.setRed(); //This defines player's color randomly
 		playerService.savePlayer(player);
 		return saveGame(game);
-//		Boolean i = true; //this was used for debugging, i will erase it later
-//		while (i) {
-//			try {
-//				gameRepository.findById(game.getId());
-//				i = false;
-//				
-//				try {
-//				    Thread.sleep(2 * 1000);
-//				} catch (InterruptedException ie) {
-//				    Thread.currentThread().interrupt();
-//				}
-//			}
-//			catch (Exception e) {
-//				i = true;
-//			}
-//		}
 	}
 	
-	public Game connectToRandomGame(Player player) {
-		Game game;
-		try {
-			game = gameRepository.findAll().stream()
-					.filter(g -> g.getStatus().equals(NEW)).findFirst()
-					.orElseThrow(() -> new NotFoundException("Game not found"));
-			game.setStatus(IN_PROGRESS);
-			game.addPlayer(player);
-			gameRepository.save(game);
-//			cardService.giveDeck(player);
-//			cardService.giveStartHand(player);
-			playerService.takeDeckAndHand(player);
-			return game;
-		} catch (NotFoundException e) {
-			log.info("Game wasn't found");
-			return null;
-		} 
+	public Game connectToRandomGame(String login) throws NotFoundException {
+		Player player = playerService.checkPlayerLogin(login);
+		playerService.takeDeckAndHand(player);
+		player.setRed(); //This defines player's color randomly
+		playerService.savePlayer(player);
+		
+		Game game = gameRepository.findAll().stream()
+				.filter(g -> g.getStatus().equals(NO2PLAYER)).findFirst()
+				.orElseThrow(() -> new NotFoundException("No new games were found"));
+		game.addPlayer(player);
+		
+		//We need to change status for frontend correctly
+		if (game.getStatus().equals(NO2PLAYER))	game.setStatus(CHOOSING_LEADERS);
+		else if (game.getStatus().equals(NO2PLAYER_1LEADER_CHOSEN)) game.setStatus(CHOOSING_LEADERS_1LEADER_CHOSEN);
+		
+		return saveGame(game);
 	} 
 	
 	//
@@ -143,7 +125,11 @@ public class GameService {
 		return new UniResponse< Map<String, Integer> >(CARD_COUNT, cardCount);
 	}
 	
-	public String readSet (Set<Card> hand) {
+	public UniResponse<Game> getGame(Game game) {
+		return new UniResponse<Game>(STATUS, game);
+	}
+	
+	public String readSet (Set<Card> hand) { //don't forget to remove this
 		MyDebug myDebug = new MyDebug(); 
 		hand.stream().forEach(c -> myDebug.string += c.getId() + " ");
 		return myDebug.string;
