@@ -1,5 +1,7 @@
 package com.saidashevar.ptgame.service;
 
+import java.util.List;
+
 //import static com.saidashevar.ptgame.model.GameStatus.CHOOSING_LEADERS;
 //import static com.saidashevar.ptgame.model.GameStatus.CHOOSING_LEADERS_1LEADER_CHOSEN;
 //import static com.saidashevar.ptgame.model.GameStatus.NO2PLAYER;
@@ -7,6 +9,7 @@ package com.saidashevar.ptgame.service;
 //import static com.saidashevar.ptgame.model.GameStatus.PEACE;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Example;
 import org.springframework.stereotype.Service;
 
 import com.saidashevar.ptgame.controller.request.HireHeroRequest;
@@ -44,6 +47,14 @@ public class HeroService {
 	LeaderRepository leaderRepository;
 	@Autowired
 	LeaderBasisRepository leaderBasisRepository;
+	
+	public List<Hero> getHeroes(String login) {
+		Player player = new Player(login);
+		Hero hero = new Hero();
+		hero.setPlayer(player);
+		Example<Hero> ex = Example.of(hero);
+		return heroRepository.findAll(ex);
+	}
 	
 	public Hero hireHero(HireHeroRequest request) throws InvalidGameException, NotFoundException { //this is not necessary to return anything
 		Game game = gameService.loadGameService(request.getGameId());

@@ -32,6 +32,10 @@ public class Hero extends CardBasis {
 	@JoinColumn(name = "player_login", referencedColumnName = "login")
 	private Player player; 
 	
+	public void setPlayer(Player player) {
+		this.player = player;
+	}
+	
 	public Player getPlayer() {
 		return player;
 	}

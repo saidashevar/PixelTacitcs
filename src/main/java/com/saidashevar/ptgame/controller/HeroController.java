@@ -63,7 +63,9 @@ public class HeroController {
 	@GetMapping("/get-heroes")
 	ResponseEntity< List<Hero> > getBoard(@RequestParam("id") String gameId, 
 										 @RequestParam("login") String login) {
-		return ResponseEntity.ok(heroRepository.findAll().stream().filter(card -> card.getPlayer().getLogin().equals(login)).toList());
+		return ResponseEntity.ok(heroService.getHeroes(login));
+				//heroRepository.
+				//.findAll().stream().filter(card -> card.getPlayer().getLogin().equals(login)).toList());
 	}
 	
 	@PostMapping("/hire-hero") //Returns to player his new hand. And sends board and card count to both players by socket

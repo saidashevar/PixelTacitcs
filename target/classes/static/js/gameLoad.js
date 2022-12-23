@@ -23,7 +23,7 @@ function connectToSocket() {
             switch (data.type) { //With response there is type of info from server.
 				case "BOARD":
 					heroesSave = data.info;
-					loadHeroes(heroesSave);
+					loadHeroes();
 				break;
 				case "CARD_COUNT":
 					cardCountSave = data.info;
@@ -48,7 +48,9 @@ async function requestFullGame() {
 			requestLeader(checkStatus);
 			
 			//Next functions are... useless for now
-			requestHeroes();
+			requestHeroes(function() {
+				loadHeroes(loadAvailablePlaces);
+			});
 			requestTurn();
         },
         error: function (error) {
@@ -129,7 +131,7 @@ function requestLeader(fun) { //this smart function can show leaders or hide the
 }
 
 //load functions
-function loadHeroes() {
+function loadHeroes(fun) {
 	for (let x = 0; x < heroesSave.length; x++) {
 		let i = heroesSave[x].coordX;
 		let j = heroesSave[x].coordY;
@@ -138,22 +140,9 @@ function loadHeroes() {
 		if (heroesSave[x].player.login == login) 
 			place = document.getElementById("1_"+id);
 		else place = document.getElementById("2_"+id);
-		place.textContent = prepareName(heroesSave[x].card.name);
+		place.textContent = prepareName(heroesSave[x].name);
 	}
-	
-	for (let i = 0; i < 3; i++) {
-        for (let j = 0; j < 3; j++) {
-			if (i == 1 && j == 1) continue; //Leader is not a place for a hero
-            let id = i + "_" + j;
-            let place = document.getElementById("1_"+id);
-            if (i == gameSave.wave && place.textContent == "") {
-				place.addEventListener('dragenter', dragEnter);
-		    	place.addEventListener('dragover', dragOver);
-	    		place.addEventListener('dragleave', dragLeave);
-	    		place.addEventListener('drop', dragDrop);
-			}
-        }
-    }
+	if (fun != undefined) fun();
 }
 
 function loadHand () {
@@ -196,6 +185,22 @@ function loadLeaders() { //This methos also loads images for decks
 		case "":
 		break;
 	}
+}
+
+function loadAvailablePlaces() {
+	for (let i = 0; i < 3; i++) {
+        for (let j = 0; j < 3; j++) {
+			//if (i == 1 && j == 1) continue; //Leader is not a place for a hero
+            let id = i + "_" + j;
+            let place = document.getElementById("1_"+id);
+            if (i == gameSave.wave && place.textContent == "") {
+				place.addEventListener('dragenter', dragEnter);
+		    	place.addEventListener('dragover', dragOver);
+	    		place.addEventListener('dragleave', dragLeave);
+	    		place.addEventListener('drop', dragDrop);
+			}
+        }
+    }
 }
 
 //support function
