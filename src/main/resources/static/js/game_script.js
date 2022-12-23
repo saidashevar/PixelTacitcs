@@ -15,6 +15,7 @@ var cardCountSave;  //two numbers that determine card count of both players (may
 var turnSave;		//info about your turn
 var gameSave;		//info about game
 var heroesSave;		//info about all heroes on board
+var leaderSave;		//info about your leader
 
 //Request functions
 function placeCard(j, id) {
@@ -60,33 +61,6 @@ function takeCard() {
 	        console.log(error);
 	    }
 	})
-}
-
-function chooseLeader (e) {
-	let chosenCard = e.target.id.split("")[0];
-	let cardId = handSave[chosenCard].id;
-	$.ajax({
-        url: url + "/heroes/hire-leader",
-        type: 'POST',
-        dataType: "json",
-        contentType: "application/json",
-        data: JSON.stringify({
-            "gameId": gameId,
-            "login": login,
-            "coordinateY": 2,
-            "cardId": cardId
-        }),
-        success: function (newHand) { //all the logic in gameload.js
-			//removeBackgroundAndText()
-			let leadersTable = document.getElementById("showLeaders");
-			document.body.removeChild(leadersTable);
-			handSave = newHand;
-			//reloadHand(handSave);
-        },
-        error: function (error) {
-            console.log(error);
-        }
-    })
 }
 
 // Some gameplay functions

@@ -30,60 +30,26 @@ function connectToSocket() {
 					document.getElementById("cardCounter").textContent = cardCountSave;
 				break;
 				case "STATUS":
-					switch (data.info.status) {
-						case "NO2PLAYER":
-							let waitForAnybodyText = document.createElement("div");
-							waitForAnybodyText.textContent = "Waiting for someone to play with...";
-							waitForAnybodyText.id = "waitOpponentText";
-							document.body.appendChild(waitForAnybodyText);
-						break;
-						case "CHOOSING_LEADERS":
-							gameSave = data.info;
-							let waitOpponentText = document.getElementById("waitOpponentText"); 
-							if (waitOpponentText.textContent == "Waiting for someone to play with...") {
-								getOpponent(gameSave);
-								waitOpponentText.textContent = opponentSave.login + " chooses leader...";
-							}
-						break;
-						case "PEACE":
-							gameSave = data.info;
-							getOpponent(gameSave);
-							removeBackgroundAndText();
-							requestHand(handSave);
-						break;
-						default: alert("something went wrong with status packages");
-					}
+					requestGame(checkStatus);
 				break;
 			}
         })
     })
 }
 
-function requestFullGame() {
+async function requestFullGame() {
     $.ajax({
         url: url + "/games/get-game?id="+gameId+"&login="+login,
         type: 'GET',
         success: function (newGame) {
 			console.log(newGame);
 			gameSave = newGame;
-			getOpponent(gameSave);
+			getOpponent();
+			requestLeader(checkStatus);
 			
-			switch (gameSave.status) {
-				case "NO2PLAYER":
-					requestHandSpecial(showLeaders);
-				break;
-				case "NO2PLAYER_1LEADER_CHOSEN":
-					requestLeader();
-				break;
-				case "CHOOSING_LEADERS":
-					requestHandSpecial(showLeaders);
-				break;
-				case "CHOOSING_LEADERS_1LEADER_CHOSEN":
-					requestLeader();
-				break;
-				default:
-					alert("this case of game status wasn't expected. You have caught a bug");
-			}
+			//Next functions are... useless for now
+			requestHeroes();
+			requestTurn();
         },
         error: function (error) {
             console.log("Game wasn't loaded!" + error);
@@ -91,28 +57,28 @@ function requestFullGame() {
     })
 }
 
-function requestHand() {
-    $.ajax({
-        url: url + "/players/get-hand?id="+gameId+"&login="+login,
+function requestGame(fun) {
+	$.ajax({
+        url: url + "/games/get-game?id="+gameId+"&login="+login,
         type: 'GET',
-        success: function (newHand) {
-			handSave = newHand;
-            //loadHand(handSave);
+        success: function (newGame) {
+			console.log("Requested game: " + newGame);
+			gameSave = newGame;
+			if (fun != undefined) fun();
         },
         error: function (error) {
-            console.log("Hand wasn't loaded!" + error);
+            console.log("Game wasn't loaded!" + error);
         }
     })
 }
 
-function requestHandSpecial(fun) {
+function requestHand(fun) {
 	$.ajax({
         url: url + "/players/get-hand?id="+gameId+"&login="+login,
         type: 'GET',
         success: function (newHand) {
 			handSave = newHand;
-			fun();
-            //loadHand(handSave);
+			if (fun != undefined) fun();
         },
         error: function (error) {
             console.log("Hand wasn't loaded!" + error);
@@ -120,15 +86,13 @@ function requestHandSpecial(fun) {
     })
 }
 
-function requestHeroes() {
+function requestHeroes(fun) {
     $.ajax({
 		url: url + "/heroes/get-heroes?id="+gameId+"&login="+login,
         type: 'GET',
         success: function (newHeroes) {
 			heroesSave = newHeroes;
-			console.log(heroesSave);
-			loadHeroes(heroesSave);
-            console.log("Successfully loaded board");
+			if (fun != undefined) fun();
         },
         error: function (error) {
             console.log(error);
@@ -149,18 +113,14 @@ function requestTurn() {
     })
 }
 
-function requestLeader() {
+function requestLeader(fun) { //this smart function can show leaders or hide them.
     $.ajax({
         url: url + "/players/get-leader?id="+gameId+"&login="+login,
         type: 'GET',
         success: function (leader) {
-			console.log("found leader:" + leader);
-			if (leader == null) requestHandSpecial(showLeaders());
-			else {
-				requestHand();
-				requestHeroes();
-				requestTurn();
-			}
+			leaderSave = leader;
+			console.log("Your leader is: " + leaderSave);
+			if (fun != undefined) fun();
         },
         error: function (error) {
             console.log("Leader is broken! Nerf him!" + error);
@@ -169,7 +129,7 @@ function requestLeader() {
 }
 
 //load functions
-function loadHeroes(heroesSave) {
+function loadHeroes() {
 	for (let x = 0; x < heroesSave.length; x++) {
 		let i = heroesSave[x].coordX;
 		let j = heroesSave[x].coordY;
@@ -195,21 +155,21 @@ function loadHeroes(heroesSave) {
     }
 }
 
-function loadHand (hand) {
-	if (hand.length <= 5) {
+function loadHand () {
+	if (handSave.length <= 5) {
 		let handElement = document.getElementById("cardHolder");
-		for (let i = 0; i < hand.length; i++) {
+		for (let i = 0; i < handSave.length; i++) {
 			addCardInHand(handElement, i);
 		}		
 	}
 }
 
-function reloadHand(data) {
+function reloadHand() {
 	const cardsInHand = document.querySelectorAll('li[id ^= "hand"]');
 	cardsInHand.forEach(card => {
     	card.remove();
 	});
-	loadHand(data);
+	loadHand();
 }
 
 //support function
@@ -224,7 +184,7 @@ function getGameIDandLogin() {
 }
 
 //Support function
-function getOpponent(gameSave) { //loads both players, if they exist
+function getOpponent() { //loads both players, if they exist
 	if (gameSave.players.length != 1) {
 		if (gameSave.players[0].login == login) {
 			opponentSave = gameSave.players[1];
@@ -239,10 +199,35 @@ function getOpponent(gameSave) { //loads both players, if they exist
 	console.log(youSave);
 }
 
+function chooseLeader (e) {
+	let chosenCard = e.target.id.split("")[0];
+	let cardId = handSave[chosenCard].id;
+	$.ajax({
+        url: url + "/heroes/hire-leader",
+        type: 'POST',
+        dataType: "json",
+        contentType: "application/json",
+        data: JSON.stringify({
+            "gameId": gameId,
+            "login": login,
+            "coordinateY": 2,
+            "cardId": cardId
+        }),
+        success: function (newHand) {
+			removeBackgroundAndTextAndLeaders();
+			handSave = newHand;
+			//reloadHand(handSave);
+        },
+        error: function (error) {
+            console.log(error);
+        }
+    })
+}
+
 //Another support function
 //Creates background and table with two rows with 3 cards each to show player's first cards.
 //And this function is too big
-function showLeaders(e) {
+function showLeaders() {
 	let table = document.createElement("table");
 	let tbody = document.createElement("tbody");
 	
@@ -287,9 +272,78 @@ function addBackground() {
 	document.body.appendChild(blackBackground);
 }
 
-function removeBackgroundAndText() {
+function addWaitText(text) {
+	let waitForAnybodyText = document.createElement("div");
+	waitForAnybodyText.textContent = text;
+	waitForAnybodyText.id = "waitOpponentText";
+	document.body.appendChild(waitForAnybodyText);	
+}
+
+function addBackgroundAndText(text) {
+	addBackground();
+	addWaitText(text);
+}
+
+function removeBackgroundAndTextAndLeaders() {
 	let background = document.getElementById("BB");
 	let text1 = document.getElementById("waitOpponentText");
+	let leaders = document.getElementById("showLeaders");
 	if (background != undefined) document.body.removeChild(background);
 	if (text1 != undefined) document.body.removeChild(text1);
+	if (leaders != undefined) document.body.removeChild(leaders);
+}
+
+function checkShowLeaders() {
+	switch (gameSave.status) {
+		case "CHOOSING_LEADERS":
+			requestHand(showLeaders);
+		break;
+		case "NO2PLAYER":
+			requestHand(showLeaders);
+		break;
+	}
+}
+
+function checkStatus() {
+	//Here we should remember that this function is called when:
+	//	1. Page loads first time (may not!)
+	//	2. Game Status changed with message 
+	switch (gameSave.status) {
+		case "NO2PLAYER":
+			requestHand(showLeaders);
+		break;
+		case "NO2PLAYER_1LEADER_CHOSEN": //Player has started game and chosen leader, but no second player
+			addBackgroundAndText("Waiting for your opponent...");
+			
+//			if (leaderSave.name == undefined) {
+//				requestHand(showLeaders);
+//			} else addBackgroundAndText("Waiting for someone to play with...");	
+		break;
+		case "CHOOSING_LEADERS":
+			let leaders = document.getElementById("showLeaders");
+			if(leaders == undefined)
+				requestLeader(function() { requestHand(showLeaders); });
+			//let waitOpponentText = document.getElementById("waitOpponentText");
+			//if (waitOpponentText != undefined)
+			//	waitOpponentText.textContent = opponentSave.login + " chooses leader...";
+			//else addWaitText( opponentSave.login + " chooses leader...");
+		break;
+		case "CHOOSING_LEADERS_1LEADER_CHOSEN":
+			requestLeader(function() {
+				if(leaderSave != "") {
+					alert("trying to change text");
+					removeBackgroundAndTextAndLeaders();		
+					addBackgroundAndText("Your opponent chooses leader...");					
+				}
+				else
+					requestHand(showLeaders);
+			}); 
+		break;
+		case "PEACE":
+			removeBackgroundAndTextAndLeaders();
+			requestHand(reloadHand);
+			requestHeroes();
+		break;
+		default: alert("something went wrong with status packages");
+	}		
 }

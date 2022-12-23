@@ -78,7 +78,7 @@ public class GameService {
 		playerService.savePlayer(player);
 		
 		Game game = gameRepository.findAll().stream()
-				.filter(g -> g.getStatus().equals(NO2PLAYER)).findFirst()
+				.filter(g -> g.getStatus().equals(NO2PLAYER) || g.getStatus().equals(NO2PLAYER_1LEADER_CHOSEN)).findFirst()
 				.orElseThrow(() -> new NotFoundException("No new games were found"));
 		game.addPlayer(player);
 		
