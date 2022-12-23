@@ -143,6 +143,7 @@ function loadHeroes() {
 	
 	for (let i = 0; i < 3; i++) {
         for (let j = 0; j < 3; j++) {
+			if (i == 1 && j == 1) continue; //Leader is not a place for a hero
             let id = i + "_" + j;
             let place = document.getElementById("1_"+id);
             if (i == gameSave.wave && place.textContent == "") {
@@ -170,6 +171,31 @@ function reloadHand() {
     	card.remove();
 	});
 	loadHand();
+}
+
+function loadLeaders() { //This methos also loads images for decks
+	switch (gameSave.status) {
+		case "PEACE":
+			let oppLeaderDiv = document.getElementById("2_1_1");
+			let yourLeaderDiv = document.getElementById("1_1_1");
+			let oppDeck = document.getElementById("deckPlayer2");
+			let yourDeck = document.getElementById("deckPlayer1");
+			
+			if (youSave.red == true) {
+				oppLeaderDiv.appendChild(createDiv(createCardImage(blueSrc)));
+				oppDeck.appendChild(createCardImage(blueSrc));
+				yourLeaderDiv.appendChild(createDiv(createCardImage(redSrc)));
+				yourDeck.appendChild(createCardImage(redSrc));
+			} else {
+				oppLeaderDiv.appendChild(createDiv(createCardImage(redSrc)));
+				oppDeck.appendChild(createCardImage(redSrc));
+				yourLeaderDiv.appendChild(createDiv(createCardImage(blueSrc)));
+				yourDeck.appendChild(createCardImage(blueSrc));
+			}
+		break;
+		case "":
+		break;
+	}
 }
 
 //support function
@@ -293,15 +319,17 @@ function removeBackgroundAndTextAndLeaders() {
 	if (leaders != undefined) document.body.removeChild(leaders);
 }
 
-function checkShowLeaders() {
-	switch (gameSave.status) {
-		case "CHOOSING_LEADERS":
-			requestHand(showLeaders);
-		break;
-		case "NO2PLAYER":
-			requestHand(showLeaders);
-		break;
-	}
+function createCardImage(src) {
+	let img = document.createElement("img");
+	img.src = src;
+	img.classList.add("fill");
+	return img;
+}
+
+function createDiv(img) {
+	let div = document.createElement("div");
+	div.appendChild(img);
+	return div;
 }
 
 function checkStatus() {
@@ -343,6 +371,7 @@ function checkStatus() {
 			removeBackgroundAndTextAndLeaders();
 			requestHand(reloadHand);
 			requestHeroes();
+			loadLeaders();
 		break;
 		default: alert("something went wrong with status packages");
 	}		

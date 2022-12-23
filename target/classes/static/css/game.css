@@ -1,8 +1,8 @@
 @charset "UTF-8";
 :root {
-  --height: 180px;
-  --width: 100px;
-  --leftOff: 810px;
+  --height: 170px;
+  --width: 117px;
+  --leftOff: 740px;
 }
 
 body {
@@ -24,7 +24,6 @@ table {
   width: var(--width);
   height: var(--height);
   border-radius: 1em;
-  padding: 20px;
   border-style: dashed;
 }
 
@@ -32,7 +31,6 @@ table {
   width: var(--width);
   height: var(--height);
   border-radius: 1em;
-  padding: 20px;
   border-style: dashed;
 }
 
@@ -40,9 +38,9 @@ table {
   width: var(--width);
   height: var(--height);
   border-radius: 1em;
-  padding: 20px;
   background: #666;
   color: white;
+  overflow: hidden;
 }
 
 .hide {
@@ -95,19 +93,19 @@ table {
 #deckPlayer1, #deckPlayer2 {
     width: var(--width);
     height: var(--height);
-    overflow: auto;
+    overflow: hidden;
 }
 
 #deckPlayer1 {
     position: absolute;
     left: var(--leftOff);
-    top: 1050px;
+    top: 900px;
 }
 
 #pilePlayer1 {
-      position: absolute;
+    position: absolute;
     left: var(--leftOff);
-    top: 810px;
+    top: 710px;
 }
 
 #deckPlayer2 {
@@ -223,3 +221,9 @@ li[id ^= "hand"] {
   color: white;
 }
 
+.fill {
+	width: 100%;
+    height: 100%;
+	object-fit: cover;
+	overflow: hidden;
+}
