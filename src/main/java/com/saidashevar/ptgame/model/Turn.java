@@ -1,5 +1,7 @@
 package com.saidashevar.ptgame.model;
 
+import com.saidashevar.ptgame.exception.game.NoMoreActionsLeftException;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -20,6 +22,15 @@ public class Turn {
 	private boolean Attacking = false; // Player who attacks, makes his move first
 	private byte actionsLeft = 2;
 	
+	//Gameplay functions
+	public void makeAction() throws NoMoreActionsLeftException {
+		if (actionsLeft >= 1)
+			actionsLeft--;
+		else throw new NoMoreActionsLeftException("Player has no more actions!");
+	}
+	
+	
+	//Getters and setters
 	public int getWave() {
 		return wave;
 	}

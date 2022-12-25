@@ -14,6 +14,7 @@ import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.MessagingException;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -25,6 +26,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.saidashevar.ptgame.controller.request.HireHeroRequest;
 import com.saidashevar.ptgame.exception.InvalidGameException;
 import com.saidashevar.ptgame.exception.NotFoundException;
+import com.saidashevar.ptgame.exception.game.NoMoreActionsLeftException;
 import com.saidashevar.ptgame.model.Game;
 import com.saidashevar.ptgame.model.Player;
 import com.saidashevar.ptgame.model.cards.Card;
@@ -62,22 +64,27 @@ public class HeroController {
 	
 	@GetMapping("/get-heroes")
 	ResponseEntity< List<Hero> > getBoard(@RequestParam("id") String gameId, 
-										 @RequestParam("login") String login) {
-		return ResponseEntity.ok(heroService.getHeroes(login));
-				//heroRepository.
-				//.findAll().stream().filter(card -> card.getPlayer().getLogin().equals(login)).toList());
+										 @RequestParam("login") String login) throws NotFoundException {
+		Player player = playerService.getPlayer(login);
+		return ResponseEntity.ok(heroService.getHeroes(player));
 	}
 	
 	@PostMapping("/hire-hero") //Returns to player his new hand. And sends board and card count to both players by socket
-	public ResponseEntity< Set<Card> > hireHero(@RequestBody HireHeroRequest request) throws InvalidGameException, NotFoundException {
+	public ResponseEntity< Set<Card> > hireHero(@RequestBody HireHeroRequest request) throws InvalidGameException, NotFoundException, MessagingException, NoMoreActionsLeftException {
 		log.info(request.getLogin() +" hires new Hero!");
-		heroService.hireHero(request);
-		//Now we have to send both players board, second player must know hero his opponent hired and where.
-		simpMessagingTemplate.convertAndSend("/topic/game-progress/" + request.getGameId(),
-											 gameService.getBoard(request.getGameId()));
-		//Second one sends info about card count
-		simpMessagingTemplate.convertAndSend("/topic/game-progress/" + request.getGameId(),
-				 							 gameService.getCardCount(request.getGameId()));
+		Game game = gameService.loadGameService(request.getGameId());
+		Player player = playerService.getPlayer(request.getLogin());
+		if (heroService.hireHero(game, player, request.getCoordinateY(), request.getCardId())) {
+			//Now we have to send both players board, second player must know hero his opponent hired and where.
+			simpMessagingTemplate.convertAndSend("/topic/game-progress/" + request.getGameId(),
+												 gameService.getBoard(request.getGameId()));
+			//Second one sends info about card count
+			simpMessagingTemplate.convertAndSend("/topic/game-progress/" + request.getGameId(),
+					 							 gameService.getCardCount(request.getGameId()));
+		} else {
+			simpMessagingTemplate.convertAndSend("/topic/game-progress/" + request.getGameId(),
+				gameService.message(request.getLogin() + " tries to hire hero in place where another hero stays... strange"));
+		}
 		return ResponseEntity.ok(playerService.getPlayer(request.getLogin()).getHand());
 	}
 	

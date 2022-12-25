@@ -8,6 +8,7 @@ import java.util.TreeSet;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.saidashevar.ptgame.exception.NotFoundException;
+import com.saidashevar.ptgame.exception.game.NoMoreActionsLeftException;
 import com.saidashevar.ptgame.model.cards.Card;
 import com.saidashevar.ptgame.model.cards.Hero;
 import com.saidashevar.ptgame.model.cards.Leader;
@@ -74,17 +75,25 @@ public class Player {
 	private Set<Card> pile = new LinkedHashSet<>();
 	
 	//gameplay functions
+	public void makeAction() throws NoMoreActionsLeftException {
+		turn.makeAction();
+	}
+	
+	public void takeCard(Card card) {
+		deck.remove(card);
+		hand.add(card);
+	}
+	
+	public void removeCardFromHand(Card card) {
+		hand.remove(card);
+	}
+	
 	public Card findCardToTake() throws NotFoundException {
 //		Random rand = new Random();
 		return deck.stream().findAny().orElseThrow(() -> new NotFoundException("There are no more cards in "+login+"'s deck!")); //old way without random
 //		int size = rand.nextInt(deck.size());
 //		if (size == 0) throw new NotFoundException("There are no more cards in "+login+"'s deck!");
 //		else return deck.get(rand.nextInt(deck.size()));
-	}
-	
-	public void takeCard(Card card) {
-		deck.remove(card);
-		hand.add(card);
 	}
 	
 	public void removeLeaderCardFromHand(int id) throws NotFoundException { //Just removes card wtih leader from hand

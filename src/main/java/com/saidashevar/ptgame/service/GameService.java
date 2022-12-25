@@ -3,6 +3,7 @@ package com.saidashevar.ptgame.service;
 import static com.saidashevar.ptgame.config.response.ResponseTypes.BOARD;
 import static com.saidashevar.ptgame.config.response.ResponseTypes.CARD_COUNT;
 import static com.saidashevar.ptgame.config.response.ResponseTypes.STATUS;
+import static com.saidashevar.ptgame.config.response.ResponseTypes.MESSAGE;
 import static com.saidashevar.ptgame.model.GameStatus.CHOOSING_LEADERS;
 import static com.saidashevar.ptgame.model.GameStatus.CHOOSING_LEADERS_1LEADER_CHOSEN;
 import static com.saidashevar.ptgame.model.GameStatus.FINISHED;
@@ -127,6 +128,10 @@ public class GameService {
 	
 	public UniResponse<Game> getGame(Game game) {
 		return new UniResponse<Game>(STATUS, game);
+	}
+	
+	public UniResponse<String> message(String message) {
+		return new UniResponse<String>(MESSAGE, message);
 	}
 	
 	public String readSet (Set<Card> hand) { //don't forget to remove this

@@ -76,4 +76,17 @@ public class Hero extends CardBasis {
 		this.coordY = coordY;
 		this.player = player;
 	}
+	
+	public Hero(int coordX, int coordY, Player player) {
+		this.coordX = coordX;
+		this.coordY = coordY;
+		this.player = player;
+	}
+	
+	public Hero(Card card, Hero heroWithoutCard) {
+		this(card);
+		this.coordX = heroWithoutCard.getCoordX();
+		this.coordY = heroWithoutCard.getCoordY();
+		this.player = heroWithoutCard.getPlayer();
+	}
 }

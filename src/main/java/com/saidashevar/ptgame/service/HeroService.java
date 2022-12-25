@@ -9,12 +9,11 @@ import java.util.List;
 //import static com.saidashevar.ptgame.model.GameStatus.PEACE;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Example;
 import org.springframework.stereotype.Service;
 
-import com.saidashevar.ptgame.controller.request.HireHeroRequest;
 import com.saidashevar.ptgame.exception.InvalidGameException;
 import com.saidashevar.ptgame.exception.NotFoundException;
+import com.saidashevar.ptgame.exception.game.NoMoreActionsLeftException;
 import com.saidashevar.ptgame.model.Game;
 import com.saidashevar.ptgame.model.Player;
 import com.saidashevar.ptgame.model.cards.Card;
@@ -28,14 +27,12 @@ import com.saidashevar.ptgame.repository.LeaderRepository;
 import com.saidashevar.ptgame.repository.PlayerRepository;
 
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @AllArgsConstructor
 @Service
 public class HeroService {
-	
-	//Other service dependencies should be removed
-	private final GameService gameService;
-	private final PlayerService playerService;
 	
 	@Autowired
 	HeroRepository heroRepository;
@@ -48,27 +45,26 @@ public class HeroService {
 	@Autowired
 	LeaderBasisRepository leaderBasisRepository;
 	
-	public List<Hero> getHeroes(String login) {
-		Player player = new Player(login);
-		Hero hero = new Hero();
-		hero.setPlayer(player);
-		Example<Hero> ex = Example.of(hero);
-		return heroRepository.findAll(ex);
+	public List<Hero> getHeroes(Player player) {
+		return heroRepository.findHeroesOfPlayer(player);
 	}
 	
-	public Hero hireHero(HireHeroRequest request) throws InvalidGameException, NotFoundException { //this is not necessary to return anything
-		Game game = gameService.loadGameService(request.getGameId());
-		Player player = playerService.getPlayer(request.getLogin());
-		Card card = cardRepository.findById(request.getCardId())
-				.orElseThrow(() -> new NotFoundException("Card with id:" + request.getCardId() + " wasn't found"));
-		Hero hero = new Hero(
-				card,
-				game.getWave(), 
-				request.getCoordinateY(), 
-				player
-		);
+	public boolean hireHero(Game game, Player player, int y, int cardId) throws InvalidGameException, NotFoundException, NoMoreActionsLeftException { //this is not necessary to return anything
 		
-		return heroRepository.save(hero);
+		if (!heroRepository.heroOnPlace(player.getLogin(), game.getWave(), y)) {
+			log.info("No hero is on this place, hero successfully hired");;
+			Card card = cardRepository.findById(cardId)
+					.orElseThrow(() -> new NotFoundException("Card with id:" + cardId + " wasn't found"));
+			player.makeAction();
+			player.removeCardFromHand(card);
+			
+			playerRepository.save(player);
+			heroRepository.save(new Hero(card, game.getWave(), y, player));
+			
+			return true;
+		} else
+			log.info("On this place some hero was found!");
+			return false;
 	}
 	
 	public Player hireLeader(Player player, int leaderId) throws NotFoundException { //this is not necessary to return anything
