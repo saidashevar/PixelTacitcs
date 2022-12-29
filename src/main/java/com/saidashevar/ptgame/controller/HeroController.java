@@ -64,7 +64,7 @@ public class HeroController {
 	
 	@GetMapping("/get-heroes")
 	ResponseEntity< List<Hero> > getBoard(@RequestParam("id") String gameId, 
-										 @RequestParam("login") String login) throws NotFoundException {
+										  @RequestParam("login") String login) throws NotFoundException {
 		Player player = playerService.getPlayer(login);
 		return ResponseEntity.ok(heroService.getHeroes(player));
 	}
@@ -81,7 +81,10 @@ public class HeroController {
 			//Second one sends info about card count
 			simpMessagingTemplate.convertAndSend("/topic/game-progress/" + request.getGameId(),
 					 							 gameService.getCardCount(request.getGameId()));
-		} else {
+			//And at last send info about actions count
+			simpMessagingTemplate.convertAndSend("/topic/game-progress/" + request.getGameId(),
+					 							 gameService.getActionsCount(request.getGameId()));
+		} else { //If something goes wrong, i hope it never happens
 			simpMessagingTemplate.convertAndSend("/topic/game-progress/" + request.getGameId(),
 				gameService.message(request.getLogin() + " tries to hire hero in place where another hero stays... strange"));
 		}

@@ -15,6 +15,7 @@ var youSave;
 //Next variables save all information about game for that player.
 var handSave;		//array of cards in your hand
 var cardCountSave;  //two numbers that determine card count of both players (may be badly translated to eng)
+var actionsCountSave;//   numbers that show actions count. negative values mean actions of your opponent
 var turnSave;		//info about your turn
 var gameSave;		//info about game
 var heroesSave;		//info about all heroes on board
@@ -125,7 +126,7 @@ function prepareName(name) { //This function just deletes underscores
 	return newname;
 }
 
-function prepareToShow(attribute, cardId) {
+function prepareToShow(attribute, cardId, hero) {
 	let container = document.createElement('div');
 	container.classList.add(attribute + 'Mini');
 	container.append(prepareImage(attribute));
@@ -133,6 +134,25 @@ function prepareToShow(attribute, cardId) {
 	return container;
 }
 
+//This method will become more serious later...
+function prepareToShow_HeroAttack(attribute, id) {
+	let container = document.createElement('div');
+	container.classList.add(attribute + 'MiniAtHero');
+	container.append(prepareImage(attribute, true));
+	container.append(prepareText_HeroAttack(id));
+	return container;
+}
+
+//And this too
+function prepareToShow_HeroHealth(attribute, id) {
+	let container = document.createElement('div');
+	container.classList.add(attribute + 'MiniAtHero');
+	container.append(prepareImage(attribute, true));
+	container.append(prepareText_HeroHealth(id));
+	return container;
+}
+
+//Add text to card in hand, depending on card.
 function prepareText(attribute, cardId) {
 	let text = document.createElement('div');
 	text.textContent = handSave[cardId][attribute];
@@ -140,9 +160,24 @@ function prepareText(attribute, cardId) {
 	return text;
 }
 
-function prepareImage(attribute) {
+function prepareText_HeroAttack(ID) {
+	let text = document.createElement('div');
+	text.textContent = heroesSave[ID].attack;
+	text.classList.add('centerText');
+	return text;
+}
+
+function prepareText_HeroHealth(ID) {
+	let text = document.createElement('div');
+	text.textContent = heroesSave[ID].maxHealth; //it will read effects to show injures later
+	text.classList.add('centerText');
+	return text;
+}
+
+function prepareImage(attribute, opacity) {
 	let image = document.createElement('img');
 	image.src = "images/mini/" + attribute + ".png";
+	if (opacity != undefined && opacity == true) image.style.opacity = "0.8";
 	return image;
 }
 

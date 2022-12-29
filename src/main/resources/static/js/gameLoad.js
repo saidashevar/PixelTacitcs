@@ -27,7 +27,11 @@ function connectToSocket() {
 				break;
 				case "CARD_COUNT":
 					cardCountSave = data.info;
-					document.getElementById("cardCounter").textContent = cardCountSave;
+					document.getElementById("cardCounter").textContent = cardCountSave[opponentSave.login];
+				break;
+				case "ACTIONS_COUNT":
+					actionsCountSave = data.info;
+					document.getElementById("actionsCounter").textContent = actionsCountSave[youSave.login] - actionsCountSave[opponentSave.login];
 				break;
 				case "STATUS":
 					requestGame(checkStatus);
@@ -49,7 +53,7 @@ async function requestFullGame() {
 			
 			//Next functions are... useless for now
 			requestHeroes(function() {
-				loadHeroes(loadAvailablePlaces);
+				loadHeroes(requestAvailablePlaces);
 			});
 			requestTurn();
         },
@@ -130,6 +134,21 @@ function requestLeader(fun) { //this smart function can show leaders or hide the
     })
 }
 
+//This function requests from servers places, where we may hire our heroes
+function requestAvailablePlaces(fun) {
+	$.ajax({
+        url: url + "/players/get-places?id="+gameId+"&login="+login,
+        type: 'GET',
+        success: function (data) {
+			loadAvailablePlaces(data);
+			if (fun != undefined) fun(); //yeah, this may be useless
+        },
+        error: function (error) {
+            console.log("Leader is broken! Nerf him!" + error);
+        }
+    })
+}
+
 //load functions
 function loadHeroes(fun) {
 	for (let x = 0; x < heroesSave.length; x++) {
@@ -141,6 +160,8 @@ function loadHeroes(fun) {
 			place = document.getElementById("1_"+id);
 		else place = document.getElementById("2_"+id);
 		place.textContent = prepareName(heroesSave[x].name);
+		place.appendChild(prepareToShow_HeroAttack('attack', x));
+		place.appendChild(prepareToShow_HeroHealth('maxHealth', x));
 	}
 	if (fun != undefined) fun();
 }
@@ -187,7 +208,19 @@ function loadLeaders() { //This methos also loads images for decks
 	}
 }
 
-function loadAvailablePlaces() {
+function loadAvailablePlaces(places) {
+	for (let i = 0; i < places.length; i++)	{
+		let i = places[x].coordX;
+		let j = places[x].coordY;
+		let id = i + "_" + j;
+		let place = document.getElementById("1_"+id); //This means, we may hire only in our squad. it may be not like that for some future heroes.
+		place.addEventListener('dragstart', function() { onDragStart(place); });
+		place.addEventListener('dragenter', dragEnter);
+		place.addEventListener('dragover', dragOver);
+	    place.addEventListener('dragleave', dragLeave);
+	    place.addEventListener('drop', dragDrop);
+	}
+	
 	for (let i = 0; i < 3; i++) {
         for (let j = 0; j < 3; j++) {
 			//if (i == 1 && j == 1) continue; //Leader is not a place for a hero
@@ -254,6 +287,8 @@ function chooseLeader (e) {
         }
     })
 }
+
+
 
 //Another support function
 //Creates background and table with two rows with 3 cards each to show player's first cards.
@@ -337,7 +372,7 @@ function createDiv(img) {
 	return div;
 }
 
-function checkStatus() {
+function checkStatus() { //this works very bad, when you enter game with used login. 
 	//Here we should remember that this function is called when:
 	//	1. Page loads first time (may not!)
 	//	2. Game Status changed with message 
@@ -347,19 +382,11 @@ function checkStatus() {
 		break;
 		case "NO2PLAYER_1LEADER_CHOSEN": //Player has started game and chosen leader, but no second player
 			addBackgroundAndText("Waiting for your opponent...");
-			
-//			if (leaderSave.name == undefined) {
-//				requestHand(showLeaders);
-//			} else addBackgroundAndText("Waiting for someone to play with...");	
 		break;
 		case "CHOOSING_LEADERS":
 			let leaders = document.getElementById("showLeaders");
 			if(leaders == undefined)
 				requestLeader(function() { requestHand(showLeaders); });
-			//let waitOpponentText = document.getElementById("waitOpponentText");
-			//if (waitOpponentText != undefined)
-			//	waitOpponentText.textContent = opponentSave.login + " chooses leader...";
-			//else addWaitText( opponentSave.login + " chooses leader...");
 		break;
 		case "CHOOSING_LEADERS_1LEADER_CHOSEN":
 			requestLeader(function() {

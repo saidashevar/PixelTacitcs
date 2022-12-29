@@ -2,6 +2,7 @@ package com.saidashevar.ptgame.service;
 
 import static com.saidashevar.ptgame.config.response.ResponseTypes.BOARD;
 import static com.saidashevar.ptgame.config.response.ResponseTypes.CARD_COUNT;
+import static com.saidashevar.ptgame.config.response.ResponseTypes.ACTIONS_COUNT;
 import static com.saidashevar.ptgame.config.response.ResponseTypes.STATUS;
 import static com.saidashevar.ptgame.config.response.ResponseTypes.MESSAGE;
 import static com.saidashevar.ptgame.model.GameStatus.CHOOSING_LEADERS;
@@ -124,6 +125,13 @@ public class GameService {
 		loadGameService(gameId).getPlayers().stream()
 			.forEach(p -> cardCount.put(p.getLogin(), p.getHand().size()));
 		return new UniResponse< Map<String, Integer> >(CARD_COUNT, cardCount);
+	}
+	
+	public UniResponse< Map<String, Byte> > getActionsCount(String gameId) throws InvalidGameException {
+		Map<String, Byte> actionsCount = new HashMap<>();
+		loadGameService(gameId).getPlayers().stream()
+			.forEach(p -> actionsCount.put(p.getLogin(), p.getTurn().getActionsLeft()));
+		return new UniResponse< Map<String, Byte> >(ACTIONS_COUNT, actionsCount);
 	}
 	
 	public UniResponse<Game> getGame(Game game) {

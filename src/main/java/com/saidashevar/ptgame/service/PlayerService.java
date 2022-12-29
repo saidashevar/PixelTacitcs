@@ -39,7 +39,6 @@ public class PlayerService {
 	}
 	
 	//Game management functions
-	
 	public synchronized Player checkPlayerLogin(String login) { //Check if this login exists, if not creates new one and defines his color.
 		try {
 			Player player = playerRepository.findById(login)

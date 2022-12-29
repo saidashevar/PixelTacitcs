@@ -35,12 +35,13 @@ table {
 }
 
 .cardPlace {
-  width: var(--width);
-  height: var(--height);
-  border-radius: 1em;
-  background: #666;
-  color: white;
-  overflow: hidden;
+	position: sticky;
+	width: var(--width);
+	height: var(--height);
+	border-radius: 1em;
+	background: #666;
+	color: white;
+	overflow: hidden;
 }
 
 .hide {
@@ -56,7 +57,7 @@ table {
 .drag-over {
 	border: solid;
 	border-color: Silver;
-	border-width: 5px;
+	border-width: 3px;
 }
 
 .attackMini {
@@ -64,6 +65,22 @@ table {
     bottom: 70px;
     left: 110px;
     opacity: 0.4;
+}
+
+.attackMiniAtHero {
+	color: black;
+	position: absolute;
+    top: 0;
+    left: 0;
+    opacity: 1;
+}
+
+.maxHealthMiniAtHero {
+	color: black;
+	position: absolute;
+    top: 0;
+    right: 0;
+    opacity: 1;
 }
 
 .maxHealthMini {

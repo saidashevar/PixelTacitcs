@@ -8,16 +8,12 @@ boxes.forEach(box => {
 });
 */
 
-function onDragStart(e) {
+function onDragStart(place) {
 	e.dataTransfer.setData('text/plain', e.target.id.split("")[4]);
 	setTimeout(() => {
         e.target.classList.add('hide');
     }, 0);
-    let query = 'td[id ^= "1_' + turnSave.wave + '"]';
-    const boxes = document.querySelectorAll(query);
-	boxes.forEach(box => {
-		if (box.textContent == "") box.classList.add('readyToDrop'); //bad, i need to make it another way
-	});
+    place.classList.add('readyToDrop');
 }
 
 function onDragEnd(e) {
