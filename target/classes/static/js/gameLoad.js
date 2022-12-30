@@ -20,7 +20,7 @@ function connectToSocket() {
         stompClient.subscribe("/topic/game-progress/" + gameId, function (response) { // this function works when gets info form socket!
             let data = JSON.parse(response.body);
             console.log(data);
-            switch (data.type) { //With response there is type of info from server.
+            switch (data.type) { // With response there is type of info from server.
 				case "BOARD":
 					heroesSave = data.info;
 					loadHeroes();
@@ -53,7 +53,7 @@ async function requestFullGame() {
 			
 			//Next functions are... useless for now
 			requestHeroes(function() {
-				loadHeroes(requestAvailablePlaces);
+				loadHeroes();
 			});
 			requestTurn();
         },
@@ -70,6 +70,7 @@ function requestGame(fun) {
         success: function (newGame) {
 			console.log("Requested game: " + newGame);
 			gameSave = newGame;
+			getOpponent();
 			if (fun != undefined) fun();
         },
         error: function (error) {
@@ -140,6 +141,7 @@ function requestAvailablePlaces(fun) {
         url: url + "/players/get-places?id="+gameId+"&login="+login,
         type: 'GET',
         success: function (data) {
+			console.log(data);
 			loadAvailablePlaces(data);
 			if (fun != undefined) fun(); //yeah, this may be useless
         },
@@ -209,12 +211,14 @@ function loadLeaders() { //This methos also loads images for decks
 }
 
 function loadAvailablePlaces(places) {
-	for (let i = 0; i < places.length; i++)	{
+	for (let x = 0; x < places.length; x++)	{
 		let i = places[x].coordX;
 		let j = places[x].coordY;
 		let id = i + "_" + j;
 		let place = document.getElementById("1_"+id); //This means, we may hire only in our squad. it may be not like that for some future heroes.
-		place.addEventListener('dragstart', function() { onDragStart(place); });
+		place.classList.add('readyToDrop');
+		//console.log('');
+		//place.addEventListener('dragstart', function() {  });
 		place.addEventListener('dragenter', dragEnter);
 		place.addEventListener('dragover', dragOver);
 	    place.addEventListener('dragleave', dragLeave);

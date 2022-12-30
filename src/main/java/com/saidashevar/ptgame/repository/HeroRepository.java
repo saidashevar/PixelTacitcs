@@ -15,7 +15,7 @@ public interface HeroRepository extends JpaRepository<Hero, Long> {
 	List<Hero> findHeroesOfPlayer(Player player);
 	
 	//This was taken from the internet, but it works and must be fast. Text blocks would be useful...
-	//This query returns true if some hero of player on coordinates (x,y) were found
+	//This query returns true if some hero of player with LOGIN on coordinates (x,y) were found
 	@Query(value = "SELECT CASE WHEN EXISTS " + 
 				   "(SELECT 1 FROM players_heroes WHERE player_login = :login AND coord_x = :x AND coord_y = :y)" + 
 				   "THEN 'true' ELSE 'false' END",

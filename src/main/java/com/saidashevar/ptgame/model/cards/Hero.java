@@ -56,6 +56,8 @@ public class Hero extends CardBasis {
 		this.coordY = coordY;
 	}
 	
+	
+	//Next are constructors. Almost all of them are used somewhere. 
 	public Hero() {}
 	
 	public Hero(int edition, String name, int attack, int maxHealth) {
@@ -70,16 +72,24 @@ public class Hero extends CardBasis {
 			card.getMaxHealth());
 	}
 	
-	public Hero(Card card ,int coordX, int coordY, Player player) {
+	public Hero(int coordX, int coordY) {
+		this.coordX = coordX;
+		this.coordY = coordY;
+	}
+	
+	public Hero (Card card, int coordX, int coordY) {
 		this(card);
 		this.coordX = coordX;
 		this.coordY = coordY;
+	}
+	
+	public Hero(Card card ,int coordX, int coordY, Player player) {
+		this(card, coordX, coordY);
 		this.player = player;
 	}
 	
 	public Hero(int coordX, int coordY, Player player) {
-		this.coordX = coordX;
-		this.coordY = coordY;
+		this(coordX, coordY);
 		this.player = player;
 	}
 	

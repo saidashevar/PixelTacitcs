@@ -1,7 +1,8 @@
 package com.saidashevar.ptgame.service;
 
+import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.Random;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -10,7 +11,9 @@ import com.saidashevar.ptgame.exception.NotFoundException;
 import com.saidashevar.ptgame.model.Game;
 import com.saidashevar.ptgame.model.Player;
 import com.saidashevar.ptgame.model.cards.Card;
+import com.saidashevar.ptgame.model.cards.Hero;
 import com.saidashevar.ptgame.repository.CardRepository;
+import com.saidashevar.ptgame.repository.HeroRepository;
 import com.saidashevar.ptgame.repository.PlayerRepository;
 
 import lombok.AllArgsConstructor;
@@ -23,7 +26,8 @@ public class PlayerService {
 	
 	@Autowired
 	PlayerRepository playerRepository;
-	
+	@Autowired
+	HeroRepository heroRepository;
 	@Autowired
 	CardRepository cardRepository;
 	
@@ -73,5 +77,14 @@ public class PlayerService {
 		player.setDeck(new HashSet<>(cardRepository.findAll()));
 		takeStartHand(player);
 //		cardRepository.findAll().stream().forEach(card -> { card.addInDeck(player); cardRepository.save(card);});
+	}
+	
+	public List<Hero> getAvailablePlaces(Game game, String login) {
+		List<Hero> places = new ArrayList<>();
+		for (int i = 0; i < 3; i++) {
+			if (!heroRepository.heroOnPlace(login, game.getWave(), i)) 
+				places.add(new Hero(game.getWave(), i)); 
+		}
+		return places;
 	}
 }

@@ -8,19 +8,23 @@ boxes.forEach(box => {
 });
 */
 
-function onDragStart(place) {
-	e.dataTransfer.setData('text/plain', e.target.id.split("")[4]);
+function onDragStart(event) {
+	event.dataTransfer.setData('text/plain', event.target.id.split("")[4]);
 	setTimeout(() => {
-        e.target.classList.add('hide');
+        event.target.classList.add('hide');
     }, 0);
-    place.classList.add('readyToDrop');
+    requestAvailablePlaces();
 }
 
 function onDragEnd(e) {
 	reloadHand(handSave);
 	let places = document.querySelectorAll('.readyToDrop');
 	places.forEach(place => {
-		place.classList.remove("readyToDrop");
+		place.classList.remove('readyToDrop');
+		place.removeEventListener('dragenter', dragEnter);
+		place.removeEventListener('dragover', dragOver);
+		place.removeEventListener('dragleave', dragLeave);
+		place.removeEventListener('drop', dragDrop);
 	});
 }
 
