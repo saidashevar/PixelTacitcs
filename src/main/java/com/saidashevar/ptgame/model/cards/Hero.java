@@ -1,12 +1,18 @@
 package com.saidashevar.ptgame.model.cards;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import com.saidashevar.ptgame.model.Player;
+import com.saidashevar.ptgame.model.effects.EffectBasic;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
@@ -14,23 +20,22 @@ import jakarta.persistence.Table;
 @Table(name = "players_heroes")
 public class Hero extends CardBasis {
 	
-//	@Id
-//	@GeneratedValue(strategy = GenerationType.AUTO)
-//	private Long id;
-	
 	@Column(name = "coord_x", nullable = true) //Caution! Here is matrix system is used. x means row, y - column.
 	private int coordX;
 	
 	@Column(name = "coord_y", nullable = true)
 	private int coordY;
-
-//	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-//	@JoinColumn(name = "card", referencedColumnName = "id", nullable = true)
-//	private Card card;
+	
+	@ManyToMany(fetch = FetchType.LAZY)
+	@JoinTable(
+			name = "heroes_effects",
+			joinColumns = @JoinColumn(name = "hero_id"),
+			inverseJoinColumns = @JoinColumn(name = "effect_id"))
+	private Set<EffectBasic> effects = new HashSet<>();
 	
 	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@JoinColumn(name = "player_login", referencedColumnName = "login")
-	private Player player; 
+	private Player player;
 	
 	public void setPlayer(Player player) {
 		this.player = player;
@@ -55,7 +60,6 @@ public class Hero extends CardBasis {
 	public void setCoordY(int coordY) {
 		this.coordY = coordY;
 	}
-	
 	
 	//Next are constructors. Almost all of them are used somewhere. 
 	public Hero() {}

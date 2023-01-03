@@ -99,8 +99,15 @@ public class PlayerController {
 	
 	@GetMapping("/get-places")
 	ResponseEntity< List<Hero> > getAvailablePlaces(@RequestParam("id") String gameId, @RequestParam("login") String login) throws NotFoundException, InvalidGameException {
-//		Player player = playerService.getPlayer(login);
 		Game game = gameService.loadGameService(gameId);
-		return ResponseEntity.ok(playerService.getAvailablePlaces(game, login));
+		return ResponseEntity.ok( playerService.getAvailablePlaces(game, login) );
+	}
+	
+	@GetMapping("/get-targets")
+	ResponseEntity< List<Hero> > getAvailableTargets(@RequestParam("id") String gameId, @RequestParam("login") String login) throws InvalidGameException, NotFoundException {
+		Game game = gameService.loadGameService(gameId);
+		Player secondPlayer = game.findPlayers(login)[1];
+		List<Hero> targets = playerService.getAvailableTargets(secondPlayer);
+		return ResponseEntity.ok(targets);
 	}
 }

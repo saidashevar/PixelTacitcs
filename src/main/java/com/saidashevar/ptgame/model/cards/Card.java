@@ -16,10 +16,6 @@ import jakarta.persistence.Table;
 @Table(name = "cards")
 public class Card extends CardBasis implements Comparable<Card>{
 	
-//	@Id
-//	@GeneratedValue(strategy = GenerationType.IDENTITY)
-//	private int id;
-	
 	@JsonIgnore
 	@ManyToMany(mappedBy = "deck", fetch = FetchType.LAZY)
 	private Set<Player> inDecks = new HashSet<>();

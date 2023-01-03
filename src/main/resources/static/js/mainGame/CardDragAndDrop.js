@@ -8,6 +8,11 @@ boxes.forEach(box => {
 });
 */
 
+function onAttackStart(event) {
+	console.log(event.target);
+	requestAvailableTargets();
+}
+
 function onDragStart(event) {
 	event.dataTransfer.setData('text/plain', event.target.id.split("")[4]);
 	setTimeout(() => {
@@ -16,7 +21,8 @@ function onDragStart(event) {
     requestAvailablePlaces();
 }
 
-function onDragEnd(e) {
+//This function can be made much more complicated in future...
+function onDragEnd() {
 	reloadHand(handSave);
 	let places = document.querySelectorAll('.readyToDrop');
 	places.forEach(place => {
@@ -48,6 +54,13 @@ function dragDrop(e) {
 	let cardInHand = e.dataTransfer.getData('text/plain');
 	console.log(handSave);
 	placeCard(place.split("_")[2], handSave[cardInHand].id);
+}
+
+function dragMeleeAttacked(e) {
+	e.target.classList.remove('drag-over');
+	console.log(heroesSave);
+	console.log("Melee attacked: " + e.target.id);
+	meleeDamage();
 }
 
 function onClickShowCard(e) {

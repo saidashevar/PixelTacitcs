@@ -1,5 +1,6 @@
 package com.saidashevar.ptgame.service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 //import static com.saidashevar.ptgame.model.GameStatus.CHOOSING_LEADERS;
@@ -45,8 +46,16 @@ public class HeroService {
 	@Autowired
 	LeaderBasisRepository leaderBasisRepository;
 	
-	public List<Hero> getHeroes(Player player) {
-		return heroRepository.findHeroesOfPlayer(player);
+	
+	//Returns all heroes on board, excluding leaders.
+	public List<Hero> getHeroes(Game game) {
+		List<Hero> allHeroes = new ArrayList<>();
+		game.getPlayers().stream().forEach(
+				p -> allHeroes.addAll(
+					heroRepository.findHeroesOfPlayer(p)
+				)
+			);
+		return allHeroes;
 	}
 	
 	public boolean hireHero(Game game, Player player, int y, int cardId) throws InvalidGameException, NotFoundException, NoMoreActionsLeftException { //this is not necessary to return anything
@@ -54,7 +63,7 @@ public class HeroService {
 		if (!heroRepository.heroOnPlace(player.getLogin(), game.getWave(), y)) {
 			log.info("No hero is on this place, hero successfully hired");;
 			Card card = cardRepository.findById(cardId)
-					.orElseThrow(() -> new NotFoundException("Card with id:" + cardId + " wasn't found"));
+					.orElseThrow(() -> new NotFoundException("Card with id: " + cardId + " wasn't found"));
 			player.makeAction();
 			player.removeCardFromHand(card);
 			

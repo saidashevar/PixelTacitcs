@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.saidashevar.ptgame.controller.request.DamageRequest;
 import com.saidashevar.ptgame.controller.request.HireHeroRequest;
 import com.saidashevar.ptgame.exception.InvalidGameException;
 import com.saidashevar.ptgame.exception.NotFoundException;
@@ -64,9 +65,9 @@ public class HeroController {
 	
 	@GetMapping("/get-heroes")
 	ResponseEntity< List<Hero> > getBoard(@RequestParam("id") String gameId, 
-										  @RequestParam("login") String login) throws NotFoundException {
-		Player player = playerService.getPlayer(login);
-		return ResponseEntity.ok(heroService.getHeroes(player));
+										  @RequestParam("login") String login) throws NotFoundException, InvalidGameException {
+		Game game = gameService.loadGameService(gameId);
+		return ResponseEntity.ok(heroService.getHeroes(game));
 	}
 	
 	@PostMapping("/hire-hero") //Returns to player his new hand. And sends board and card count to both players by socket
@@ -114,4 +115,8 @@ public class HeroController {
 		return ResponseEntity.ok(player.getHand());
 	}
 	
+//	@PostMapping("/damage")
+//	public ResponseEntity< Set<Hero> > makeDamage(@RequestBody DamageRequest request) {
+//		
+//	}
 }

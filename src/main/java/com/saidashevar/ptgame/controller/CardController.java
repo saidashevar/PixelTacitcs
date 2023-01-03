@@ -63,7 +63,7 @@ public class CardController {
 		return cardRepository.save(card);
 	}	
 	
-	@GetMapping("/updateAll") //fast restoring
+	@GetMapping("/updateAll") //fast restoring, debug use
 	void createCardsAndLeaders() {
 		cardRepository.save(new Card(2, "Cursed_Knight", 3, 6));
 		cardRepository.save(new Card(2, "Diabolist", 1, 3));

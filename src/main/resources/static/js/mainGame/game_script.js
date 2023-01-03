@@ -1,5 +1,3 @@
-// Script map
-// 65. function displayCard(e) 
 //Next are some support variables
 var redSrc = "images/CardsDetails/Red.png";
 var blueSrc = "images/CardsDetails/Blue.png";
@@ -42,6 +40,28 @@ function placeCard(j, id) {
             console.log(error);
         }
     })
+}
+
+function meleeDamage() {
+	$.ajax({
+        url: url + "/heroes/meleeDamage",
+        type: 'POST',
+        dataType: "json",
+        contentType: "application/json",
+        data: JSON.stringify({
+            "gameId": gameId,
+            "login": login,
+            "coordinateY": j,
+            "cardId": id
+        }),
+        success: function (newHand) {
+			handSave = newHand;
+            reloadHand(handSave);
+        },
+        error: function (error) {
+            console.log(error);
+        }
+	})
 }
 
 function takeCard() {

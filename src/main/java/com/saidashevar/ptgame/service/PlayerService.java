@@ -43,6 +43,7 @@ public class PlayerService {
 	}
 	
 	//Game management functions
+	
 	public synchronized Player checkPlayerLogin(String login) { //Check if this login exists, if not creates new one and defines his color.
 		try {
 			Player player = playerRepository.findById(login)
@@ -76,9 +77,9 @@ public class PlayerService {
 	public void takeDeckAndHand(Player player) throws NotFoundException {
 		player.setDeck(new HashSet<>(cardRepository.findAll()));
 		takeStartHand(player);
-//		cardRepository.findAll().stream().forEach(card -> { card.addInDeck(player); cardRepository.save(card);});
 	}
 	
+	//This method is used when player should see where hiring is possible
 	public List<Hero> getAvailablePlaces(Game game, String login) {
 		List<Hero> places = new ArrayList<>();
 		for (int i = 0; i < 3; i++) {
@@ -86,5 +87,28 @@ public class PlayerService {
 				places.add(new Hero(game.getWave(), i)); 
 		}
 		return places;
+	}
+	
+	public List<Hero> getAvailableTargets(Player player) {
+		List<Hero> heroesOpenedForAttack = new ArrayList<>();
+		
+		//Here we check first unit in each column
+		//And add first heroes of each coloumn to list of available targets.
+		//We think all attacks are melee now...
+		for (int j = 0; j < 3; j++) {
+			for (int i = 0; i < 3; i++) {
+				if (heroRepository.heroOnPlace(player.getLogin(), i, j)) {
+					heroesOpenedForAttack.add(new Hero(i, j));
+					break;
+				}
+				
+				if (i == 0 && j == 1) { //add leader as available target, if nobody covers him
+					heroesOpenedForAttack.add(new Hero(i+1, j));
+					break;
+				}
+			}
+		}
+		
+		return heroesOpenedForAttack;
 	}
 }
