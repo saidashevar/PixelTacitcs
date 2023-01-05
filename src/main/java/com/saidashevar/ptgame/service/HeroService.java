@@ -12,16 +12,19 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.saidashevar.ptgame.controller.request.DamageRequest;
 import com.saidashevar.ptgame.exception.InvalidGameException;
 import com.saidashevar.ptgame.exception.NotFoundException;
 import com.saidashevar.ptgame.exception.game.NoMoreActionsLeftException;
 import com.saidashevar.ptgame.model.Game;
 import com.saidashevar.ptgame.model.Player;
 import com.saidashevar.ptgame.model.cards.Card;
+import com.saidashevar.ptgame.model.cards.CardBasis;
 import com.saidashevar.ptgame.model.cards.Hero;
 import com.saidashevar.ptgame.model.cards.Leader;
 import com.saidashevar.ptgame.model.cards.LeaderBasis;
 import com.saidashevar.ptgame.repository.CardRepository;
+import com.saidashevar.ptgame.repository.EffectRepository;
 import com.saidashevar.ptgame.repository.HeroRepository;
 import com.saidashevar.ptgame.repository.LeaderBasisRepository;
 import com.saidashevar.ptgame.repository.LeaderRepository;
@@ -45,7 +48,18 @@ public class HeroService {
 	LeaderRepository leaderRepository;
 	@Autowired
 	LeaderBasisRepository leaderBasisRepository;
+	@Autowired
+	EffectRepository effectRepository;
 	
+	private Leader getLeader(long id) throws NotFoundException {
+		return leaderRepository.findById(id)
+				.orElseThrow(() -> new NotFoundException("Leader with some id while attack wasn't found"));
+	}
+	
+	private Hero getHero(long id) throws NotFoundException {
+		return heroRepository.findById(id)
+				.orElseThrow(() -> new NotFoundException("Hero with some id while attack wasn't found"));
+	}
 	
 	//Returns all heroes on board, excluding leaders.
 	public List<Hero> getHeroes(Game game) {
@@ -84,4 +98,35 @@ public class HeroService {
 		
 		return player;
 	}
+	
+	public void heroAttacked(DamageRequest request) throws NotFoundException { //totally not most optimized function
+		CardBasis attacker;
+		if (request.isAttackerIsLeader()) 
+			attacker = getLeader(request.getAttackerId());
+		else 
+			attacker = getHero(request.getAttackerId());
+		
+		CardBasis target;
+		if (request.isTargetIsLeader()) { //yeah yeah, repeating
+			
+			target = getLeader(request.getTargetId());
+			target.saveEffect(
+					effectRepository.save(
+							target.takeDamage( attacker.getAttack() )
+					)
+			);
+			
+			leaderRepository.save((Leader)target);
+		} else {
+			target = getHero(request.getTargetId());
+			target.saveEffect(
+					effectRepository.save(
+							target.takeDamage(attacker.getAttack())
+					)
+			);
+			
+			heroRepository.save((Hero)target);
+		}
+		log.info("effects saved!"); //that also waits till hero saved
+	} 
 }

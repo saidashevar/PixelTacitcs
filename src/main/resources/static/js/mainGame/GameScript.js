@@ -1,23 +1,3 @@
-//Next are some support variables
-var redSrc = "images/CardsDetails/Red.png";
-var blueSrc = "images/CardsDetails/Blue.png";
-
-//Few variables about non gameplay fields.
-const url = 'http://localhost:8080';
-//var gameStatus;
-var gameId;
-var login;
-var opponentSave;
-var youSave;
-
-//Next variables save all information about game for that player.
-var handSave;		//array of cards in your hand
-var cardCountSave;  //two numbers that determine card count of both players (may be badly translated to eng)
-var actionsCountSave;//   numbers that show actions count. negative values mean actions of your opponent
-var turnSave;		//info about your turn
-var gameSave;		//info about game
-var heroesSave;		//info about all heroes on board
-var leaderSave;		//info about your leader
 
 //Request functions
 function placeCard(j, id) {
@@ -42,17 +22,19 @@ function placeCard(j, id) {
     })
 }
 
-function meleeDamage() {
+function meleeDamage(attackerPlaceId, targetId) {
 	$.ajax({
-        url: url + "/heroes/meleeDamage",
+        url: url + "/heroes/damage",
         type: 'POST',
         dataType: "json",
         contentType: "application/json",
         data: JSON.stringify({
-            "gameId": gameId,
-            "login": login,
-            "coordinateY": j,
-            "cardId": id
+			"gameId": gameId,
+            "type": "MELEE",
+            "attackerIsLeader": false,
+            "attackerId": findCardId(attackerPlaceId),
+            "targetIsLeader": false,
+            "targetId": findCardId(targetId)
         }),
         success: function (newHand) {
 			handSave = newHand;
@@ -206,6 +188,25 @@ function prepareCardInHandName(cardId) {
 	cardName.classList.add('cardName');
 	cardName.textContent = prepareName(handSave[cardId].name);
 	return cardName;
+}
+
+function findCardId(placeId) {
+	let id = placeId.split("");
+	let squad = id[0];
+	let i = id[2];
+	let j = id[4];
+	if (i == 1 && j == 1) { return "leader attacked!" } //Leader case
+	else {
+		for(let x = 0; x < heroesSave.length; x++) {
+			let hero = heroesSave[x];
+			if (hero.coordX == i && hero.coordY == j) {
+				console.log(hero.id);
+				if((squad == 1 && hero.player.login == login) || 
+				   (squad == 2 && hero.player.login == opponentSave.login)) 
+					return hero.id;
+			}
+		}
+	}
 }
 
 //Click functions

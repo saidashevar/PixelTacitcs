@@ -5,6 +5,7 @@ import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.saidashevar.ptgame.model.cards.Hero;
+import com.saidashevar.ptgame.model.cards.Leader;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -30,8 +31,16 @@ public class EffectBasic {
 	
 	@JsonIgnore
 	@ManyToMany(mappedBy = "effects", fetch = FetchType.LAZY)
-	private Set<Hero> heroes = new HashSet<>();
+	private Set<Hero> onHeroes = new HashSet<>();
 	
+	@JsonIgnore
+	@ManyToMany(mappedBy = "effects", fetch = FetchType.LAZY)
+	private Set<Leader> onLeaders = new HashSet<>();
+	
+	public Integer getValue() { return null; }
+	public void setValue(int value) {}
+	
+	//Constructors
 	public EffectBasic () {}
 
 	public EffectBasic(String name) {
@@ -39,6 +48,7 @@ public class EffectBasic {
 		this.name = name;
 	}
 	
+	//Getters and setters
 	public String getName() {
 		return name;
 	}

@@ -6,5 +6,10 @@ import lombok.Data;
 
 @Data
 public class DamageRequest {
-	DamageType type;
+	private String gameId;
+	private DamageType type;
+	private boolean attackerIsLeader;
+	private long attackerId;
+	private boolean targetIsLeader;
+	private long targetId;
 }

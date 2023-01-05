@@ -1,5 +1,8 @@
 package com.saidashevar.ptgame.model.cards;
 
+import com.saidashevar.ptgame.model.effects.EffectBasic;
+import com.saidashevar.ptgame.model.effects.EffectSimple;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
@@ -8,7 +11,7 @@ import jakarta.persistence.InheritanceType;
 
 @Entity
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
-public abstract class CardBasis {
+public class CardBasis {
 	
 	@Id
 	@GeneratedValue
@@ -19,6 +22,12 @@ public abstract class CardBasis {
 	private int attack;
 	private int maxHealth;
 	
+	//Functions
+	public EffectSimple takeDamage(int attack) { return null; }
+	
+	public void saveEffect(EffectBasic effect) {}
+	
+	//Constructors
 	public CardBasis(int edition, String name, int attack, int maxHealth) {
 		super();
 		this.edition = edition;
@@ -29,6 +38,7 @@ public abstract class CardBasis {
 	
 	public CardBasis() {}
 	
+	//Getters and setters
 	public int getId() {
 		return id;
 	}

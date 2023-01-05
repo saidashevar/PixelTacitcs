@@ -89,11 +89,8 @@ public class Player {
 	}
 	
 	public Card findCardToTake() throws NotFoundException {
-//		Random rand = new Random();
-		return deck.stream().findAny().orElseThrow(() -> new NotFoundException("There are no more cards in "+login+"'s deck!")); //old way without random
-//		int size = rand.nextInt(deck.size());
-//		if (size == 0) throw new NotFoundException("There are no more cards in "+login+"'s deck!");
-//		else return deck.get(rand.nextInt(deck.size()));
+		return deck.stream().findAny()
+				.orElseThrow(() -> new NotFoundException("There are no more cards in "+login+"'s deck!")); //old way without random
 	}
 	
 	public void removeLeaderCardFromHand(int id) throws NotFoundException { //Just removes card wtih leader from hand

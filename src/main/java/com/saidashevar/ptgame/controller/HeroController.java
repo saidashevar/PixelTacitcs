@@ -115,8 +115,12 @@ public class HeroController {
 		return ResponseEntity.ok(player.getHand());
 	}
 	
-//	@PostMapping("/damage")
-//	public ResponseEntity< Set<Hero> > makeDamage(@RequestBody DamageRequest request) {
-//		
-//	}
+	@PostMapping("/damage")
+	//ResponseEntity< Set<Hero> >
+	public ResponseEntity<String> makeDamage(@RequestBody DamageRequest request) throws NotFoundException, MessagingException, InvalidGameException {
+		heroService.heroAttacked(request);
+		var resp = gameService.getBoard(request.getGameId());
+		simpMessagingTemplate.convertAndSend("/topic/game-progress/" + request.getGameId(), resp);
+		return ResponseEntity.ok("Attack successful!");	
+	}
 }

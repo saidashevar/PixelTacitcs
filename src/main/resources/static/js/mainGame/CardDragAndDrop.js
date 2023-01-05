@@ -10,6 +10,7 @@ boxes.forEach(box => {
 
 function onAttackStart(event) {
 	console.log(event.target);
+	event.dataTransfer.setData('text/plain', event.target.id);
 	requestAvailableTargets();
 }
 
@@ -58,9 +59,10 @@ function dragDrop(e) {
 
 function dragMeleeAttacked(e) {
 	e.target.classList.remove('drag-over');
-	console.log(heroesSave);
+	console.log(leaderSave);
 	console.log("Melee attacked: " + e.target.id);
-	meleeDamage();
+	let attackerPlaceId = e.dataTransfer.getData('text/plain');
+	meleeDamage(attackerPlaceId, e.target.id);
 }
 
 function onClickShowCard(e) {

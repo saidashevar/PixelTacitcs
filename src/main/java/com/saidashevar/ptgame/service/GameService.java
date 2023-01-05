@@ -13,9 +13,11 @@ import static com.saidashevar.ptgame.model.GameStatus.NO2PLAYER_1LEADER_CHOSEN;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.tomcat.util.json.JSONParser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -27,6 +29,7 @@ import com.saidashevar.ptgame.model.Game;
 import com.saidashevar.ptgame.model.Player;
 import com.saidashevar.ptgame.model.cards.Card;
 import com.saidashevar.ptgame.model.cards.Hero;
+import com.saidashevar.ptgame.model.effects.EffectBasic;
 import com.saidashevar.ptgame.repository.CardRepository;
 import com.saidashevar.ptgame.repository.GameRepository;
 import com.saidashevar.ptgame.repository.HeroRepository;
@@ -40,7 +43,7 @@ import lombok.extern.slf4j.Slf4j;
 @AllArgsConstructor
 public class GameService {
 	
-	//This service depends on other services only
+	//Only this service depends on other services
 //	private final CardService cardService;
 	private final PlayerService playerService;
 	
@@ -74,14 +77,15 @@ public class GameService {
 	}
 	
 	public Game connectToRandomGame(String login) throws NotFoundException {
-		Player player = playerService.checkPlayerLogin(login);
-		playerService.takeDeckAndHand(player);
-		player.setRed(); //This defines player's color randomly
-		playerService.savePlayer(player);
-		
 		Game game = gameRepository.findAll().stream()
 				.filter(g -> g.getStatus().equals(NO2PLAYER) || g.getStatus().equals(NO2PLAYER_1LEADER_CHOSEN)).findFirst()
 				.orElseThrow(() -> new NotFoundException("No new games were found"));
+		
+		Player player = playerService.checkPlayerLogin(login);
+		playerService.takeDeckAndHand(player);
+		player.setRed(!game.findPlayers(login)[1].isRed()); //This defines player's color to be opposite to his opponent
+		playerService.savePlayer(player);
+		
 		game.addPlayer(player);
 		
 		//We need to change status for frontend correctly
@@ -115,8 +119,11 @@ public class GameService {
 	// Next methods prepare information about game for both players (board, card count)
 	
 	public UniResponse< Set<Hero> > getBoard(String gameId) throws InvalidGameException {
+		Iterator<Player> itr = loadGameService(gameId).getPlayers().iterator();
 		Set<Hero> set = new HashSet<>();
-		loadGameService(gameId).getPlayers().stream().forEach(p -> set.addAll(p.getBoard()));
+		while (itr.hasNext()) {
+			set.addAll(itr.next().getBoard());
+		}
 		return new UniResponse< Set<Hero> >(BOARD, set);
 	}
 	
@@ -159,4 +166,14 @@ public class GameService {
 	public void setGameRepository(GameRepository gameRepository) {
 		this.gameRepository = gameRepository;
 	}
+	
+	//Debug function
+//	private String makeStringFromSet(Set<Hero> heroes) {
+//		Iterator<Hero> itr = heroes.iterator();
+//		String string = "";
+//		while (itr.hasNext()) {
+//			string += itr.next().getId() + " ";
+//		}
+//		return string;
+//	}
 }
