@@ -4,8 +4,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.saidashevar.ptgame.model.Player;
 import com.saidashevar.ptgame.model.effects.EffectBasic;
@@ -31,15 +29,14 @@ public class Hero extends CardBasis {
 	@Column(name = "coord_y", nullable = true)
 	private int coordY;
 	
-	@JsonBackReference
-	@ManyToMany(fetch = FetchType.LAZY)
+	@ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	@JoinTable(
 			name = "heroes_effects",
 			joinColumns = @JoinColumn(name = "hero_id"),
 			inverseJoinColumns = @JoinColumn(name = "effect_id"))
 	private Set<EffectBasic> effects = new HashSet<>();
 	
-	@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"}) //You don't even imagine how much time i've spent to find this line of code
+	@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"}) //You don't even imagine how much time i've spent to find this line of code (15 minutes)
 	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@JoinColumn(name = "player_login", referencedColumnName = "login")
 	private Player player;
@@ -125,6 +122,10 @@ public class Hero extends CardBasis {
 	}
 	
 	//Getters and setters
+	public Set<EffectBasic> getEffects() {
+		return effects;
+	}
+	
 	public void setPlayer(Player player) {
 		this.player = player;
 	}

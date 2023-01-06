@@ -1,4 +1,3 @@
-
 // Request functions
 //
 //This function requests from servers places, where we may hire our heroes

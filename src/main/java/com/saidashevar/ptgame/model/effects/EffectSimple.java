@@ -1,11 +1,28 @@
 package com.saidashevar.ptgame.model.effects;
 
+import java.util.HashSet;
+import java.util.Set;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.saidashevar.ptgame.model.cards.Hero;
+import com.saidashevar.ptgame.model.cards.Leader;
+
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.ManyToMany;
 
 @Entity
 public class EffectSimple extends EffectBasic {
 	
 	private int value;
+	
+	@JsonIgnore
+	@ManyToMany(mappedBy = "effects", fetch = FetchType.LAZY)
+	private Set<Hero> onHeroes = new HashSet<>();
+	
+	@JsonIgnore
+	@ManyToMany(mappedBy = "effects", fetch = FetchType.LAZY)
+	private Set<Leader> onLeaders = new HashSet<>();
 	
 	//Constructors
 	public EffectSimple() {

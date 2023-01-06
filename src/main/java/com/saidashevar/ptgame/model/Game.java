@@ -70,6 +70,11 @@ public class Game {
 		}
 	}
 	
+	public Player getPlayer() throws NotFoundException {
+		return players.stream().findAny()
+				.orElseThrow(() -> new NotFoundException("no players in that game"));
+	}
+	
 //	public Player findOtherPlayerByLogin(String login) throws NotFoundException {
 //		return players.stream().filter(p -> !p.getLogin().equals(login)).findAny()
 //				.orElseThrow(() -> new NotFoundException("Opponent of " + login + "out of universe"));

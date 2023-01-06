@@ -1,6 +1,7 @@
 //Next are some support variables
 var redSrc = "images/CardsDetails/Red.png";
 var blueSrc = "images/CardsDetails/Blue.png";
+var actionsSrc = "images/CardsDetails/Actions.png";
 
 //Few variables about non gameplay fields.
 const url = 'http://localhost:8080';

@@ -1,10 +1,10 @@
 package com.saidashevar.ptgame.service;
 
+import static com.saidashevar.ptgame.config.response.ResponseTypes.ACTIONS_COUNT;
 import static com.saidashevar.ptgame.config.response.ResponseTypes.BOARD;
 import static com.saidashevar.ptgame.config.response.ResponseTypes.CARD_COUNT;
-import static com.saidashevar.ptgame.config.response.ResponseTypes.ACTIONS_COUNT;
-import static com.saidashevar.ptgame.config.response.ResponseTypes.STATUS;
 import static com.saidashevar.ptgame.config.response.ResponseTypes.MESSAGE;
+import static com.saidashevar.ptgame.config.response.ResponseTypes.STATUS;
 import static com.saidashevar.ptgame.model.GameStatus.CHOOSING_LEADERS;
 import static com.saidashevar.ptgame.model.GameStatus.CHOOSING_LEADERS_1LEADER_CHOSEN;
 import static com.saidashevar.ptgame.model.GameStatus.FINISHED;
@@ -15,9 +15,9 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Random;
 import java.util.Set;
 
-import org.apache.tomcat.util.json.JSONParser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -29,7 +29,6 @@ import com.saidashevar.ptgame.model.Game;
 import com.saidashevar.ptgame.model.Player;
 import com.saidashevar.ptgame.model.cards.Card;
 import com.saidashevar.ptgame.model.cards.Hero;
-import com.saidashevar.ptgame.model.effects.EffectBasic;
 import com.saidashevar.ptgame.repository.CardRepository;
 import com.saidashevar.ptgame.repository.GameRepository;
 import com.saidashevar.ptgame.repository.HeroRepository;
@@ -76,17 +75,24 @@ public class GameService {
 		return saveGame(game);
 	}
 	
+	//This method is probably too large...
 	public Game connectToRandomGame(String login) throws NotFoundException {
 		Game game = gameRepository.findAll().stream()
 				.filter(g -> g.getStatus().equals(NO2PLAYER) || g.getStatus().equals(NO2PLAYER_1LEADER_CHOSEN)).findFirst()
 				.orElseThrow(() -> new NotFoundException("No new games were found"));
 		
-		Player player = playerService.checkPlayerLogin(login);
-		playerService.takeDeckAndHand(player);
-		player.setRed(!game.findPlayers(login)[1].isRed()); //This defines player's color to be opposite to his opponent
-		playerService.savePlayer(player);
+		Player player1 = game.getPlayer();
+		Player player2 = playerService.checkPlayerLogin(login);
 		
-		game.addPlayer(player);
+		Random rd = new Random();
+		boolean color = rd.nextBoolean();
+		player1.setAsFirst(color);
+		player2.setAsSecond(!color);
+		
+		playerService.takeDeckAndHand(player2);
+		playerService.savePlayer(player2);
+		
+		game.addPlayer(player2);
 		
 		//We need to change status for frontend correctly
 		if (game.getStatus().equals(NO2PLAYER))	game.setStatus(CHOOSING_LEADERS);

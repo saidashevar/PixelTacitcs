@@ -46,7 +46,7 @@ public class Turn {
 	public byte getActionsLeft() {
 		return actionsLeft;
 	}
-	public void setActionsLeft(byte actionsLeft) {
-		this.actionsLeft = actionsLeft;
+	public void setActionsLeft(int actionsLeft) {
+		this.actionsLeft = (byte)actionsLeft;
 	}
 }

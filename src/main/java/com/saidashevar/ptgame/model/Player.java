@@ -103,6 +103,19 @@ public class Player {
 		setRed(!player.isRed());
 	}
 	
+	public void setAsFirst(boolean cardShirt) {
+		turn.setActionsLeft(2);
+		turn.setAttacking(true);
+		isRed = cardShirt;
+		//turn.setWave(0); this is unnecessary
+	}
+	
+	public void setAsSecond(boolean cardShirt) {
+		turn.setActionsLeft(0);
+		turn.setAttacking(false);
+		isRed = cardShirt;
+	}
+	
 	//Getters and setters
 	public String getLogin() {
 		return login;
