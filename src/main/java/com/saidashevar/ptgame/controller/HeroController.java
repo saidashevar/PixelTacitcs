@@ -34,6 +34,7 @@ import com.saidashevar.ptgame.model.cards.Card;
 import com.saidashevar.ptgame.model.cards.Hero;
 import com.saidashevar.ptgame.repository.CardRepository;
 import com.saidashevar.ptgame.repository.HeroRepository;
+import com.saidashevar.ptgame.repository.PlayerRepository;
 import com.saidashevar.ptgame.service.GameService;
 import com.saidashevar.ptgame.service.HeroService;
 import com.saidashevar.ptgame.service.PlayerService;
@@ -56,6 +57,8 @@ public class HeroController {
 	HeroRepository heroRepository;
 	@Autowired
 	CardRepository cardRepository;
+	@Autowired
+	PlayerRepository playerRepository;
 	
 	@GetMapping
 	List<Hero> getHeroes() { return heroRepository.findAll(); }
@@ -118,9 +121,16 @@ public class HeroController {
 	@PostMapping("/damage")
 	//ResponseEntity< Set<Hero> >
 	public ResponseEntity<String> makeDamage(@RequestBody DamageRequest request) throws NotFoundException, MessagingException, InvalidGameException {
-		heroService.heroAttacked(request);
-		var resp = gameService.getBoard(request.getGameId());
-		simpMessagingTemplate.convertAndSend("/topic/game-progress/" + request.getGameId(), resp);
-		return ResponseEntity.ok("Attack successful!");	
+		Player player = playerService.getPlayer(request.getLogin());
+		try {
+			player.checkActions();
+			heroService.heroAttacked(request);
+			var resp = gameService.getBoard(request.getGameId());
+			simpMessagingTemplate.convertAndSend("/topic/game-progress/" + request.getGameId(), resp);
+			return ResponseEntity.ok("Attack successful!");
+		} catch (NoMoreActionsLeftException e) {
+			log.info(e.getMessage());
+			return ResponseEntity.badRequest().body("everything is bad");
+		}	
 	}
 }

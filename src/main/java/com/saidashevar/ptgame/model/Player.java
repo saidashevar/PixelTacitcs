@@ -116,6 +116,10 @@ public class Player {
 		isRed = cardShirt;
 	}
 	
+	public void checkActions() throws NoMoreActionsLeftException {
+		if (turn.getActionsLeft() == 0) throw new NoMoreActionsLeftException(login + " has no more actions!"); 
+	}
+	
 	//Getters and setters
 	public String getLogin() {
 		return login;

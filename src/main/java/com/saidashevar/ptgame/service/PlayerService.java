@@ -74,11 +74,14 @@ public class PlayerService {
 		return player;
 	}
 	
+	//This function is used when player connects to new game only.
 	public void takeDeckAndHand(Player player) throws NotFoundException {
 		player.setDeck(new HashSet<>(cardRepository.findAll()));
 		takeStartHand(player);
 	}
 	
+	
+	//Next are functions that are used during the game
 	//This method is used when player should see where hiring is possible
 	public List<Hero> getAvailablePlaces(Game game, String login) {
 		List<Hero> places = new ArrayList<>();

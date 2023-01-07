@@ -30,6 +30,7 @@ function meleeDamage(attackerPlaceId, targetId) {
         contentType: "application/json",
         data: JSON.stringify({
 			"gameId": gameId,
+			"login": login,
             "type": "MELEE",
             "attackerIsLeader": false,
             "attackerId": findCardId(attackerPlaceId),

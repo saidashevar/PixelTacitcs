@@ -100,6 +100,7 @@ public class HeroService {
 	}
 	
 	public void heroAttacked(DamageRequest request) throws NotFoundException { //totally not most optimized function
+		
 		CardBasis attacker;
 		if (request.isAttackerIsLeader()) 
 			attacker = getLeader(request.getAttackerId());

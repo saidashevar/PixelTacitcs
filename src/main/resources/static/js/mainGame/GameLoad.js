@@ -18,6 +18,7 @@ function connectToSocket() {
         stompClient.subscribe("/topic/game-progress/" + gameId, function (response) { // this function works when gets info form socket!
             let data = JSON.parse(response.body);
             console.log(data);
+            reloadTurns(); //this should be removed from here... probably
             switch (data.type) { // With response there is type of info from server.
 				case "BOARD":
 					heroesSave = data.info;
@@ -53,7 +54,7 @@ async function requestFullGame() {
 			requestHeroes(function() {
 				loadHeroes();
 			});
-			requestTurn();
+			reloadTurns();
         },
         error: function (error) {
             console.log("Game wasn't loaded!" + error);
@@ -201,6 +202,45 @@ function loadLeaders() { //This methos also loads images for decks
 		break;
 		case "":
 		break;
+	}
+}
+
+function loadTurns() {
+	loadTurnImage(youSave);
+	if (opponentSave != undefined) loadTurnImage(opponentSave);
+}
+
+function reloadTurns() {
+	for (let x = 1; x <= 2; x++) {
+		for(let y = 0; y < 3; y++) {
+			let div = document.getElementById("0_" + x + "_" + y).firstChild;
+			if (div != undefined) div.remove();
+		}
+	}
+	loadTurns();
+} //later
+
+//support function
+function loadTurnImage(player) {
+	let i = 2;
+	if (player.login == login) i = 1;
+	
+	if (player.turn.attacking == true) { //maybe i have to avoid such contructions
+		if (player.turn.actionsLeft == 0) {
+			if (player.turn.wave == 2) {
+				turnDiv = document.getElementById("0_"+i+"_2");
+				turnDiv.appendChild(createDiv(createCardImage(actionsSrc)));		
+			} else {
+				turnDiv = document.getElementById("0_"+i+"_" + (player.turn.wave+1));
+				turnDiv.appendChild(createDiv(createCardImage(firstSrc)));
+			}
+		} else {
+			youTurnDiv = document.getElementById("0_"+i+"_" + player.turn.wave);
+			youTurnDiv.appendChild(createDiv(createCardImage(firstSrc)));
+		}
+	} else {
+		youTurnDiv = document.getElementById("0_"+i+"_" + player.turn.wave);
+		youTurnDiv.appendChild(createDiv(createCardImage(secondSrc)));
 	}
 }
 
