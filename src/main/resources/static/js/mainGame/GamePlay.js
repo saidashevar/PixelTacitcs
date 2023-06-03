@@ -6,7 +6,7 @@ function requestAvailablePlaces(fun) {
         url: url + "/players/get-places?id="+gameId+"&login="+login,
         type: 'GET',
         success: function (data) {
-			loadAvailablePlaces(data);``
+			loadAvailablePlaces(data);
 			if (fun != undefined) fun(); //yeah, this may be useless
         },
         error: function (error) {
@@ -29,6 +29,7 @@ function requestAvailableTargets() {
 }
 
 // Loading functions
+//
 //
 function loadAvailablePlaces(places) {
 	for (let x = 0; x < places.length; x++)	{

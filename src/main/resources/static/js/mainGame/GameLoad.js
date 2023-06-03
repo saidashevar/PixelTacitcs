@@ -7,8 +7,6 @@ function loadPage() {
 	requestFullGame();
 }
 
-//Script map for future:
-
 function connectToSocket() {
     console.log("connecting to the game");
     let socket = new SockJS(url + "/gameplay");
@@ -18,7 +16,6 @@ function connectToSocket() {
         stompClient.subscribe("/topic/game-progress/" + gameId, function (response) { // this function works when gets info form socket!
             let data = JSON.parse(response.body);
             console.log(data);
-            reloadTurns(); //this should be removed from here... probably
             switch (data.type) { // With response there is type of info from server.
 				case "BOARD":
 					heroesSave = data.info;
@@ -49,12 +46,12 @@ async function requestFullGame() {
 			gameSave = newGame;
 			getOpponent();
 			requestLeader(checkStatus);
+			reloadTurns();
 			
 			//Next functions are... useless for now
 			requestHeroes(function() {
 				loadHeroes();
 			});
-			reloadTurns();
         },
         error: function (error) {
             console.log("Game wasn't loaded!" + error);
@@ -183,7 +180,7 @@ function reloadHand() {
 function loadLeaders() { //This methos also loads images for decks
 	switch (gameSave.status) {
 		case "PEACE":
-			let oppLeaderDiv = document.getElementById("2_1_1");
+			let oppLeaderDiv = document.getElementById("2_1_1"); 
 			let yourLeaderDiv = document.getElementById("1_1_1");
 			let oppDeck = document.getElementById("deckPlayer2");
 			let yourDeck = document.getElementById("deckPlayer1");
@@ -221,15 +218,15 @@ function reloadTurns() {
 } //later
 
 //support function
-function loadTurnImage(player) {
+function loadTurnImage(player) { //This function loads image of sword and shield to show wave and turn order of players.
 	let i = 2;
 	if (player.login == login) i = 1;
 	
-	if (player.turn.attacking == true) { //maybe i have to avoid such contructions
+	if (player.turn.attacking == true) { //maybe i have to avoid such contructions but i don't know how to do this.
 		if (player.turn.actionsLeft == 0) {
 			if (player.turn.wave == 2) {
 				turnDiv = document.getElementById("0_"+i+"_2");
-				turnDiv.appendChild(createDiv(createCardImage(actionsSrc)));		
+				turnDiv.appendChild(createDiv(createCardImage(actionsSrc)));	
 			} else {
 				turnDiv = document.getElementById("0_"+i+"_" + (player.turn.wave+1));
 				turnDiv.appendChild(createDiv(createCardImage(firstSrc)));
@@ -382,8 +379,9 @@ function createDiv(img) {
 
 function checkStatus() { //this works very bad, when you enter new game with used login. 
 						 //Probably i should make account system later
+						 //Bug! When Player 1 starts game and player 2 connects to it and chooses leader before player 1 does the same, player 1 gets 12 cards at the start of the game
 	//Here we should remember that this function is called when:
-	//	1. Page loads first time (may not!)
+	//	1. Page loads first time
 	//	2. Game Status changed with message 
 	switch (gameSave.status) {
 		case "NO2PLAYER":
