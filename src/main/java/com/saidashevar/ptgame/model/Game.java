@@ -36,7 +36,7 @@ public class Game {
 	private int wave = 0;
 	private GameStatus status;
 	
-	public Player[] findPlayers(String login) throws NotFoundException { // Returns player with requested login first. In very strange way without playerRepository. mmay be very bad
+	public Player[] findPlayers(String login) throws NotFoundException { // Returns player with requested login first. In very strange way without playerRepository. may be very bad
 		Player player1 = players.stream().filter(p -> p.getLogin().equals(login)).findAny()
 				.orElseThrow(() -> new NotFoundException("Player with login " + login + " is not playing that game"));
 		Player player2 = players.stream().filter(p -> !p.getLogin().equals(login)).findAny().orElse(null);

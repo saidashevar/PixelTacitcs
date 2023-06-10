@@ -23,12 +23,18 @@ public class Turn {
 	private byte actionsLeft = 2;
 	
 	//Gameplay functions
-	public void makeAction() throws NoMoreActionsLeftException {
+	//Here second player is used to add him actions
+	public void makeAction(Player player) throws NoMoreActionsLeftException {
 		if (actionsLeft >= 1)
 			actionsLeft--;
 		else throw new NoMoreActionsLeftException("Player has no more actions!");
+		if (actionsLeft == 0)
+			player.addActions((byte)2);
 	}
 	
+	public void addActions(byte x) {
+		actionsLeft = (byte) (actionsLeft + x); //weird
+	}
 	
 	//Getters and setters
 	public int getWave() {

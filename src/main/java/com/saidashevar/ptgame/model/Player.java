@@ -74,9 +74,10 @@ public class Player {
 			inverseJoinColumns = @JoinColumn(name = "card_id"))
 	private Set<Card> pile = new LinkedHashSet<>();
 	
-	//gameplay functions
-	public void makeAction() throws NoMoreActionsLeftException {
-		turn.makeAction();
+	//Gameplay functions
+	//Here we use other player to give him actions if our actions ended
+	public void makeAction(Player player) throws NoMoreActionsLeftException {
+		turn.makeAction(player);
 	}
 	
 	public void takeCard(Card card) {
@@ -118,6 +119,10 @@ public class Player {
 	
 	public void checkActions() throws NoMoreActionsLeftException {
 		if (turn.getActionsLeft() == 0) throw new NoMoreActionsLeftException(login + " has no more actions!"); 
+	}
+	
+	public void addActions(byte x) {
+		this.turn.addActions(x);
 	}
 	
 	//Getters and setters

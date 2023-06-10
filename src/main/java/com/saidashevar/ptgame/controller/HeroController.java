@@ -74,12 +74,13 @@ public class HeroController {
 	}
 	
 	@PostMapping("/hire-hero") //Returns to player his new hand. And sends board and card count to both players by socket
+							   //Also should make all actions assisting making turn. (give new actions to second player if there are no one after hiring etc.)
 	public ResponseEntity< Set<Card> > hireHero(@RequestBody HireHeroRequest request) throws InvalidGameException, NotFoundException, MessagingException, NoMoreActionsLeftException {
 		log.info(request.getLogin() +" hires new Hero!");
 		Game game = gameService.loadGameService(request.getGameId());
-		Player player = playerService.getPlayer(request.getLogin());
-		if (heroService.hireHero(game, player, request.getCoordinateY(), request.getCardId())) {
-			//Now we have to send both players board, second player must know hero his opponent hired and where.
+		Player[] players = game.findPlayers(request.getLogin());
+		if (heroService.hireHero(game, players, request.getCoordinateY(), request.getCardId())) {
+			//Now we have to send both players board, second player must know hero his opponent hired and where he is.
 			simpMessagingTemplate.convertAndSend("/topic/game-progress/" + request.getGameId(),
 												 gameService.getBoard(request.getGameId()));
 			//Second one sends info about card count
