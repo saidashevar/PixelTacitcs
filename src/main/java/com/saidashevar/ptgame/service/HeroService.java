@@ -78,12 +78,12 @@ public class HeroService {
 			log.info("No hero is on this place, hero successfully hired");;
 			Card card = cardRepository.findById(cardId)
 					.orElseThrow(() -> new NotFoundException("Card with id: " + cardId + " wasn't found"));
-			players[0].makeAction(players[1]);
+			players[0].makeAction(game, players[1]);
 			players[0].removeCardFromHand(card);
 			
+			heroRepository.save(new Hero(card, game.getWave(), y, players[0]));
 			playerRepository.save(players[0]);
 			playerRepository.save(players[1]);
-			heroRepository.save(new Hero(card, game.getWave(), y, players[0]));
 			
 			return true;
 		} else

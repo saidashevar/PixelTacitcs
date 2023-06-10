@@ -18,6 +18,7 @@ import com.saidashevar.ptgame.controller.request.ConnectRequest;
 import com.saidashevar.ptgame.controller.request.StringRequest;
 import com.saidashevar.ptgame.exception.InvalidGameException;
 import com.saidashevar.ptgame.exception.NotFoundException;
+import com.saidashevar.ptgame.exception.game.NoMoreActionsLeftException;
 import com.saidashevar.ptgame.model.Game;
 import com.saidashevar.ptgame.model.Player;
 import com.saidashevar.ptgame.model.cards.Card;
@@ -69,8 +70,9 @@ public class PlayerController {
 	//Gameplay functions
 	
 	@PostMapping("/take-card") //This is called when player takes card from deck
-	public ResponseEntity< Set<Card> > takeCard(@RequestBody ConnectRequest request) throws NotFoundException, InvalidGameException {
-		Player player = playerService.takeCard(request.getLogin());
+	public ResponseEntity< Set<Card> > takeCard(@RequestBody ConnectRequest request) throws NotFoundException, InvalidGameException, NoMoreActionsLeftException {
+		Game game = gameService.loadGameService(request.getGameId());
+		Player player = playerService.takeCard(request.getLogin(), game);
 		log.info(player.getLogin() + "takes card");
 		//Send info about card count to both players
 		simpMessagingTemplate.convertAndSend("/topic/game-progress/" + request.getGameId(),

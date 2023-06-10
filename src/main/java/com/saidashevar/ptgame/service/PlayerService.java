@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.saidashevar.ptgame.exception.NotFoundException;
+import com.saidashevar.ptgame.exception.game.NoMoreActionsLeftException;
 import com.saidashevar.ptgame.model.Game;
 import com.saidashevar.ptgame.model.Player;
 import com.saidashevar.ptgame.model.cards.Card;
@@ -66,12 +67,14 @@ public class PlayerService {
 		}
 	} 
 	
-	public Player takeCard(String requester) throws NotFoundException {
-		Player player = getPlayer(requester);
-		Card card = player.findCardToTake();
-		player.takeCard(card);
-		playerRepository.save(player);
-		return player;
+	public Player takeCard(String requester, Game game) throws NotFoundException, NoMoreActionsLeftException { //may be more compact and easer...
+		Player[] players = game.findPlayers(requester);
+		Card card = players[0].findCardToTake();
+		players[0].takeCard(card);
+		players[0].makeAction(game, players[1]);
+		playerRepository.save(players[0]);
+		playerRepository.save(players[1]);
+		return players[0];
 	}
 	
 	//This function is used when player connects to new game only.
@@ -83,6 +86,7 @@ public class PlayerService {
 	
 	//Next are functions that are used during the game
 	//This method is used when player should see where hiring is possible
+	//Why did i separate game wave and players' waves? who knows...
 	public List<Hero> getAvailablePlaces(Game game, String login) {
 		List<Hero> places = new ArrayList<>();
 		for (int i = 0; i < 3; i++) {

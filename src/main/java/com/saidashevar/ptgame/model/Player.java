@@ -76,8 +76,8 @@ public class Player {
 	
 	//Gameplay functions
 	//Here we use other player to give him actions if our actions ended
-	public void makeAction(Player player) throws NoMoreActionsLeftException {
-		turn.makeAction(player);
+	public void makeAction(Game game, Player player) throws NoMoreActionsLeftException {
+		turn.makeAction(game, player);
 	}
 	
 	public void takeCard(Card card) {
@@ -94,12 +94,13 @@ public class Player {
 				.orElseThrow(() -> new NotFoundException("There are no more cards in "+login+"'s deck!")); //old way without random
 	}
 	
-	public void removeLeaderCardFromHand(int id) throws NotFoundException { //Just removes card wtih leader from hand
+	public void removeLeaderCardFromHand(int id) throws NotFoundException { //Just removes card with leader from hand
 		Card futureLeader = hand.stream().filter(card -> card.getId() == id).findAny()
 			.orElseThrow(() -> new NotFoundException(this.login + " tries to make leader somebody else"));
 		hand.remove(futureLeader);
 	}
 	
+	//Setup functions, that are activated when new game/round/wave starts or ends
 	public void setColor(Player player) {
 		setRed(!player.isRed());
 	}
@@ -117,6 +118,15 @@ public class Player {
 		isRed = cardShirt;
 	}
 	
+	public void endRound() {
+		turn.endRound();
+	}
+	
+	public void endWave() {
+		turn.endWave();
+	}
+	
+	//Support functions
 	public void checkActions() throws NoMoreActionsLeftException {
 		if (turn.getActionsLeft() == 0) throw new NoMoreActionsLeftException(login + " has no more actions!"); 
 	}
