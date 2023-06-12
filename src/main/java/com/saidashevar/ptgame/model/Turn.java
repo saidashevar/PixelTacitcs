@@ -40,6 +40,7 @@ public class Turn {
 				if (wave == 2) {
 					Attacking = true;
 					wave = 0;
+					actionsLeft += 2;
 					player.endRound();
 				} else {
 					wave++;
