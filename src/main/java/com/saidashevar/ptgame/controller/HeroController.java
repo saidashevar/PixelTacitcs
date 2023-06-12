@@ -79,7 +79,7 @@ public class HeroController {
 		log.info(request.getLogin() +" hires new Hero!");
 		Game game = gameService.loadGameService(request.getGameId());
 		Player[] players = game.findPlayers(request.getLogin());
-		if (heroService.hireHero(game, players, request.getCoordinateY(), request.getCardId())) {
+		if (heroService.hireHero(game, players, request.getCoordinateX(), request.getCoordinateY(), request.getCardId())) {
 			//Now we have to send both players board, second player must know hero his opponent hired and where he is.
 			simpMessagingTemplate.convertAndSend("/topic/game-progress/" + request.getGameId(),
 												 gameService.getBoard(request.getGameId()));

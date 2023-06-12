@@ -54,7 +54,7 @@ function dragDrop(e) {
 	let place = e.target.id;
 	let cardInHand = e.dataTransfer.getData('text/plain');
 	console.log(handSave);
-	placeCard(place.split("_")[2], handSave[cardInHand].id);
+	placeCard(place.split("_")[1], place.split("_")[2], handSave[cardInHand].id); //Sending coordinate x, y and id of card
 }
 
 function dragMeleeAttacked(e) {

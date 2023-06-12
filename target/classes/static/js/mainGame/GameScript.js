@@ -1,6 +1,6 @@
 
 //Request functions
-function placeCard(j, id) {
+function placeCard(i, j, id) {
     $.ajax({
         url: url + "/heroes/hire-hero",
         type: 'POST',
@@ -9,6 +9,7 @@ function placeCard(j, id) {
         data: JSON.stringify({
             "gameId": gameId,
             "login": login,
+            "coordinateX": i,
             "coordinateY": j,
             "cardId": id
         }),

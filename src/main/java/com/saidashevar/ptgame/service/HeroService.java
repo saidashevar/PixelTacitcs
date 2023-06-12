@@ -72,16 +72,19 @@ public class HeroService {
 		return allHeroes;
 	}
 	
-	public boolean hireHero(Game game, Player[] players, int y, int cardId) throws InvalidGameException, NotFoundException, NoMoreActionsLeftException { //this is not necessary to return anything
+	public boolean hireHero(Game game, 
+							Player[] players, 
+							int x, int y, 
+							int cardId) throws InvalidGameException, NotFoundException, NoMoreActionsLeftException { //this is not necessary to return anything
 		
-		if (!heroRepository.heroOnPlace(players[0].getLogin(), game.getWave(), y)) {
+		if (!heroRepository.heroOnPlace(players[0].getLogin(), x, y)) {
 			log.info("No hero is on this place, hero successfully hired");;
 			Card card = cardRepository.findById(cardId)
 					.orElseThrow(() -> new NotFoundException("Card with id: " + cardId + " wasn't found"));
 			players[0].makeAction(game, players[1]);
 			players[0].removeCardFromHand(card);
 			
-			heroRepository.save(new Hero(card, game.getWave(), y, players[0]));
+			heroRepository.save(new Hero(card, x, y, players[0]));
 			playerRepository.save(players[0]);
 			playerRepository.save(players[1]);
 			
