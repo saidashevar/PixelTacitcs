@@ -33,9 +33,9 @@ function meleeDamage(attackerPlaceId, targetId) {
 			"gameId": gameId,
 			"login": login,
             "type": "MELEE",
-            "attackerIsLeader": false,
+            "attackerIsLeader": false, //for now, only heroes can attack
             "attackerId": findCardId(attackerPlaceId),
-            "targetIsLeader": false,
+            "targetIsLeader": checkIfTargetIsLeader(targetId),
             "targetId": findCardId(targetId)
         }),
         success: function (newHand) {
@@ -173,8 +173,10 @@ function prepareText_HeroAttack(ID) {
 
 function prepareText_HeroHealth(ID) {
 	let text = document.createElement('div');
-	text.textContent = heroesSave[ID].maxHealth; //it will read effects to show injures later
+	let damage = checkEffect(ID, "damaged");
+	text.textContent = heroesSave[ID].maxHealth - damage; 
 	text.classList.add('centerText');
+	if (damage != 0) text.style.color = "red";
 	return text;
 }
 
@@ -193,22 +195,46 @@ function prepareCardInHandName(cardId) {
 }
 
 function findCardId(placeId) {
+	//in html coordinates of places in squad are like this: 1_1_1, where first number - squad, second and third - place in square
 	let id = placeId.split("");
 	let squad = id[0];
 	let i = id[2];
 	let j = id[4];
-	if (i == 1 && j == 1) { return "leader attacked!" } //Leader case
+	//i = 1; j = 1 - center of the squad. Leader is there
+	if (i == 1 && j == 1) { return -1 } //Leader case
 	else {
 		for(let x = 0; x < heroesSave.length; x++) {
 			let hero = heroesSave[x];
 			if (hero.coordX == i && hero.coordY == j) {
 				console.log(hero.id);
+				//next we have to be sure to attack opposite squad
 				if((squad == 1 && hero.player.login == login) || 
 				   (squad == 2 && hero.player.login == opponentSave.login)) 
 					return hero.id;
 			}
 		}
 	}
+}
+
+//temporary function... it must be
+function checkIfTargetIsLeader(placeId) {
+	//in html coordinates of places in squad are like this: 1_1_1, where first number - squad, second and third - place in square
+	let id = placeId.split("");
+	let squad = id[0];
+	let i = id[2];
+	let j = id[4];
+	return i == 1 && j == 1;
+}
+
+//another temporary function (no, it is actually usefull, i just don't know where to place it)
+//looks for some effect in hero's current effects, if finds, returns it's value
+//if finds nothing returns 0
+function checkEffect(heroId, effect) {
+	for(let i = 0; i < heroesSave[heroId].effects.length; i++) {
+		if (heroesSave[heroId].effects[i].name == effect)
+		return heroesSave[heroId].effects[i].value;
+	}
+	return 0;
 }
 
 //Click functions

@@ -21,4 +21,5 @@ var actionsCountSave;	//numbers that show actions count. negative values mean ac
 var turnSave;			//info about your turn
 var gameSave;			//info about game
 var heroesSave;			//info about all heroes on board
-var leaderSave;			//info about your leader
+var yourLeaderSave;		//info about your leader
+var enemyLeaderSave;    //info about enemy leader

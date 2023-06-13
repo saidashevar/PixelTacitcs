@@ -80,15 +80,7 @@ public class HeroController {
 		Game game = gameService.loadGameService(request.getGameId());
 		Player[] players = game.findPlayers(request.getLogin());
 		if (heroService.hireHero(game, players, request.getCoordinateX(), request.getCoordinateY(), request.getCardId())) {
-			//Now we have to send both players board, second player must know hero his opponent hired and where he is.
-			simpMessagingTemplate.convertAndSend("/topic/game-progress/" + request.getGameId(),
-												 gameService.getBoard(request.getGameId()));
-			//Second one sends info about card count
-			simpMessagingTemplate.convertAndSend("/topic/game-progress/" + request.getGameId(),
-					 							 gameService.getCardCount(request.getGameId()));
-			//And at last send info about actions count
-			simpMessagingTemplate.convertAndSend("/topic/game-progress/" + request.getGameId(),
-					 							 gameService.getActionsCount(request.getGameId()));
+			sendBoardActionsCards(request.getGameId());
 		} else { //If something goes wrong, i hope it never happens
 			simpMessagingTemplate.convertAndSend("/topic/game-progress/" + request.getGameId(),
 				gameService.message(request.getLogin() + " tries to hire hero in place where another hero stays... strange"));
@@ -122,16 +114,33 @@ public class HeroController {
 	@PostMapping("/damage")
 	//ResponseEntity< Set<Hero> >
 	public ResponseEntity<String> makeDamage(@RequestBody DamageRequest request) throws NotFoundException, MessagingException, InvalidGameException {
-		Player player = playerService.getPlayer(request.getLogin());
+		log.info(request.getLogin() +" ATTACKS!");
+		Game game = gameService.loadGameService(request.getGameId());
+		Player[] players = game.findPlayers(request.getLogin());
 		try {
-			player.checkActions();
+			players[0].makeAction(game, players[1]);
 			heroService.heroAttacked(request);
-			var resp = gameService.getBoard(request.getGameId());
-			simpMessagingTemplate.convertAndSend("/topic/game-progress/" + request.getGameId(), resp);
+//			var resp = gameService.getBoard(request.getGameId());
+//			simpMessagingTemplate.convertAndSend("/topic/game-progress/" + request.getGameId(), resp);
+			sendBoardActionsCards(request.getGameId());
 			return ResponseEntity.ok("Attack successful!");
 		} catch (NoMoreActionsLeftException e) {
 			log.info(e.getMessage());
-			return ResponseEntity.badRequest().body("everything is bad");
+			return ResponseEntity.badRequest().body("You ran out of actions!"); //oh my god
 		}	
+	}
+	
+	//Next is a support function is BAC - sending both players info about board, action and card count
+	//It is a overwhelming sometimes, but significantly improves code readability
+	private void sendBoardActionsCards(String gameId) throws MessagingException, InvalidGameException {
+		//We are sending both players board to show them current heroes and their statuses
+		simpMessagingTemplate.convertAndSend("/topic/game-progress/" + gameId,
+											 gameService.getBoard(gameId));
+		//Also players must know card count of each other. No one card from any game edition has any ability to hide this
+		simpMessagingTemplate.convertAndSend("/topic/game-progress/" + gameId,
+				 							 gameService.getCardCount(gameId));
+		//And at last send info about actions count. Must be always known
+		simpMessagingTemplate.convertAndSend("/topic/game-progress/" + gameId,
+				 							 gameService.getActionsCount(gameId));
 	}
 }

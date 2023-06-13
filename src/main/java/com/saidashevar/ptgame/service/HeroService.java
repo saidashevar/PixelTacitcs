@@ -132,6 +132,6 @@ public class HeroService {
 			
 			heroRepository.save((Hero)target);
 		}
-		log.info("effects saved!"); //that also waits till hero saved
+		log.info("effects saved!"); //that also waits till hero saved... i believe
 	} 
 }
