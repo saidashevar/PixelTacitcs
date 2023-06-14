@@ -21,3 +21,20 @@ Next step is to make cards drag'n'drop on the battlefield! It must be a bit ease
 
 22.11.22
 10-th day. Drag'n'drop not so easy to make... But dragging cards is possible now
+
+16.12.22
+34-th day. Added lots of things compare to last note. Now games, players, their cards, boards, leaders 
+are saved in database through JPA and hibernate. drag and drop were done long ago. Now i am working
+on ability to choose your leader. But for better debugging and future game I would like to make
+firstle opponent's cards counter and your actions left counter. I don't know how fast i'm going on.
+I see lots of errors with every change. But i've learnt a lot now. Maybe I am not so bad for looking
+for a job... And yes, on month of development gone! I spent a lot of time with this project working few
+hours every day.
+ 
+12.02.22
+A lot of time passed after last note. And I didn't use this time for the project because I was working.
+It is so hard to work and learn simultaneously... And i don't know how to count days of working with
+project while i'm not actually working on it... 
+
+11.03.22
+I am still not working on this project... This is really cold here

@@ -1,5 +1,7 @@
 package com.saidashevar.ptgame.model;
 
+import com.saidashevar.ptgame.exception.game.NoMoreActionsLeftException;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -17,9 +19,51 @@ public class Turn {
 	private Long id;
 	
 	private int wave = 0;
-	private boolean Attacking; // Player who attacks, makes his move first
-	private byte actionsLeft = 10; //For experiments only, by rules there are only 2.
+	private boolean Attacking = false; // Player who attacks, makes his move first
+	private byte actionsLeft = 2;
 	
+	//Gameplay functions
+	//Here second player is used to add him actions
+	public void makeAction(Game game, Player player) throws NoMoreActionsLeftException {
+		if (actionsLeft >= 1) actionsLeft--;
+		else throw new NoMoreActionsLeftException("Player has no more actions!");
+		
+		checkRoundOrWaveEnd(game, player);
+	}
+	
+	private void checkRoundOrWaveEnd(Game game, Player player) { //Describes changes in players' turns, when round ends
+		if (actionsLeft == 0) { //always see not to do this... but i have done
+			if (Attacking) {
+				player.addActions((byte)2);
+			} else {
+				game.nextWave();
+				if (wave == 2) {
+					Attacking = true;
+					wave = 0;
+					actionsLeft += 2;
+					player.endRound();
+				} else {
+					wave++;
+					player.endWave();
+				}
+			}
+		}
+	}
+	
+	public void endWave() {
+		addActions((byte)2); //in future there will be situations when there must be added 3 or more actions... but in the future!
+		wave++;
+	}
+	public void endRound() {
+		wave = 0;
+		Attacking = false;
+	}
+	
+	public void addActions(byte x) {
+		actionsLeft = (byte) (actionsLeft + x); //weird
+	}
+	
+	//Getters and setters
 	public int getWave() {
 		return wave;
 	}
@@ -35,7 +79,7 @@ public class Turn {
 	public byte getActionsLeft() {
 		return actionsLeft;
 	}
-	public void setActionsLeft(byte actionsLeft) {
-		this.actionsLeft = actionsLeft;
+	public void setActionsLeft(int actionsLeft) {
+		this.actionsLeft = (byte)actionsLeft;
 	}
 }

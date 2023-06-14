@@ -1,27 +1,42 @@
 package com.saidashevar.ptgame.service;
 
+import java.util.ArrayList;
+import java.util.List;
+
+//import static com.saidashevar.ptgame.model.GameStatus.CHOOSING_LEADERS;
+//import static com.saidashevar.ptgame.model.GameStatus.CHOOSING_LEADERS_1LEADER_CHOSEN;
+//import static com.saidashevar.ptgame.model.GameStatus.NO2PLAYER;
+//import static com.saidashevar.ptgame.model.GameStatus.NO2PLAYER_1LEADER_CHOSEN;
+//import static com.saidashevar.ptgame.model.GameStatus.PEACE;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.saidashevar.ptgame.controller.request.HireHeroRequest;
+import com.saidashevar.ptgame.controller.request.DamageRequest;
 import com.saidashevar.ptgame.exception.InvalidGameException;
 import com.saidashevar.ptgame.exception.NotFoundException;
-import com.saidashevar.ptgame.model.Card;
+import com.saidashevar.ptgame.exception.game.NoMoreActionsLeftException;
 import com.saidashevar.ptgame.model.Game;
-import com.saidashevar.ptgame.model.Hero;
 import com.saidashevar.ptgame.model.Player;
+import com.saidashevar.ptgame.model.cards.Card;
+import com.saidashevar.ptgame.model.cards.CardBasis;
+import com.saidashevar.ptgame.model.cards.Hero;
+import com.saidashevar.ptgame.model.cards.Leader;
+import com.saidashevar.ptgame.model.cards.LeaderBasis;
 import com.saidashevar.ptgame.repository.CardRepository;
+import com.saidashevar.ptgame.repository.EffectRepository;
 import com.saidashevar.ptgame.repository.HeroRepository;
+import com.saidashevar.ptgame.repository.LeaderBasisRepository;
+import com.saidashevar.ptgame.repository.LeaderRepository;
 import com.saidashevar.ptgame.repository.PlayerRepository;
 
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @AllArgsConstructor
 @Service
 public class HeroService {
-	
-	private final GameService gameService;
-	private final PlayerService playerService;
 	
 	@Autowired
 	HeroRepository heroRepository;
@@ -29,22 +44,94 @@ public class HeroService {
 	CardRepository cardRepository;
 	@Autowired
 	PlayerRepository playerRepository;
+	@Autowired
+	LeaderRepository leaderRepository;
+	@Autowired
+	LeaderBasisRepository leaderBasisRepository;
+	@Autowired
+	EffectRepository effectRepository;
 	
-	public Hero hireHero(HireHeroRequest request) throws InvalidGameException, NotFoundException { //this is not necessary to return anything
-		Game game = gameService.loadGameService(request.getGameId());
-		Player player = playerService.getPlayer(request.getLogin());
-		Card card = cardRepository.findById(request.getCardId())
-				.orElseThrow(() -> new NotFoundException("Card with id:" + request.getCardId() + " wasn't found"));
-		Hero hero = new Hero(
-				game.getWave(), 
-				request.getCoordinateY(), 
-				card,
-				player
-		);
-		
-		card.hiredBy(player);
-		cardRepository.save(card);
-		
-		return heroRepository.save(hero);
+	private Leader getLeader(long id) throws NotFoundException {
+		return leaderRepository.findById(id)
+				.orElseThrow(() -> new NotFoundException("Leader with some id while attack wasn't found"));
 	}
+	
+	private Hero getHero(long id) throws NotFoundException {
+		return heroRepository.findById(id)
+				.orElseThrow(() -> new NotFoundException("Hero with some id while attack wasn't found"));
+	}
+	
+	//Returns all heroes on board, excluding leaders.
+	public List<Hero> getHeroes(Game game) {
+		List<Hero> allHeroes = new ArrayList<>();
+		game.getPlayers().stream().forEach(
+				p -> allHeroes.addAll(
+					heroRepository.findHeroesOfPlayer(p)
+				)
+			);
+		return allHeroes;
+	}
+	
+	public boolean hireHero(Game game, 
+							Player[] players, 
+							int x, int y, 
+							int cardId) throws InvalidGameException, NotFoundException, NoMoreActionsLeftException { //this is not necessary to return anything
+		
+		if (!heroRepository.heroOnPlace(players[0].getLogin(), x, y)) {
+			log.info("No hero is on this place, hero successfully hired");;
+			Card card = cardRepository.findById(cardId)
+					.orElseThrow(() -> new NotFoundException("Card with id: " + cardId + " wasn't found"));
+			players[0].makeAction(game, players[1]);
+			players[0].removeCardFromHand(card);
+			
+			heroRepository.save(new Hero(card, x, y, players[0]));
+			playerRepository.save(players[0]);
+			playerRepository.save(players[1]);
+			
+			return true;
+		} else
+			log.info("On this place some hero was found!");
+			return false;
+	}
+	
+	public Player hireLeader(Player player, int leaderId) throws NotFoundException { //this is not necessary to return anything
+		LeaderBasis leaderBasis = leaderBasisRepository.findById(leaderId + 25) 									//For now leaders have id of connected cards +25. It may be changed many ways, so this line with !CAUTION!
+				.orElseThrow(() -> new NotFoundException("Leader with that id: " + leaderId + " doesn't exist")); 	//I won't create LeaderService for this
+		player.setLeader(new Leader(leaderBasis, player));
+		player.removeLeaderCardFromHand(leaderId);
+		
+		return player;
+	}
+	
+	public void heroAttacked(DamageRequest request) throws NotFoundException { //totally not most optimized function
+		
+		CardBasis attacker;
+		if (request.isAttackerIsLeader()) 
+			attacker = getLeader(request.getAttackerId());
+		else 
+			attacker = getHero(request.getAttackerId());
+		
+		CardBasis target;
+		if (request.isTargetIsLeader()) { //yeah yeah, repeating
+			
+			target = getLeader(request.getTargetId());
+			target.saveEffect(
+					effectRepository.save(
+							target.takeDamage( attacker.getAttack() )
+					)
+			);
+			
+			leaderRepository.save((Leader)target);
+		} else {
+			target = getHero(request.getTargetId());
+			target.saveEffect(
+					effectRepository.save(
+							target.takeDamage(attacker.getAttack())
+					)
+			);
+			
+			heroRepository.save((Hero)target);
+		}
+		log.info("effects saved!"); //that also waits till hero saved... i believe
+	} 
 }

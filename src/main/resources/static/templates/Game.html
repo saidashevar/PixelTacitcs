@@ -14,12 +14,8 @@
       <ol id="cardHolder">
       </ol>
     </div>
-    <div class="cardPlace" id="deckPlayer2">
-      <p>This is deck of other players</p>
-    </div>
-    <div class="cardPlace" id="deckPlayer1">
-      <p>This is your deck</p>
-    </div>
+    <div class="cardPlace" id="deckPlayer2"></div>
+    <div class="cardPlace" id="deckPlayer1"></div>
     <div class="pile" id="pilePlayer2">
       <p>This is pile2</p>
     </div>
@@ -33,19 +29,19 @@
   	<table>
 		<tbody>
     		<tr>
-      			<td class="emptyCardPlace"></td>
+      			<td class="emptyCardPlace" id="0_2_2"></td>
 				<td class="cardPlace" id="2_2_0"></td>
 				<td class="cardPlace" id="2_2_1"></td>
 				<td class="cardPlace" id="2_2_2"></td>
 			</tr>
 			<tr>
-      			<td class="emptyCardPlace"></td>
+      			<td class="emptyCardPlace" id="0_2_1"></td>
 				<td class="cardPlace" id="2_1_0"></td>
 				<td class="cardPlace" id="2_1_1"></td>
 				<td class="cardPlace" id="2_1_2"></td>
 			</tr>
 			<tr>
-      			<td class="emptyCardPlace"></td>
+      			<td class="emptyCardPlace" id="0_2_0"></td>
 				<td class="cardPlace" id="2_0_0"></td>
 				<td class="cardPlace" id="2_0_1"></td>
 				<td class="cardPlace" id="2_0_2"></td>
@@ -58,27 +54,27 @@
 	<table>
 		<tbody>
 			<tr>
-      			<td class="emptyCardPlace"></td>
+      			<td class="emptyCardPlace" id="0_1_0"></td>
 				<td class="cardPlace" id="1_0_0"></td>
 				<td class="cardPlace" id="1_0_1"></td>
 				<td class="cardPlace" id="1_0_2"></td>
 			</tr>
 			<tr>
-      			<td class="emptyCardPlace"></td>
+      			<td class="emptyCardPlace" id="0_1_1"></td>
 				<td class="cardPlace" id="1_1_0"></td>
 				<td class="cardPlace" id="1_1_1"></td>
 				<td class="cardPlace" id="1_1_2"></td>
 			</tr>
 			<tr>
-	   	  		<td class="emptyCardPlace"></td>
+	   	  		<td class="emptyCardPlace" id="0_1_2"></td>
 				<td class="cardPlace" id="1_2_0"></td>
 				<td class="cardPlace" id="1_2_1"></td>
 				<td class="cardPlace" id="1_2_2"></td>
 			</tr>
 		</tbody> 
 	</table>
+	<div id="cardCounter">0</div>
+	<div id="actionsCounter">0</div>
 </body>
-	<script src="js/game_script.js"></script>
-	<script src="js/gameLoad.js"></script>
-	<script src="js/CardDragAndDrop.js"></script>
+	<script src="js/mainGame/ScriptsLoad.js"></script>
 </html>

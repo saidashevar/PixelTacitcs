@@ -1,5 +1,11 @@
 package com.saidashevar.ptgame.model;
 
 public enum GameStatus {
-	NEW, IN_PROGRESS, FINISHED; 
+	NO2PLAYER,
+	NO2PLAYER_1LEADER_CHOSEN,
+	CHOOSING_LEADERS,
+	CHOOSING_LEADERS_1LEADER_CHOSEN,
+	PEACE, 
+	MID_GAME, 
+	FINISHED; 
 }

@@ -3,6 +3,7 @@ package com.saidashevar.ptgame.controller;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -26,7 +27,7 @@ import lombok.extern.slf4j.Slf4j;
 public class GameController {
 
 	private final GameService gameService;
-//	private final SimpMessagingTemplate simpMessagingTemplate;
+	private final SimpMessagingTemplate simpMessagingTemplate;
 
 	// Rest methods
 	@GetMapping
@@ -41,7 +42,7 @@ public class GameController {
 	
 	@GetMapping("/get-game")
 	ResponseEntity<Game> getGame(@RequestParam("id") String gameId) throws NotFoundException, InvalidGameException {
-		log.info("Game with ID: " + gameId + " is requested");
+		log.info("Requested game with ID: " + gameId);
 		return ResponseEntity.ok(gameService.loadGameService(gameId));
 	}
 	
@@ -49,25 +50,18 @@ public class GameController {
 	// Game managing methods, maybe i should unite them with rest methods
 	//
 	
-	
 	@PostMapping("/start")
-	public ResponseEntity<Game> startGame(@RequestBody Player player) {
+	public ResponseEntity<Game> startGame(@RequestBody Player player) throws NotFoundException {
 		log.info("start game request: {}", player.getLogin());
-		return ResponseEntity.ok(gameService.createGame(player));
+		return ResponseEntity.ok(gameService.createGame(player.getLogin()));
 	}
 
 	@PostMapping("/connect/random")
 	public ResponseEntity<Game> connectRandom(@RequestBody Player player) throws NotFoundException { 
 		log.info("connect random from {}", player.getLogin());
-		return ResponseEntity.ok(gameService.connectToRandomGame(player)); 
+		Game game = gameService.connectToRandomGame(player.getLogin());
+		simpMessagingTemplate.convertAndSend("/topic/game-progress/" + game.getId(), //We send message that game status had changed because second player has conncted
+				 							 gameService.getGame(game));
+		return ResponseEntity.ok(game);
 	}
-	
-	//Looks like this mapping is useless now
-//	@GetMapping("/loadgame") //sends basic info about game
-//	public ResponseEntity<Game> loadBoard(@RequestParam("id") String gameId) throws NotFoundException, InvalidGameException { 
-//		log.info("got game with ID: " + gameId);
-////		simpMessagingTemplate.convertAndSend("/topic/game-progress/" + gameId, 
-////											 gameService.getBoard(gameId)); 
-//		return ResponseEntity.ok(gameService.loadGameService(gameId)); 
-//	}
 }
