@@ -25,7 +25,7 @@ public class CardBasis {
 	//Functions
 	public EffectSimple takeDamage(int attack) { return null; }
 	
-	public void saveEffect(EffectBasic effect) {}
+	public void saveEffect(EffectBasic effect) {} //useless???
 	
 	//Constructors
 	public CardBasis(int edition, String name, int attack, int maxHealth) {

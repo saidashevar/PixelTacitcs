@@ -48,6 +48,8 @@ public class Hero extends CardBasis {
 	
 	@Override
 	public EffectSimple takeDamage(int attackValue) {
+		//Next code searches for current damage and adjusts new if present
+		//using set for effects is... inefficient, but it is hard to use map with hibernate
 		Iterator<EffectBasic> itr = effects.iterator();
 		while ( itr.hasNext() ) {
 			EffectBasic effect = itr.next(); 
@@ -56,6 +58,7 @@ public class Hero extends CardBasis {
 				return (EffectSimple)effect;
 			}
 		} 
+		//If hero has no damage, next line will add it
 		var damageEffect = new EffectSimple("damaged", attackValue);
 		return damageEffect;
 //		if(itr.next().getLeader() == null) return false;

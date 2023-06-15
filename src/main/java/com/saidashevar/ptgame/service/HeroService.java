@@ -105,12 +105,14 @@ public class HeroService {
 	
 	public void heroAttacked(DamageRequest request) throws NotFoundException { //totally not most optimized function
 		
+		//Defining attacker. I am sure there is a much better way to do that without IF statement
 		CardBasis attacker;
 		if (request.isAttackerIsLeader()) 
 			attacker = getLeader(request.getAttackerId());
 		else 
 			attacker = getHero(request.getAttackerId());
 		
+		//Defining target and saving damage effect
 		CardBasis target;
 		if (request.isTargetIsLeader()) { //yeah yeah, repeating
 			

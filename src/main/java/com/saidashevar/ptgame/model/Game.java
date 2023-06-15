@@ -1,6 +1,9 @@
 package com.saidashevar.ptgame.model;
 
-import static com.saidashevar.ptgame.model.GameStatus.*;
+import static com.saidashevar.ptgame.model.GameStatus.CHOOSING_LEADERS_1LEADER_CHOSEN;
+import static com.saidashevar.ptgame.model.GameStatus.NO2PLAYER;
+import static com.saidashevar.ptgame.model.GameStatus.NO2PLAYER_1LEADER_CHOSEN;
+import static com.saidashevar.ptgame.model.GameStatus.PEACE;
 
 import java.util.HashSet;
 import java.util.Iterator;
@@ -8,6 +11,7 @@ import java.util.Set;
 import java.util.UUID;
 
 import com.saidashevar.ptgame.exception.NotFoundException;
+import com.saidashevar.ptgame.model.effects.EffectBasic;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -86,6 +90,13 @@ public class Game {
 	}
 	
 	public void nextWave() {
+//		var defeatedEffect = new EffectBasic("defeated");
+		players.stream().forEach(
+			p -> p.getBoard().stream().forEach(
+				hero -> hero.saveEffect(new EffectBasic("defeated"))
+			)
+		);
+		
 		if (wave == 2) wave = 0;
 		else wave++;
 	}

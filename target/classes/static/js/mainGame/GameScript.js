@@ -72,7 +72,7 @@ function takeCard() {
 }
 
 // Some gameplay functions
-function displayCard(e) {
+function displayCard(e) { // shows card in hand when you click it
 	let blackBackground = document.createElement("div");
 	let cardNumber = e.target.id.split("")[4];
 	blackBackground.id = "BB";

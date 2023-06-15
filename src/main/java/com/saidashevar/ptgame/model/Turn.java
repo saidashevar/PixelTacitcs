@@ -32,9 +32,9 @@ public class Turn {
 	}
 	
 	private void checkRoundOrWaveEnd(Game game, Player player) { //Describes changes in players' turns, when round ends
-		if (actionsLeft == 0) { //always see not to do this... but i have done
+		if (actionsLeft == 0) { //always see not to do (if in if)... but i have done
 			if (Attacking) {
-				player.addActions((byte)2);
+				player.addActions((byte)2); // just adding another player two actions
 			} else {
 				game.nextWave();
 				if (wave == 2) {
