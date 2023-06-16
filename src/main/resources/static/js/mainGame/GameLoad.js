@@ -148,36 +148,14 @@ function loadHeroes(fun) {
 		
 		if (checkEffect(x, "defeated") == 1) {
 			//in case this hero is already defeated all we have to know is where his corpse lies
-			//IT IS TIME FOR A VERY BAD CODE!!! IT doesn't understand what color player uses!
 			place.innerHTML = '';
-  			place.appendChild(createDiv(createCardImage(blueSrc)));
-			/* if (isYour) {
-				//check if there are any children in this element (in case this hero was alive with attack and defence being shown)
-				
-				if (place.textContent !== '') {
-					while (place.hasChildNodes) {
-   						 place.firstChild.remove();
-  					}
- 
-  					place.textContent == '';
-  					place.appendChild(createDiv(createCardImage(blueSrc)));
-				} else if (place.hasChildNodes) {
-					place.appendChild(createDiv(createCardImage(blueSrc)));
-				}
-				alert(place.firstChild)
+			if (isYour) {
+				if (youSave.red) place.appendChild(createDiv(createCardImage(redSrc)));
+				else place.appendChild(createDiv(createCardImage(blueSrc)));
 			} else {
-				//check if there are any children in this element (in case this hero was alive with attack and defence being shown)
-				if (place.textContent !== '') {
-					while (place.hasChildNodes) {
-   						 place.firstChild.remove();
-  					}
-  					place.textContent == '';
-  					place.appendChild(createDiv(createCardImage(redSrc)));
-				} else if (place.hasChildNodes) {
-					place.appendChild(createDiv(createCardImage(redSrc)));
-				}
+				if (opponentSave.red) place.appendChild(createDiv(createCardImage(redSrc)));
+				else place.appendChild(createDiv(createCardImage(blueSrc)));
 			}
-			*/
 		} else {
 			//print hero's name, health and attack
 			place.textContent = prepareName(heroesSave[x].name);
