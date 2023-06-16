@@ -11,7 +11,8 @@ import java.util.Set;
 import java.util.UUID;
 
 import com.saidashevar.ptgame.exception.NotFoundException;
-import com.saidashevar.ptgame.model.effects.EffectBasic;
+import com.saidashevar.ptgame.model.effects.EffectSimple;
+import com.saidashevar.ptgame.repository.EffectRepository;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -89,11 +90,11 @@ public class Game {
 		players.add(player);
 	}
 	
-	public void nextWave() {
+	public void nextWave(EffectRepository effectRepository) {
 //		var defeatedEffect = new EffectBasic("defeated");
 		players.stream().forEach(
-			p -> p.getBoard().stream().forEach(
-				hero -> hero.saveEffect(new EffectBasic("defeated"))
+			p -> p.getBoard().stream().filter(hero -> hero.getEffectValue("damaged") >= hero.getMaxHealth()).forEach(
+				hero -> hero.saveEffect(effectRepository.save(new EffectSimple("defeated", 1)))
 			)
 		);
 		

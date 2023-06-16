@@ -1,6 +1,7 @@
 package com.saidashevar.ptgame.model;
 
 import com.saidashevar.ptgame.exception.game.NoMoreActionsLeftException;
+import com.saidashevar.ptgame.repository.EffectRepository;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -24,19 +25,19 @@ public class Turn {
 	
 	//Gameplay functions
 	//Here second player is used to add him actions
-	public void makeAction(Game game, Player player) throws NoMoreActionsLeftException {
+	public void makeAction(Game game, Player player, EffectRepository effectRepository) throws NoMoreActionsLeftException {
 		if (actionsLeft >= 1) actionsLeft--;
 		else throw new NoMoreActionsLeftException("Player has no more actions!");
 		
-		checkRoundOrWaveEnd(game, player);
+		checkRoundOrWaveEnd(game, player, effectRepository);
 	}
 	
-	private void checkRoundOrWaveEnd(Game game, Player player) { //Describes changes in players' turns, when round ends
+	private void checkRoundOrWaveEnd(Game game, Player player, EffectRepository effectRepository) { //Describes changes in players' turns, when round ends
 		if (actionsLeft == 0) { //always see not to do (if in if)... but i have done
 			if (Attacking) {
 				player.addActions((byte)2); // just adding another player two actions
 			} else {
-				game.nextWave();
+				game.nextWave(effectRepository);
 				if (wave == 2) {
 					Attacking = true;
 					wave = 0;
@@ -55,6 +56,7 @@ public class Turn {
 		wave++;
 	}
 	public void endRound() {
+		addActions((byte)2);
 		wave = 0;
 		Attacking = false;
 	}

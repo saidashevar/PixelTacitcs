@@ -77,6 +77,17 @@ public class Hero extends CardBasis {
 //		return effect;
 	}
 	
+	public int getEffectValue(String effectName) {
+		Iterator<EffectBasic> itr = effects.iterator();
+		while ( itr.hasNext() ) {
+			EffectBasic effect = itr.next(); 
+			if(effect.getName().equals(effectName)) {
+				return effect.getValue();
+			}
+		}
+		return 0;
+	}
+	
 	public void saveEffect(EffectBasic effect) {
 		effects.add(effect);
 	}

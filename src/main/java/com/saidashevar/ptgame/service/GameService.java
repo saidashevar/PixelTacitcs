@@ -48,13 +48,10 @@ public class GameService {
 	
 	@Autowired
 	GameRepository gameRepository;
-	
 	@Autowired
 	PlayerRepository playerRepository;
-	
 	@Autowired
 	CardRepository cardRepository;
-	
 	@Autowired
 	HeroRepository heroRepository;
 	
@@ -121,6 +118,10 @@ public class GameService {
 		
 		return game; 
 	}
+	
+	// Next methods are used in gameplay
+	
+	
 	
 	// Next methods prepare information about game for both players (board, card count)
 	

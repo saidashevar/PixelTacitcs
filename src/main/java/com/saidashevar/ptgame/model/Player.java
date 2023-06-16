@@ -12,6 +12,7 @@ import com.saidashevar.ptgame.exception.game.NoMoreActionsLeftException;
 import com.saidashevar.ptgame.model.cards.Card;
 import com.saidashevar.ptgame.model.cards.Hero;
 import com.saidashevar.ptgame.model.cards.Leader;
+import com.saidashevar.ptgame.repository.EffectRepository;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
@@ -76,8 +77,8 @@ public class Player {
 	
 	//Gameplay functions
 	//Here we use other player to give him actions if our actions ended
-	public void makeAction(Game game, Player player) throws NoMoreActionsLeftException {
-		turn.makeAction(game, player);
+	public void makeAction(Game game, Player player, EffectRepository effectRepository) throws NoMoreActionsLeftException {
+		turn.makeAction(game, player, effectRepository);
 	}
 	
 	public void takeCard(Card card) {

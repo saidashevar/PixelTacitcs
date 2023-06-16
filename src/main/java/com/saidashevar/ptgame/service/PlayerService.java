@@ -14,6 +14,7 @@ import com.saidashevar.ptgame.model.Player;
 import com.saidashevar.ptgame.model.cards.Card;
 import com.saidashevar.ptgame.model.cards.Hero;
 import com.saidashevar.ptgame.repository.CardRepository;
+import com.saidashevar.ptgame.repository.EffectRepository;
 import com.saidashevar.ptgame.repository.HeroRepository;
 import com.saidashevar.ptgame.repository.PlayerRepository;
 
@@ -31,6 +32,8 @@ public class PlayerService {
 	HeroRepository heroRepository;
 	@Autowired
 	CardRepository cardRepository;
+	@Autowired
+	EffectRepository effectRepository;
 	
 	//RESTful functions
 	
@@ -71,7 +74,7 @@ public class PlayerService {
 		Player[] players = game.findPlayers(requester);
 		Card card = players[0].findCardToTake();
 		players[0].takeCard(card);
-		players[0].makeAction(game, players[1]);
+		players[0].makeAction(game, players[1], effectRepository);
 		playerRepository.save(players[0]);
 		playerRepository.save(players[1]);
 		return players[0];

@@ -33,6 +33,7 @@ import com.saidashevar.ptgame.model.Player;
 import com.saidashevar.ptgame.model.cards.Card;
 import com.saidashevar.ptgame.model.cards.Hero;
 import com.saidashevar.ptgame.repository.CardRepository;
+import com.saidashevar.ptgame.repository.EffectRepository;
 import com.saidashevar.ptgame.repository.HeroRepository;
 import com.saidashevar.ptgame.repository.PlayerRepository;
 import com.saidashevar.ptgame.service.GameService;
@@ -59,6 +60,8 @@ public class HeroController {
 	CardRepository cardRepository;
 	@Autowired
 	PlayerRepository playerRepository;
+	@Autowired
+	EffectRepository effectRepository;
 	
 	@GetMapping
 	List<Hero> getHeroes() { return heroRepository.findAll(); }
@@ -118,7 +121,7 @@ public class HeroController {
 		Game game = gameService.loadGameService(request.getGameId());
 		Player[] players = game.findPlayers(request.getLogin());
 		try {
-			players[0].makeAction(game, players[1]);
+			players[0].makeAction(game, players[1], effectRepository);
 			heroService.heroAttacked(request);
 //			var resp = gameService.getBoard(request.getGameId());
 //			simpMessagingTemplate.convertAndSend("/topic/game-progress/" + request.getGameId(), resp);

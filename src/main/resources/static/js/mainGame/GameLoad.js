@@ -134,28 +134,62 @@ function requestLeader(fun) { //this smart function can show leaders or hide the
 //load functions
 function loadHeroes(fun) {
 	for (let x = 0; x < heroesSave.length; x++) {
-		//get id
+		//get id and knoledge which squad this hero belongs to
 		let i = heroesSave[x].coordX;
 		let j = heroesSave[x].coordY;
 		let id = i + "_" + j;
+		let isYour = heroesSave[x].player.login == login;
 		
 		//find place where hero was hired
 		let place;
 		console.log(heroesSave[x]);
-		if (heroesSave[x].player.login == login) 
-			place = document.getElementById("1_"+id);
-		else place = document.getElementById("2_"+id);
+		if (isYour)	place = document.getElementById("1_"+id);
+		else 		place = document.getElementById("2_"+id);
 		
-		//print hero's name, health and attack
-		place.textContent = prepareName(heroesSave[x].name);
-		place.appendChild(prepareToShow_HeroAttack('attack', x));
-		place.appendChild(prepareToShow_HeroHealth('maxHealth', x));
-		
-		//This is for attacking
-		//you can drag your hero to attack other heroes
-		place.setAttribute("draggable", "true");
-		place.addEventListener('dragstart', onAttackStart);
-		place.addEventListener('dragend', onDragEnd); //this removes borders from other heroes, who are able to be attacked
+		if (checkEffect(x, "defeated") == 1) {
+			//in case this hero is already defeated all we have to know is where his corpse lies
+			//IT IS TIME FOR A VERY BAD CODE!!! IT doesn't understand what color player uses!
+			place.innerHTML = '';
+  			place.appendChild(createDiv(createCardImage(blueSrc)));
+			/* if (isYour) {
+				//check if there are any children in this element (in case this hero was alive with attack and defence being shown)
+				
+				if (place.textContent !== '') {
+					while (place.hasChildNodes) {
+   						 place.firstChild.remove();
+  					}
+ 
+  					place.textContent == '';
+  					place.appendChild(createDiv(createCardImage(blueSrc)));
+				} else if (place.hasChildNodes) {
+					place.appendChild(createDiv(createCardImage(blueSrc)));
+				}
+				alert(place.firstChild)
+			} else {
+				//check if there are any children in this element (in case this hero was alive with attack and defence being shown)
+				if (place.textContent !== '') {
+					while (place.hasChildNodes) {
+   						 place.firstChild.remove();
+  					}
+  					place.textContent == '';
+  					place.appendChild(createDiv(createCardImage(redSrc)));
+				} else if (place.hasChildNodes) {
+					place.appendChild(createDiv(createCardImage(redSrc)));
+				}
+			}
+			*/
+		} else {
+			//print hero's name, health and attack
+			place.textContent = prepareName(heroesSave[x].name);
+			place.appendChild(prepareToShow_HeroAttack('attack', x));
+			place.appendChild(prepareToShow_HeroHealth('maxHealth', x));
+			
+			//This is for attacking
+			//you can drag your hero to attack other heroes
+			place.setAttribute("draggable", "true");
+			place.addEventListener('dragstart', onAttackStart);
+			place.addEventListener('dragend', onDragEnd); //this removes borders from other heroes, who are able to be attacked	
+		}
 	}
 	if (fun != undefined) fun();
 }
