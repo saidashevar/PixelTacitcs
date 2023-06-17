@@ -25,6 +25,7 @@ import com.saidashevar.ptgame.model.cards.Leader;
 import com.saidashevar.ptgame.model.cards.LeaderBasis;
 import com.saidashevar.ptgame.repository.CardRepository;
 import com.saidashevar.ptgame.repository.EffectRepository;
+import com.saidashevar.ptgame.repository.GameRepository;
 import com.saidashevar.ptgame.repository.HeroRepository;
 import com.saidashevar.ptgame.repository.LeaderBasisRepository;
 import com.saidashevar.ptgame.repository.LeaderRepository;
@@ -50,6 +51,8 @@ public class HeroService {
 	LeaderBasisRepository leaderBasisRepository;
 	@Autowired
 	EffectRepository effectRepository;
+	@Autowired
+	GameRepository gameRepository;
 	
 	private Leader getLeader(long id) throws NotFoundException {
 		return leaderRepository.findById(id)
@@ -72,6 +75,7 @@ public class HeroService {
 		return allHeroes;
 	}
 	
+//	@Transactional(isolation = Isolation.REPEATABLE_READ)
 	public boolean hireHero(Game game, 
 							Player[] players, 
 							int x, int y, 
@@ -81,12 +85,17 @@ public class HeroService {
 			log.info("No hero is on this place, hero successfully hired");;
 			Card card = cardRepository.findById(cardId)
 					.orElseThrow(() -> new NotFoundException("Card with id: " + cardId + " wasn't found"));
-			players[0].makeAction(game, players[1], effectRepository);
 			players[0].removeCardFromHand(card);
 			
 			heroRepository.save(new Hero(card, x, y, players[0]));
-			playerRepository.save(players[0]);
+			playerRepository.save(players[0].makeAction(game, players[1], effectRepository, gameRepository));
 			playerRepository.save(players[1]);
+//			
+//			try {
+//				  Thread.sleep(100);
+//				} catch (InterruptedException e) {
+//				  Thread.currentThread().interrupt();
+//				}
 			
 			return true;
 		} else

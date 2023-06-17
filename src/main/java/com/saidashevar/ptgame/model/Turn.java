@@ -1,7 +1,8 @@
-package com.saidashevar.ptgame.model;
+package com.saidashevar.ptgame.model; //i don't like this class
 
 import com.saidashevar.ptgame.exception.game.NoMoreActionsLeftException;
 import com.saidashevar.ptgame.repository.EffectRepository;
+import com.saidashevar.ptgame.repository.GameRepository;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -25,19 +26,19 @@ public class Turn {
 	
 	//Gameplay functions
 	//Here second player is used to add him actions
-	public void makeAction(Game game, Player player, EffectRepository effectRepository) throws NoMoreActionsLeftException {
+	public void makeAction(Game game, Player player, EffectRepository effectRepository, GameRepository gameRepository) throws NoMoreActionsLeftException {
 		if (actionsLeft >= 1) actionsLeft--;
 		else throw new NoMoreActionsLeftException("Player has no more actions!");
 		
-		checkRoundOrWaveEnd(game, player, effectRepository);
+		checkRoundOrWaveEnd(game, player, effectRepository, gameRepository);
 	}
 	
-	private void checkRoundOrWaveEnd(Game game, Player player, EffectRepository effectRepository) { //Describes changes in players' turns, when round ends
+	private void checkRoundOrWaveEnd(Game game, Player player, EffectRepository effectRepository, GameRepository gameRepository) { //Describes changes in players' turns, when round ends
 		if (actionsLeft == 0) { //always see not to do (if in if)... but i have done
 			if (Attacking) {
 				player.addActions((byte)2); // just adding another player two actions
 			} else {
-				game.nextWave(effectRepository);
+				gameRepository.save(game.nextWave(effectRepository));
 				if (wave == 2) {
 					Attacking = true;
 					wave = 0;

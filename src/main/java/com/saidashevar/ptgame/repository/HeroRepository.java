@@ -5,10 +5,12 @@ import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.saidashevar.ptgame.model.Player;
 import com.saidashevar.ptgame.model.cards.Hero;
 
+@Transactional(readOnly = true)
 public interface HeroRepository extends JpaRepository<Hero, Long> {
 	
 	@Query("SELECT h FROM Hero h where h.player = ?1")

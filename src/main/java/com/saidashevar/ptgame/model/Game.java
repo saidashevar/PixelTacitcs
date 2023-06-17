@@ -11,6 +11,7 @@ import java.util.Set;
 import java.util.UUID;
 
 import com.saidashevar.ptgame.exception.NotFoundException;
+import com.saidashevar.ptgame.model.cards.Hero;
 import com.saidashevar.ptgame.model.effects.EffectSimple;
 import com.saidashevar.ptgame.repository.EffectRepository;
 
@@ -90,16 +91,21 @@ public class Game {
 		players.add(player);
 	}
 	
-	public void nextWave(EffectRepository effectRepository) {
-//		var defeatedEffect = new EffectBasic("defeated");
-		players.stream().forEach(
-			p -> p.getBoard().stream().filter(hero -> hero.getEffectValue("damaged") >= hero.getMaxHealth()).forEach(
-				hero -> hero.saveEffect(effectRepository.save(new EffectSimple("defeated", 1)))
-			)
-		);
-		
+	public Game nextWave(EffectRepository effectRepository) { //check losses is here!
+		//Next paragraph check losses
+		Iterator<Player> itr = this.getPlayers().iterator();
+		while (itr.hasNext()) {
+			Iterator<Hero> itr2 = itr.next().getBoard().iterator();
+			while (itr2.hasNext()) {
+				var hero = itr2.next();
+				if (hero.getEffectValue("damaged") >= hero.getMaxHealth())
+					hero.saveEffect(effectRepository.save(new EffectSimple("defeated", 1)));
+			}
+		}
+		//Next one changes waves
 		if (wave == 2) wave = 0;
 		else wave++;
+		return this;
 	}
 	
 	public void setId(String id) {

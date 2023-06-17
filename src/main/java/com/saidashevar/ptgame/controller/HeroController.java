@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.MessagingException;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -34,6 +35,7 @@ import com.saidashevar.ptgame.model.cards.Card;
 import com.saidashevar.ptgame.model.cards.Hero;
 import com.saidashevar.ptgame.repository.CardRepository;
 import com.saidashevar.ptgame.repository.EffectRepository;
+import com.saidashevar.ptgame.repository.GameRepository;
 import com.saidashevar.ptgame.repository.HeroRepository;
 import com.saidashevar.ptgame.repository.PlayerRepository;
 import com.saidashevar.ptgame.service.GameService;
@@ -62,6 +64,8 @@ public class HeroController {
 	PlayerRepository playerRepository;
 	@Autowired
 	EffectRepository effectRepository;
+	@Autowired
+	GameRepository gameRepository;
 	
 	@GetMapping
 	List<Hero> getHeroes() { return heroRepository.findAll(); }
@@ -82,6 +86,7 @@ public class HeroController {
 		log.info(request.getLogin() +" hires new Hero!");
 		Game game = gameService.loadGameService(request.getGameId());
 		Player[] players = game.findPlayers(request.getLogin());
+		
 		if (heroService.hireHero(game, players, request.getCoordinateX(), request.getCoordinateY(), request.getCardId())) {
 			sendBoardActionsCards(request.getGameId());
 		} else { //If something goes wrong, i hope it never happens
@@ -121,7 +126,7 @@ public class HeroController {
 		Game game = gameService.loadGameService(request.getGameId());
 		Player[] players = game.findPlayers(request.getLogin());
 		try {
-			players[0].makeAction(game, players[1], effectRepository);
+			players[0].makeAction(game, players[1], effectRepository, gameRepository);
 			heroService.heroAttacked(request);
 //			var resp = gameService.getBoard(request.getGameId());
 //			simpMessagingTemplate.convertAndSend("/topic/game-progress/" + request.getGameId(), resp);
@@ -135,6 +140,7 @@ public class HeroController {
 	
 	//Next is a support function is BAC - sending both players info about board, action and card count
 	//It is a overwhelming sometimes, but significantly improves code readability
+	@Transactional
 	private void sendBoardActionsCards(String gameId) throws MessagingException, InvalidGameException {
 		//We are sending both players board to show them current heroes and their statuses
 		simpMessagingTemplate.convertAndSend("/topic/game-progress/" + gameId,
