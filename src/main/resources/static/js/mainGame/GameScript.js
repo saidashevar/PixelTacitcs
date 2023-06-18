@@ -56,7 +56,7 @@ function takeCard() {
 	    contentType: "application/json",
 	    data: JSON.stringify({
 	        "gameId": gameId,
-	        "login": login,
+	        "login": login
 	    }),
 	    success: function (newHand) {
 			handSave = newHand;
@@ -68,6 +68,30 @@ function takeCard() {
 	    error: function (error) {
 	        console.log(error);
 	    }
+	})
+}
+
+function removeCorpse(placeId) { //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!Working on that
+	$.ajax({
+        url: url + "/heroes/removeCorpse",
+        type: 'POST',
+        dataType: "json",
+        contentType: "application/json",
+        data: JSON.stringify({
+            "gameId": gameId,
+            "login": login,
+            "coordinateX": 0, //coordinates doesn't matter
+            "coordinateY": 0,
+            "cardId": findCardId(placeId)
+        }),
+        success: function (message) {
+			let place = document.getElementById(placeId);
+			console.log(place.id);
+			place.innerHTML = '';
+        },
+        error: function (error) {
+            console.log(error);
+        }
 	})
 }
 
@@ -194,7 +218,7 @@ function prepareCardInHandName(cardId) {
 	return cardName;
 }
 
-function findCardId(placeId) {
+function findCardId(placeId) { // returns cardId knowing place of card. Used for attacks
 	//in html coordinates of places in squad are like this: 1_1_1, where first number - squad, second and third - place in square
 	let id = placeId.split("");
 	let squad = id[0];
@@ -207,7 +231,8 @@ function findCardId(placeId) {
 			let hero = heroesSave[x];
 			if (hero.coordX == i && hero.coordY == j) {
 				console.log(hero.id);
-				//next we have to be sure to attack opposite squad
+				//next we have to be sure to attack opposite squad.
+				//Reviewing this code again after half a year, i don't understand why this check was needed
 				if((squad == 1 && hero.player.login == login) || 
 				   (squad == 2 && hero.player.login == opponentSave.login)) 
 					return hero.id;

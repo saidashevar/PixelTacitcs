@@ -88,15 +88,9 @@ public class HeroService {
 			players[0].removeCardFromHand(card);
 			
 			heroRepository.save(new Hero(card, x, y, players[0]));
-			playerRepository.save(players[0].makeAction(game, players[1], effectRepository, gameRepository));
+			playerRepository.save(players[0].makeAction(game, players[1], effectRepository, gameRepository));// do not divide this
 			playerRepository.save(players[1]);
-//			
-//			try {
-//				  Thread.sleep(100);
-//				} catch (InterruptedException e) {
-//				  Thread.currentThread().interrupt();
-//				}
-			
+
 			return true;
 		} else
 			log.info("On this place some hero was found!");
@@ -144,5 +138,19 @@ public class HeroService {
 			heroRepository.save((Hero)target);
 		}
 		log.info("effects saved!"); //that also waits till hero saved... i believe
-	} 
+	}
+	
+	//It is called when we drag hero's corpse into pile
+	public void removeHero(Game game, Player[] players, Long heroId) throws NotFoundException, NoMoreActionsLeftException {
+		//first checking and saving that player has one action
+		players[0].makeAction(game, players[1], effectRepository, gameRepository);
+		//then we disconnect player with this hero
+		Hero hero = getHero(heroId);
+		playerRepository.save(players[0].removeCorpseOfHero(hero));
+		//then we disconnect card with this hero
+		Card card = hero.getCard();
+		card.killHero(hero);
+		cardRepository.save(card.addInPile(players[0])); //Adding hero as a card to pile
+		heroRepository.delete(hero);
+	}
 }

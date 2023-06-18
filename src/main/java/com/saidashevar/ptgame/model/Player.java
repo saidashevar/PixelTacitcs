@@ -97,6 +97,11 @@ public class Player {
 				.orElseThrow(() -> new NotFoundException("There are no more cards in "+login+"'s deck!")); //old way without random
 	}
 	
+	public Player removeCorpseOfHero(Hero hero) {
+		board.remove(hero);
+		return this;
+	}
+	
 	public void removeLeaderCardFromHand(int id) throws NotFoundException { //Just removes card with leader from hand
 		Card futureLeader = hand.stream().filter(card -> card.getId() == id).findAny()
 			.orElseThrow(() -> new NotFoundException(this.login + " tries to make leader somebody else"));

@@ -10,6 +10,7 @@ import com.saidashevar.ptgame.model.Player;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.ManyToMany;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
 @Entity
@@ -27,6 +28,32 @@ public class Card extends CardBasis implements Comparable<Card>{
 	@JsonIgnore
 	@ManyToMany(mappedBy = "pile", fetch = FetchType.LAZY)
 	private Set<Player> inPiles = new HashSet<>();
+	
+	@JsonIgnore
+	@OneToMany(mappedBy = "card", fetch = FetchType.LAZY)
+	private Set<Hero> asHeroes = new HashSet<>();
+	
+	public void addInDeck(Player player) {
+		inDecks.add(player);
+	}
+	
+	public void addInHand(Player player) {
+		inHands.add(player);
+	}
+	
+	public Card addInPile(Player player) {
+		inPiles.add(player);
+		return this;
+	}
+	
+	public Card addAsHero(Hero hero) {
+		asHeroes.add(hero);
+		return this;
+	}
+	
+	public void killHero(Hero hero) {
+		asHeroes.remove(hero);
+	}
 
 	public Card(int edition, String name, int attack, int maxHealth) {
 		super(edition, name, attack, maxHealth);
@@ -52,18 +79,6 @@ public class Card extends CardBasis implements Comparable<Card>{
 
 	public int getMaxHealth() {
 		return super.getMaxHealth();
-	}
-	
-	public void addInDeck(Player player) {
-		inDecks.add(player);
-	}
-	
-	public void addInHand(Player player) {
-		inHands.add(player);
-	}
-	
-	public void addInPile(Player player) {
-		inPiles.add(player);
 	}
 	
 	public Set<Player> getInDecks() {

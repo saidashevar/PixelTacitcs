@@ -4,6 +4,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.saidashevar.ptgame.model.Player;
 import com.saidashevar.ptgame.model.effects.EffectBasic;
@@ -40,6 +41,11 @@ public class Hero extends CardBasis {
 	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@JoinColumn(name = "player_login", referencedColumnName = "login")
 	private Player player;
+	
+	@JsonIgnore
+	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@JoinColumn(name = "cardId", referencedColumnName = "id") //id - it is card id.
+	private Card card;
 	
 	@Override
 	public int getAttack() {
@@ -105,6 +111,7 @@ public class Hero extends CardBasis {
 			card.getName(),
 			card.getAttack(),
 			card.getMaxHealth());
+		this.card = card;
 	}
 	
 	public Hero(int coordX, int coordY) {
@@ -162,5 +169,9 @@ public class Hero extends CardBasis {
 
 	public void setCoordY(int coordY) {
 		this.coordY = coordY;
+	}
+	
+	public Card getCard() {
+		return card;
 	}
 }

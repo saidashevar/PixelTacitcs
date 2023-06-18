@@ -132,7 +132,7 @@ function requestLeader(fun) { //this smart function can show leaders or hide the
 }
 
 //load functions
-function loadHeroes(fun) {
+function loadHeroes(fun) { //this function is my masterpiece of javascripting
 	for (let x = 0; x < heroesSave.length; x++) {
 		//get id and knoledge which squad this hero belongs to
 		let i = heroesSave[x].coordX;
@@ -146,8 +146,9 @@ function loadHeroes(fun) {
 		if (isYour)	place = document.getElementById("1_"+id);
 		else 		place = document.getElementById("2_"+id);
 		
+		//check if it is alive
 		if (checkEffect(x, "defeated") == 1) {
-			//in case this hero is already defeated all we have to know is where his corpse lies
+			//if it is dead we show a shirt of card
 			place.innerHTML = '';
 			if (isYour) {
 				if (youSave.red) place.appendChild(createDiv(createCardImage(redSrc)));
@@ -156,6 +157,12 @@ function loadHeroes(fun) {
 				if (opponentSave.red) place.appendChild(createDiv(createCardImage(redSrc)));
 				else place.appendChild(createDiv(createCardImage(blueSrc)));
 			}
+			
+			//prepare dragging if we will want to remove corpse
+			place.setAttribute("draggable", "true");
+			place.addEventListener('dragstart', onCorpseRemovingDragStart);
+			
+		//in case it is alive 
 		} else {
 			//print hero's name, health and attack
 			place.textContent = prepareName(heroesSave[x].name);
@@ -165,7 +172,7 @@ function loadHeroes(fun) {
 			//This is for attacking
 			//you can drag your hero to attack other heroes
 			place.setAttribute("draggable", "true");
-			place.addEventListener('dragstart', onAttackStart);
+			place.addEventListener('dragstart', onAttackStart); //prepare to attack!
 			place.addEventListener('dragend', onDragEnd); //this removes borders from other heroes, who are able to be attacked	
 		}
 	}

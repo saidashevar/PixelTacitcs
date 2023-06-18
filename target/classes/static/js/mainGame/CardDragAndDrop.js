@@ -22,6 +22,16 @@ function onDragStart(event) {
     requestAvailablePlaces();
 }
 
+function onCorpseRemovingDragStart(event) {
+	event.dataTransfer.setData('text/plain', event.target.id);
+	let pile = document.getElementById('pilePlayer1');
+	pile.classList.add('readyToDrop');
+	pile.addEventListener('dragenter', dragEnter);
+	pile.addEventListener('dragover', dragOver);
+	pile.addEventListener('dragleave', dragLeave);
+	pile.addEventListener('drop', dragCorpseRemoved);
+}
+
 //This function can be made much more complicated in future...
 function onDragEnd() {
 	reloadHand(handSave);
@@ -65,6 +75,46 @@ function dragMeleeAttacked(e) {
 	meleeDamage(attackerPlaceId, e.target.id);
 }
 
+function dragCorpseRemoved(e) {
+	e.target.classList.remove('drag-over');
+	let corpsePlaceId = e.dataTransfer.getData('text/plain');
+	removeCorpse(corpsePlaceId);
+}
+
 function onClickShowCard(e) {
 	displayCard(e);
+}
+
+function loadAvailablePlaces(places) {
+	for (let x = 0; x < places.length; x++)	{
+		//Get coordinates
+		let i = places[x].coordX;
+		let j = places[x].coordY;
+		let id = i + "_" + j;
+		
+		let place = document.getElementById("1_"+id); //This means, we may hire only in our squad. it may be not like that for some future heroes.
+		
+		place.classList.add('readyToDrop');
+		place.addEventListener('dragenter', dragEnter);
+		place.addEventListener('dragover', dragOver);
+	    place.addEventListener('dragleave', dragLeave);
+	    place.addEventListener('drop', dragDrop);
+	}
+}
+
+function loadAvailableTargets(heroes) {
+	for (let x = 0; x < heroes.length; x++)	{
+		//Get coordinates
+		let i = heroes[x].coordX;
+		let j = heroes[x].coordY;
+		let id = i + "_" + j;
+		//Get place with coordinate
+		let hero = document.getElementById("2_"+id);
+		
+		hero.classList.add('readyToDrop');
+		hero.addEventListener('dragenter', dragEnter);
+		hero.addEventListener('dragover', dragOver);
+	    hero.addEventListener('dragleave', dragLeave);
+	    hero.addEventListener('drop', dragMeleeAttacked);
+	}
 }

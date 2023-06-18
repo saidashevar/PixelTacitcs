@@ -138,6 +138,17 @@ public class HeroController {
 		}	
 	}
 	
+	//It is called when we move hero's corpse into pile
+	//No checking that this hero is ours!
+	@PostMapping("/removeCorpse") //may be i should code another request class for better understanding
+	public ResponseEntity< String > removeCorpse(@RequestBody HireHeroRequest request) throws NotFoundException, InvalidGameException, NoMoreActionsLeftException {
+		log.info(request.getLogin() +" removes corpse");
+		Game game = gameService.loadGameService(request.getGameId());
+		Player[] players = game.findPlayers(request.getLogin());
+		heroService.removeHero(game, players, (long)request.getCardId());
+		return ResponseEntity.ok("You successfully disposed of corpse");
+	}
+	
 	//Next is a support function is BAC - sending both players info about board, action and card count
 	//It is a overwhelming sometimes, but significantly improves code readability
 	@Transactional
