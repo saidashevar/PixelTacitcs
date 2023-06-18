@@ -47,8 +47,6 @@ async function requestFullGame() {
 			getOpponent();
 			requestLeader(checkStatus);
 			reloadTurns();
-			
-			//Next functions are... useless for now
 			requestHeroes(function() {
 				loadHeroes();
 			});
@@ -216,7 +214,7 @@ function loadLeaders() { //This methos also loads images for decks
 				yourDeck.appendChild(createCardImage(blueSrc));
 			}
 		break;
-		case "":
+		case "": //next updates are coming!
 		break;
 	}
 }
@@ -283,8 +281,8 @@ function getOpponent() { //loads both players, if they exist
 			youSave = gameSave.players[1];	
 		}
 	} else youSave = gameSave.players[0];
-	console.log(opponentSave);
-	console.log(youSave);
+//	console.log(opponentSave);
+//	console.log(youSave);
 }
 
 function chooseLeader (e) {
@@ -304,7 +302,7 @@ function chooseLeader (e) {
         success: function (newHand) {
 			removeBackgroundAndTextAndLeaders();
 			handSave = newHand;
-			//reloadHand(handSave);
+			reloadHand(handSave);
         },
         error: function (error) {
             console.log(error);
@@ -409,20 +407,19 @@ function checkStatus() { //this works very bad, when you enter new game with use
 		case "NO2PLAYER_1LEADER_CHOSEN": //Player has started game and chosen leader, but no second player
 			addBackgroundAndText("Waiting for your opponent...");
 		break;
-		case "CHOOSING_LEADERS":
+		case "CHOOSING_LEADERS": //Both players connected and no one has chosen leader
 			let leaders = document.getElementById("showLeaders");
 			if(leaders == undefined)
 				requestLeader(function() { requestHand(showLeaders); });
 		break;
 		case "CHOOSING_LEADERS_1LEADER_CHOSEN":
-			requestLeader(function() {
-				if(leaderSave != "") {
-					alert("trying to change text");
+			requestLeader(function() { 
+				if(leaderSave != "") {// this case you have chosen leader but your opponent hasn't
 					removeBackgroundAndTextAndLeaders();		
 					addBackgroundAndText("Your opponent chooses leader...");					
 				}
-				else
-					requestHand(showLeaders);
+				else //that case you haven't chosen leader, but your opponent had chosen
+					requestHand(showLeaders); //that's a bug!!!!
 			}); 
 		break;
 		case "PEACE":
@@ -430,6 +427,7 @@ function checkStatus() { //this works very bad, when you enter new game with use
 			requestHand(reloadHand);
 			requestHeroes();
 			loadLeaders();
+			reloadTurns()
 		break;
 		default: alert("something went wrong with status packages");
 	}		
