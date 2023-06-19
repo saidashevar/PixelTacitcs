@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 public class SiteController {
 	
 	@GetMapping
-	public String game() { return "templates/Game.html"; }
-	
+	public String game() { 
+		return "templates/Game.html";
+	}
 }

@@ -146,6 +146,7 @@ public class HeroController {
 		Game game = gameService.loadGameService(request.getGameId());
 		Player[] players = game.findPlayers(request.getLogin());
 		heroService.removeHero(game, players, (long)request.getCardId());
+		sendBoardActionsCards(request.getGameId());
 		return ResponseEntity.ok("You successfully disposed of corpse");
 	}
 	

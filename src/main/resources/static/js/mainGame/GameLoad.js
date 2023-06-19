@@ -14,22 +14,29 @@ function connectToSocket() {
     stompClient.connect({}, function (frame) {
         console.log("connected to the frame: " + frame);
         stompClient.subscribe("/topic/game-progress/" + gameId, function (response) { // this function works when gets info form socket!
+        	//In this function we get messages from server whenever server wants to warn us about something
+        	//Here you get almost ALL updatable info: your hand, number of cards in your opponent's hand, his and your number of actions
+        	//Even Hp and effects of heroes may be sent here, you may not find some special functions anywhere how to update this information
+        	//Workssss strangely sometimes, be careful with this
+        	
             let data = JSON.parse(response.body);
-            console.log(data);
+            console.log(data); //logging everything right now
+            
             switch (data.type) { // With response there is type of info from server.
-				case "BOARD":
+            
+				case "BOARD": //we wanna update info about our heroes, their hp, buffs and we need to know if they are dead
 					heroesSave = data.info;
 					loadHeroes();
 				break;
-				case "CARD_COUNT":
+				case "CARD_COUNT": //non-updatable through other functions!!! Non-requirable
 					cardCountSave = data.info;
 					document.getElementById("cardCounter").textContent = cardCountSave[opponentSave.login];
 				break;
-				case "ACTIONS_COUNT":
+				case "ACTIONS_COUNT": //non-updatable through other functions!!! 
 					actionsCountSave = data.info;
 					document.getElementById("actionsCounter").textContent = actionsCountSave[youSave.login] - actionsCountSave[opponentSave.login];
 				break;
-				case "STATUS":
+				case "STATUS": // actually requires client to update this whole game... i don't remember where it is used
 					requestGame(checkStatus);
 				break;
 			}
@@ -46,9 +53,9 @@ async function requestFullGame() {
 			gameSave = newGame;
 			getOpponent();
 			requestLeader(checkStatus);
-			reloadTurns();
-			requestHeroes(function() {
-				loadHeroes();
+			reloadTurns(); //shield and sword at right of main board
+			requestHeroes(function() { //i don't understand how is this work. Probably they should be in another order?
+				loadHeroes();		   // anyway, this function is called once while page starts... and it works properly...
 			});
         },
         error: function (error) {
@@ -73,7 +80,7 @@ function requestGame(fun) {
     })
 }
 
-function requestHand(fun) {
+function requestHand(fun) { //this function just updates your hand, can't return new cards
 	$.ajax({
         url: url + "/players/get-hand?id="+gameId+"&login="+login,
         type: 'GET',
@@ -130,7 +137,7 @@ function requestLeader(fun) { //this smart function can show leaders or hide the
 }
 
 //load functions
-function loadHeroes(fun) { //this function is my masterpiece of javascripting
+function loadHeroes(fun) { //this function is my masterpiece of javascripting... but probably too large
 	for (let x = 0; x < heroesSave.length; x++) {
 		//get id and knoledge which squad this hero belongs to
 		let i = heroesSave[x].coordX;
@@ -219,7 +226,7 @@ function loadLeaders() { //This methos also loads images for decks
 	}
 }
 
-function loadTurns() {
+function loadTurns() { // loads images of sword and shield
 	loadTurnImage(youSave);
 	if (opponentSave != undefined) loadTurnImage(opponentSave);
 }
@@ -427,7 +434,7 @@ function checkStatus() { //this works very bad, when you enter new game with use
 			requestHand(reloadHand);
 			requestHeroes();
 			loadLeaders();
-			reloadTurns()
+			reloadTurns();
 		break;
 		default: alert("something went wrong with status packages");
 	}		

@@ -113,14 +113,14 @@ function displayCard(e) { // shows card in hand when you click it
 }
 
 //Event functions
-function closeCard() {
+function closeCard() { //closes opened card
 	let back = document.getElementById("BB");
 	let card = document.getElementById("displayedCard");
 	back.remove();
 	card.remove();
 }
 
-function turnCard() {
+function turnCard() { //turns card upside down to help you reading this card's leader abilities
 	let card = document.getElementById('displayedCard');
 	if (card.style.getPropertyValue("transform") == "") {
 		card.style.transform = "scaleY(-1) scaleX(-1)";
@@ -131,7 +131,7 @@ function turnCard() {
 //chooseLeader is also event function...
 
 //Support functions
-function addCardInHand(hand, cardId) {
+function addCardInHand(hand, cardId) { //inputs new card in your hand when you take new card.
 	let card = document.createElement('li');
 	card.id = "hand"+cardId;
 	card.setAttribute("draggable", "true");
