@@ -67,20 +67,6 @@ public class Hero extends CardBasis {
 		//If hero has no damage, next line will add it
 		var damageEffect = new EffectSimple("damaged", attackValue);
 		return damageEffect;
-//		if(itr.next().getLeader() == null) return false;
-//		
-//		EffectSimple effect = null;
-//		effects.stream().filter(e -> e.getName().equals("damaged")).findAny()
-//						.ifPresentOrElse(e -> {
-//							int value = e.getValue();
-//							e.setValue(value + attackValue);
-//							effect = (EffectSimple)e;
-//						}, () -> {
-//							var damageEffect = new EffectSimple("damaged", attackValue);
-//							effects.add(damageEffect);
-//							effect = damageEffect;
-//						});
-//		return effect;
 	}
 	
 	public int getEffectValue(String effectName) {
@@ -96,6 +82,11 @@ public class Hero extends CardBasis {
 	
 	public void saveEffect(EffectBasic effect) {
 		effects.add(effect);
+	}
+	
+	public Hero removeEffects() {
+		effects.clear();
+		return this;
 	}
 	
 	//Next are constructors. Almost all of them are used somewhere. 

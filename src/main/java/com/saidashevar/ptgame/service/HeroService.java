@@ -141,16 +141,20 @@ public class HeroService {
 	}
 	
 	//It is called when we drag hero's corpse into pile
-	public void removeHero(Game game, Player[] players, Long heroId) throws NotFoundException, NoMoreActionsLeftException {
+	public boolean removeHero(Game game, Player[] players, Long heroId) throws NotFoundException, NoMoreActionsLeftException {
 		//first checking and saving that player has one action
 		players[0].makeAction(game, players[1], effectRepository, gameRepository);
 		//then we disconnect player with this hero
 		Hero hero = getHero(heroId);
-		playerRepository.save(players[0].removeCorpseOfHero(hero));
+		//I am using such nesting constructions because i don't know how to get rid of them. They work. Without them not work
+		playerRepository.save(players[0].removeCorpseOfHero(heroRepository.save(hero.removeEffects())));
 		//then we disconnect card with this hero
 		Card card = hero.getCard();
 		card.killHero(hero);
-		cardRepository.save(card.addInPile(players[0])); //Adding hero as a card to pile
+		//Adding hero as a card to pile and saving it
+		cardRepository.save(card.addInPile(players[0]));
+		//Now when nothing connects this hero with this world, we remove him from board (but not from game completely, this will be in later updates)
 		heroRepository.delete(hero);
+		return true; //for tests
 	}
 }

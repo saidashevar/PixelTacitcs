@@ -145,8 +145,10 @@ public class HeroController {
 		log.info(request.getLogin() +" removes corpse");
 		Game game = gameService.loadGameService(request.getGameId());
 		Player[] players = game.findPlayers(request.getLogin());
-		heroService.removeHero(game, players, (long)request.getCardId());
-		sendBoardActionsCards(request.getGameId());
+		
+		if (heroService.removeHero(game, players, (long)request.getCardId())) //I am testing that evth is alright
+			sendBoardActionsCards(request.getGameId()); // then send a message to client with new info
+		
 		return ResponseEntity.ok("You successfully disposed of corpse");
 	}
 	

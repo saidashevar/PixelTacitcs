@@ -26,7 +26,10 @@ function connectToSocket() {
             
 				case "BOARD": //we wanna update info about our heroes, their hp, buffs and we need to know if they are dead
 					heroesSave = data.info;
-					loadHeroes();
+					cleanBoard(function () { 
+						loadHeroes();
+						loadLeaders(); 
+					});
 				break;
 				case "CARD_COUNT": //non-updatable through other functions!!! Non-requirable
 					cardCountSave = data.info;
@@ -184,6 +187,18 @@ function loadHeroes(fun) { //this function is my masterpiece of javascripting...
 	if (fun != undefined) fun();
 }
 
+function cleanBoard(fun) { //clears all board table and then reloads heroes
+	for (let squad = 1; squad < 2; squad++) {
+		for (let i = 0; i < 2; i++){
+			for (let j = 0; j < 2; j++){
+				let place = document.getElementById(squad + "_" + i + "_" + j);
+				place.innerHTML = '';
+			}
+		}
+	}
+	if (fun != undefined) fun();
+}
+
 function loadHand () {
 	if (handSave.length <= 5) {
 		let handElement = document.getElementById("cardHolder");
@@ -210,20 +225,23 @@ function loadLeaders() { //This methos also loads images for decks
 			let yourDeck = document.getElementById("deckPlayer1");
 			
 			if (youSave.red == true) {
-				oppLeaderDiv.appendChild(createDiv(createCardImage(blueSrc)));
-				oppDeck.appendChild(createCardImage(blueSrc));
-				yourLeaderDiv.appendChild(createDiv(createCardImage(redSrc)));
-				yourDeck.appendChild(createCardImage(redSrc));
+				helpLoadLeaders(oppLeaderDiv, oppDeck, blueSrc);
+				helpLoadLeaders(yourLeaderDiv, yourDeck, redSrc);
 			} else {
-				oppLeaderDiv.appendChild(createDiv(createCardImage(redSrc)));
-				oppDeck.appendChild(createCardImage(redSrc));
-				yourLeaderDiv.appendChild(createDiv(createCardImage(blueSrc)));
-				yourDeck.appendChild(createCardImage(blueSrc));
+				helpLoadLeaders(oppLeaderDiv, oppDeck, redSrc);
+				helpLoadLeaders(yourLeaderDiv, yourDeck, blueSrc);
 			}
 		break;
 		case "": //next updates are coming!
 		break;
 	}
+}
+
+function helpLoadLeaders(leaderDiv, deck, src) { //support function to ease last function
+	leaderDiv.innerHTML = '';
+	deck.innerHTML = '';
+	leaderDiv.appendChild(createDiv(createCardImage(src)));
+	deck.appendChild(createCardImage(src));
 }
 
 function loadTurns() { // loads images of sword and shield
