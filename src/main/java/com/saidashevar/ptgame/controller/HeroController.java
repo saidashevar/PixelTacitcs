@@ -16,7 +16,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.MessagingException;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -26,6 +25,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.saidashevar.ptgame.controller.request.DamageRequest;
 import com.saidashevar.ptgame.controller.request.HireHeroRequest;
+import com.saidashevar.ptgame.controller.support.Support;
 import com.saidashevar.ptgame.exception.InvalidGameException;
 import com.saidashevar.ptgame.exception.NotFoundException;
 import com.saidashevar.ptgame.exception.game.NoMoreActionsLeftException;
@@ -55,6 +55,7 @@ public class HeroController {
 	private final PlayerService playerService;
 	private final GameService gameService;
 	private final SimpMessagingTemplate simpMessagingTemplate;
+	private final Support support;
 	
 	@Autowired
 	HeroRepository heroRepository;
@@ -88,7 +89,7 @@ public class HeroController {
 		Player[] players = game.findPlayers(request.getLogin());
 		
 		if (heroService.hireHero(game, players, request.getCoordinateX(), request.getCoordinateY(), request.getCardId())) {
-			sendBoardActionsCards(request.getGameId());
+			support.sendBoardActionsCards(request.getGameId());
 		} else { //If something goes wrong, i hope it never happens
 			simpMessagingTemplate.convertAndSend("/topic/game-progress/" + request.getGameId(),
 				gameService.message(request.getLogin() + " tries to hire hero in place where another hero stays... strange"));
@@ -130,7 +131,7 @@ public class HeroController {
 			heroService.heroAttacked(request);
 //			var resp = gameService.getBoard(request.getGameId());
 //			simpMessagingTemplate.convertAndSend("/topic/game-progress/" + request.getGameId(), resp);
-			sendBoardActionsCards(request.getGameId());
+			support.sendBoardActionsCards(request.getGameId());
 			return ResponseEntity.ok("Attack successful!");
 		} catch (NoMoreActionsLeftException e) {
 			log.info(e.getMessage());
@@ -147,23 +148,8 @@ public class HeroController {
 		Player[] players = game.findPlayers(request.getLogin());
 		
 		if (heroService.removeHero(game, players, (long)request.getCardId())) //I am testing that evth is alright
-			sendBoardActionsCards(request.getGameId()); // then send a message to client with new info
+			support.sendBoardActionsCards(request.getGameId()); // then send a message to client with new info
 		
 		return ResponseEntity.ok("You successfully disposed of corpse");
-	}
-	
-	//Next is a support function is BAC - sending both players info about board, action and card count
-	//It is a overwhelming sometimes, but significantly improves code readability
-	@Transactional
-	private void sendBoardActionsCards(String gameId) throws MessagingException, InvalidGameException {
-		//We are sending both players board to show them current heroes and their statuses
-		simpMessagingTemplate.convertAndSend("/topic/game-progress/" + gameId,
-											 gameService.getBoard(gameId));
-		//Also players must know card count of each other. No one card from any game edition has any ability to hide this
-		simpMessagingTemplate.convertAndSend("/topic/game-progress/" + gameId,
-				 							 gameService.getCardCount(gameId));
-		//And at last send info about actions count. Must be always known
-		simpMessagingTemplate.convertAndSend("/topic/game-progress/" + gameId,
-				 							 gameService.getActionsCount(gameId));
 	}
 }

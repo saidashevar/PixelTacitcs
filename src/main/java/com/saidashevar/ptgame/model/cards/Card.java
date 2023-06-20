@@ -51,8 +51,9 @@ public class Card extends CardBasis implements Comparable<Card>{
 		return this;
 	}
 	
-	public void killHero(Hero hero) {
+	public Card killHero(Hero hero) {
 		asHeroes.remove(hero);
+		return this;
 	}
 
 	public Card(int edition, String name, int attack, int maxHealth) {

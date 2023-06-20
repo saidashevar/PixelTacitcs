@@ -56,7 +56,8 @@ public class Turn {
 		addActions((byte)2); //in future there will be situations when there must be added 3 or more actions... but in the future!
 		wave++;
 	}
-	public void endRound() {
+	
+	public void endRound() { //here is a bug with 4 actions given to one player
 		addActions((byte)2);
 		wave = 0;
 		Attacking = false;

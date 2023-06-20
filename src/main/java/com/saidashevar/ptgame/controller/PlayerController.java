@@ -5,7 +5,6 @@ import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -16,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.saidashevar.ptgame.controller.request.ConnectRequest;
 import com.saidashevar.ptgame.controller.request.StringRequest;
+import com.saidashevar.ptgame.controller.support.Support;
 import com.saidashevar.ptgame.exception.InvalidGameException;
 import com.saidashevar.ptgame.exception.NotFoundException;
 import com.saidashevar.ptgame.exception.game.NoMoreActionsLeftException;
@@ -40,7 +40,8 @@ public class PlayerController {
 	private final GameService gameService;
 //	private final CardService cardService;
 	private final PlayerService playerService;
-	private final SimpMessagingTemplate simpMessagingTemplate;
+//	private final SimpMessagingTemplate simpMessagingTemplate;
+	private final Support support;
 	
 	@Autowired
 	PlayerRepository playerRepository;
@@ -75,8 +76,9 @@ public class PlayerController {
 		Player player = playerService.takeCard(request.getLogin(), game);
 		log.info(player.getLogin() + "takes card");
 		//Send info about card count to both players
-		simpMessagingTemplate.convertAndSend("/topic/game-progress/" + request.getGameId(),
-											 gameService.getCardCount(request.getGameId())); 
+		support.sendBoardActionsCards(request.getGameId());
+//		simpMessagingTemplate.convertAndSend("/topic/game-progress/" + request.getGameId(),
+//											 gameService.getCardCount(request.getGameId())); 
 		return ResponseEntity.ok(player.getHand()); 
 	}
 	

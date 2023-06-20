@@ -146,13 +146,13 @@ public class HeroService {
 		players[0].makeAction(game, players[1], effectRepository, gameRepository);
 		//then we disconnect player with this hero
 		Hero hero = getHero(heroId);
-		//I am using such nesting constructions because i don't know how to get rid of them. They work. Without them not work
-		playerRepository.save(players[0].removeCorpseOfHero(heroRepository.save(hero.removeEffects())));
-		//then we disconnect card with this hero
 		Card card = hero.getCard();
-		card.killHero(hero);
+		cardRepository.saveAndFlush(card.killHero(hero));
+		//I am using such nesting constructions because i don't know how to get rid of them. They work. Without them not work
+//		playerRepository.save(players[0].removeCorpseOfHero(heroRepository.save(hero.removeEffects())));s
+		//then we disconnect card with this hero
 		//Adding hero as a card to pile and saving it
-		cardRepository.save(card.addInPile(players[0]));
+		cardRepository.saveAndFlush(card.addInPile(playerRepository.saveAndFlush(players[0].removeCorpseOfHero(heroRepository.saveAndFlush(hero.removeEffects())))));
 		//Now when nothing connects this hero with this world, we remove him from board (but not from game completely, this will be in later updates)
 		heroRepository.delete(hero);
 		return true; //for tests
