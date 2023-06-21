@@ -71,7 +71,7 @@ function takeCard() {
 	})
 }
 
-function removeCorpse(placeId) { //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!Working on that
+function removeCorpse(placeId) { //not working properly, doesn't used anywhere... i think
 	$.ajax({
         url: url + "/heroes/removeCorpse",
         type: 'POST',

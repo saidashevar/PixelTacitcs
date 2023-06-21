@@ -78,7 +78,11 @@ function dragMeleeAttacked(e) {
 function dragCorpseRemoved(e) {
 	e.target.classList.remove('drag-over');
 	let corpsePlaceId = e.dataTransfer.getData('text/plain');
-	removeCorpse(corpsePlaceId);
+	cleanBoard(function () { 
+		loadHeroes();
+		loadLeaders(); 
+	});
+	//removeCorpse(corpsePlaceId); seems not working
 }
 
 function onClickShowCard(e) {

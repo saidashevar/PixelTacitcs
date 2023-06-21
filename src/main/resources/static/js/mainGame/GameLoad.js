@@ -3,7 +3,7 @@ window.onload = loadPage;
 
 function loadPage() {
 	getGameIDandLogin();
-	connectToSocket(gameId);
+	connectToSocket();
 	requestFullGame();
 }
 
@@ -21,6 +21,8 @@ function connectToSocket() {
         	
             let data = JSON.parse(response.body);
             console.log(data); //logging everything right now
+            
+            reloadTurns(); //if we get some info from server, whatever we get we will update shield and sword
             
             switch (data.type) { // With response there is type of info from server.
             
@@ -43,11 +45,12 @@ function connectToSocket() {
 					requestGame(checkStatus);
 				break;
 			}
-        })
+        });
+        requestBoardActionsCards();
     })
 }
 
-async function requestFullGame() {
+async function requestFullGame(fun) {
     $.ajax({
         url: url + "/games/get-game?id="+gameId+"&login="+login,
         type: 'GET',
@@ -60,6 +63,7 @@ async function requestFullGame() {
 			requestHeroes(function() { //i don't understand how is this work. Probably they should be in another order?
 				loadHeroes();		   // anyway, this function is called once while page starts... and it works properly...
 			});
+			if (fun != undefined) fun();
         },
         error: function (error) {
             console.log("Game wasn't loaded!" + error);
@@ -135,6 +139,28 @@ function requestLeader(fun) { //this smart function can show leaders or hide the
         },
         error: function (error) {
             console.log("Leader is broken! Nerf him!" + error);
+        }
+    })
+}
+
+//the most important function. BAC!
+function requestBoardActionsCards() {
+	console.log("requesting BAC!");
+    $.ajax({
+        url: url + "/games/get-board-actions-cards?id="+gameId+"&login="+login,
+        type: 'GET',
+        success: function () {
+			/*console.log(newGame);
+			gameSave = newGame;
+			getOpponent();
+			requestLeader(checkStatus);
+			reloadTurns(); //shield and sword at right of main board
+			requestHeroes(function() { //i don't understand how is this work. Probably they should be in another order?
+				loadHeroes();		   // anyway, this function is called once while page starts... and it works properly...
+			});*/
+        },
+        error: function (error) {
+            console.log("Requesting BAC failed!" + error);
         }
     })
 }

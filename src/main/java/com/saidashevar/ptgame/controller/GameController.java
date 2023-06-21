@@ -3,6 +3,7 @@ package com.saidashevar.ptgame.controller;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.MessagingException;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.saidashevar.ptgame.controller.support.Support;
 import com.saidashevar.ptgame.exception.InvalidGameException;
 import com.saidashevar.ptgame.exception.NotFoundException;
 import com.saidashevar.ptgame.model.Game;
@@ -28,6 +30,7 @@ public class GameController {
 
 	private final GameService gameService;
 	private final SimpMessagingTemplate simpMessagingTemplate;
+	private final Support support;
 
 	// Rest methods
 	@GetMapping
@@ -40,10 +43,17 @@ public class GameController {
 		return gameService.getGameRepository().save(game);
 	}
 	
-	@GetMapping("/get-game")
+	@GetMapping("/get-game") //Return object of "Game" class with given ID.
 	ResponseEntity<Game> getGame(@RequestParam("id") String gameId) throws NotFoundException, InvalidGameException {
 		log.info("Requested game with ID: " + gameId);
+		//support.sendBoardActionsCards(gameId); seems not working
 		return ResponseEntity.ok(gameService.loadGameService(gameId));
+	}
+	
+	@GetMapping("/get-board-actions-cards")
+	ResponseEntity<String> getBoardActionsCards(@RequestParam("id") String gameId) throws MessagingException, InvalidGameException {
+		support.sendBoardActionsCards(gameId);
+		return ResponseEntity.ok(new String("got BAC!"));
 	}
 	
 	//
