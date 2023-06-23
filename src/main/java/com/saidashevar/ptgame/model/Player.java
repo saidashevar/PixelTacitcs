@@ -92,6 +92,12 @@ public class Player {
 		hand.remove(card);
 	}
 	
+	public Player dropCard(Card card) {
+		hand.remove(card);
+		pile.add(card);
+		return this;
+	}
+	
 	public Card findCardToTake() throws NotFoundException {
 		return deck.stream().findAny()
 				.orElseThrow(() -> new NotFoundException("There are no more cards in "+login+"'s deck!")); //old way without random

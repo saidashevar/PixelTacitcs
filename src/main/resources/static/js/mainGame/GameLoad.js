@@ -7,7 +7,7 @@ function loadPage() {
 	requestFullGame();
 }
 
-function connectToSocket() {
+function connectToSocket(fun) {
     console.log("connecting to the game");
     let socket = new SockJS(url + "/gameplay");
     stompClient = Stomp.over(socket);
@@ -47,6 +47,7 @@ function connectToSocket() {
 			}
         });
         requestBoardActionsCards();
+        if (fun != undefined) fun();
     })
 }
 

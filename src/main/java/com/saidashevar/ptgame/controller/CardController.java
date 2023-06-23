@@ -3,6 +3,7 @@ package com.saidashevar.ptgame.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -11,7 +12,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.saidashevar.ptgame.controller.request.HireHeroRequest;
+import com.saidashevar.ptgame.exception.InvalidGameException;
 import com.saidashevar.ptgame.exception.NotFoundException;
+import com.saidashevar.ptgame.model.Game;
 import com.saidashevar.ptgame.model.Player;
 import com.saidashevar.ptgame.model.cards.Card;
 import com.saidashevar.ptgame.model.cards.LeaderBasis;
@@ -19,6 +23,7 @@ import com.saidashevar.ptgame.repository.CardRepository;
 import com.saidashevar.ptgame.repository.LeaderBasisRepository;
 import com.saidashevar.ptgame.repository.LeaderRepository;
 import com.saidashevar.ptgame.repository.PlayerRepository;
+import com.saidashevar.ptgame.service.GameService;
 
 import lombok.AllArgsConstructor;
 
@@ -30,7 +35,7 @@ public class CardController {
 	
 //	private final CardService cardService;
 //	private final PlayerService playerService;
-//	private final GameService gameService;
+	private final GameService gameService;
 //	private final SimpMessagingTemplate simpMessagingTemplate;
 	
 	@Autowired
@@ -48,6 +53,17 @@ public class CardController {
 	@PostMapping
 	Card createCard(@RequestBody Card card) {
 		return cardRepository.save(card);
+	}
+	
+	@PostMapping("/dropCard")
+	ResponseEntity<String> dropCard(@RequestBody HireHeroRequest request) throws NotFoundException, InvalidGameException {
+		Game game = gameService.loadGameService(request.getGameId());
+		Player[] players = game.findPlayers(request.getLogin());
+		Card card = cardRepository.findById(request.getCardId())
+				.orElseThrow(() -> new NotFoundException("Card with id: " + request.getCardId() + " wasn't found"));
+		
+		playerRepository.save(players[0].dropCard(card));
+		return ResponseEntity.ok(new String("Do you really wanted to kill your card? Ok, that's free"));
 	}
 	
 	@PutMapping("/{cardId}/players/{playerLogin}")

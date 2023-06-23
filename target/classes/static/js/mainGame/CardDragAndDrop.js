@@ -14,12 +14,13 @@ function onAttackStart(event) {
 	requestAvailableTargets();
 }
 
-function onDragStart(event) {
-	event.dataTransfer.setData('text/plain', event.target.id.split("")[4]);
-	setTimeout(() => {
+function onDragStart(event) {// this function is called when you start dragging card in hand
+	event.dataTransfer.setData('text/plain', event.target.id.split("")[4]); //cards in hand have ID's like: hand0, hand1... so here you find number of card
+	setTimeout(() => { //just hiding this card
         event.target.classList.add('hide');
     }, 0);
     requestAvailablePlaces();
+    getReadyToDropCard();
 }
 
 function onCorpseRemovingDragStart(event) {
@@ -59,18 +60,19 @@ function dragLeave(e) {
     e.target.classList.remove('drag-over');
 }
 
-function dragDrop(e) {
+//Should be renamed i think
+function dragDrop(e) { //this function is called when you drop card from hand on free slot in your squad to hire a hero.
 	e.target.classList.remove('drag-over');
 	let place = e.target.id;
 	let cardInHand = e.dataTransfer.getData('text/plain');
-	console.log(handSave);
+//	console.log(handSave);
 	placeCard(place.split("_")[1], place.split("_")[2], handSave[cardInHand].id); //Sending coordinate x, y and id of card
 }
 
 function dragMeleeAttacked(e) {
 	e.target.classList.remove('drag-over');
-	console.log(leaderSave);
-	console.log("Melee attacked: " + e.target.id);
+//	console.log(leaderSave);
+//	console.log("Melee attacked: " + e.target.id);
 	let attackerPlaceId = e.dataTransfer.getData('text/plain');
 	meleeDamage(attackerPlaceId, e.target.id);
 }
@@ -82,7 +84,7 @@ function dragCorpseRemoved(e) {
 		loadHeroes();
 		loadLeaders(); 
 	});
-	//removeCorpse(corpsePlaceId); seems not working
+	//removeCorpse(corpsePlaceId); //seems not working or working with errors
 }
 
 function onClickShowCard(e) {
@@ -121,4 +123,37 @@ function loadAvailableTargets(heroes) {
 	    hero.addEventListener('dragleave', dragLeave);
 	    hero.addEventListener('drop', dragMeleeAttacked);
 	}
+}
+
+//This function prepares your pile to get rid of one of your cards in hand
+function getReadyToDropCard() {
+	let deathPile = document.getElementById("pilePlayer1");
+	deathPile.classList.add('readyToDrop');
+	deathPile.addEventListener('dragenter', dragEnter);
+	deathPile.addEventListener('dragover', dragOver);
+    deathPile.addEventListener('dragleave', dragLeave);
+    deathPile.addEventListener('drop', dropCard);
+}
+
+function dropCard(e) {
+	let cardInHand = e.dataTransfer.getData('text/plain');
+	$.ajax({
+        url: url + "/cards/dropCard",
+        type: 'POST',
+        dataType: "json",
+        contentType: "application/json",
+        data: JSON.stringify({
+            "gameId": gameId,
+            "login": login,
+            "coordinateX": 0, //coordinates here doesn't matter
+            "coordinateY": 0,
+            "cardId": handSave[cardInHand].id
+        }),
+        success: function () {
+			requestBoardActionsCards(); //may not work!
+        },
+        error: function (error) {
+            console.log("Disposing card into a pile caused an error: " + error);
+        }
+    })
 }
