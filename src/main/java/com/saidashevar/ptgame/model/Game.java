@@ -4,6 +4,7 @@ import static com.saidashevar.ptgame.model.GameStatus.CHOOSING_LEADERS_1LEADER_C
 import static com.saidashevar.ptgame.model.GameStatus.NO2PLAYER;
 import static com.saidashevar.ptgame.model.GameStatus.NO2PLAYER_1LEADER_CHOSEN;
 import static com.saidashevar.ptgame.model.GameStatus.PEACE;
+import static com.saidashevar.ptgame.model.GameStatus.MID_GAME;
 
 import java.util.HashSet;
 import java.util.Iterator;
@@ -71,6 +72,11 @@ public class Game {
 		case CHOOSING_LEADERS_1LEADER_CHOSEN:
 			this.setStatus(PEACE);
 			break;
+		case PEACE:
+			this.setStatus(MID_GAME);
+			break;
+		case MID_GAME: //here is nothing...
+			break;
 		default:
 			log.info("something went wrong with setting game status");
 			break;
@@ -102,6 +108,8 @@ public class Game {
 					hero.saveEffect(effectRepository.save(new EffectSimple("defeated", 1)));
 			}
 		}
+		//switching to midgame...
+		nextLeaderStatus();
 		//Next one changes waves
 		if (wave == 2) wave = 0;
 		else wave++;
