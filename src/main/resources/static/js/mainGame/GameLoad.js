@@ -2,13 +2,12 @@
 window.onload = loadPage;
 
 function loadPage() {
-	getGameIDandLogin();
-	connectToSocket();
-	requestFullGame();
+	getGameIDandLogin(); //sync function
+	requestFullGame();  //async function
 }
 
 function connectToSocket(fun) {
-    console.log("connecting to the game");
+    console.log("connecting to socket");
     let socket = new SockJS(url + "/gameplay");
     stompClient = Stomp.over(socket);
     stompClient.connect({}, function (frame) {
@@ -46,17 +45,18 @@ function connectToSocket(fun) {
 				break;
 			}
         });
-        requestBoardActionsCards();
+        if(gameSave.status == "PEACE") requestBoardActionsCards();
         if (fun != undefined) fun();
     })
 }
 
 async function requestFullGame(fun) {
+	console.log("requesting initialization info about everything here");
     $.ajax({
         url: url + "/games/get-game?id="+gameId+"&login="+login,
         type: 'GET',
         success: function (newGame) {
-			console.log(newGame);
+			console.log("got info about game from initialization: " + newGame);
 			gameSave = newGame;
 			getOpponent();
 			requestLeader(checkStatus);
@@ -64,6 +64,7 @@ async function requestFullGame(fun) {
 			requestHeroes(function() { //i don't understand how is this work. Probably they should be in another order?
 				loadHeroes();		   // anyway, this function is called once while page starts... and it works properly...
 			});
+			connectToSocket();
 			if (fun != undefined) fun();
         },
         error: function (error) {
@@ -72,6 +73,7 @@ async function requestFullGame(fun) {
     })
 }
 
+//probably useless...
 function requestGame(fun) {
 	$.ajax({
         url: url + "/games/get-game?id="+gameId+"&login="+login,
@@ -103,6 +105,7 @@ function requestHand(fun) { //this function just updates your hand, can't return
 }
 
 function requestHeroes(fun) {
+	console.log("requesting heroes");
     $.ajax({
 		url: url + "/heroes/get-heroes?id="+gameId+"&login="+login,
         type: 'GET',
@@ -135,7 +138,7 @@ function requestLeader(fun) { //this smart function can show leaders or hide the
         type: 'GET',
         success: function (leader) {
 			leaderSave = leader;
-			console.log("Your leader is: " + leaderSave);
+			console.log("got your leader from initialization: " + leaderSave);
 			if (fun != undefined) fun();
         },
         error: function (error) {
@@ -168,6 +171,8 @@ function requestBoardActionsCards() {
 
 //load functions
 function loadHeroes(fun) { //this function is my masterpiece of javascripting... but probably too large
+	//here we have an array of every hero (your and not) that needs to be produced
+	console.log("loading heroes");
 	for (let x = 0; x < heroesSave.length; x++) {
 		//get id and knoledge which squad this hero belongs to
 		let i = heroesSave[x].coordX;
@@ -272,11 +277,14 @@ function helpLoadLeaders(leaderDiv, deck, src) { //support function to ease last
 }
 
 function loadTurns() { // loads images of sword and shield
+	console.log ("placing sword and shield images");
 	loadTurnImage(youSave);
 	if (opponentSave != undefined) loadTurnImage(opponentSave);
 }
 
 function reloadTurns() {
+	//removes shield and sword images from board and loads them again later
+	console.log("removin shield and sword images");
 	for (let x = 1; x <= 2; x++) {
 		for(let y = 0; y < 3; y++) {
 			let div = document.getElementById("0_" + x + "_" + y).firstChild;
@@ -311,12 +319,14 @@ function loadTurnImage(player) { //This function loads image of sword and shield
 }
 
 //support function
+//Gets gameid and login from URI immediately after loading page
 function getGameIDandLogin() {
 	const params = new Proxy(new URLSearchParams(window.location.search), {
   		get: (searchParams, prop) => searchParams.get(prop),
 	});
 	gameId = params.id;
 	login = params.login;
+	console.log("got your login and id");
 	let paragraph = document.getElementById("ShowId");
 	paragraph.textContent = login+", "+paragraph.textContent+gameId;
 }
@@ -333,8 +343,9 @@ function getOpponent() { //loads both players, if they exist
 			youSave = gameSave.players[1];	
 		}
 	} else youSave = gameSave.players[0];
-//	console.log(opponentSave);
-//	console.log(youSave);
+	console.log("got info about players from initialization!");
+	console.log(opponentSave);
+	console.log(youSave);
 }
 
 function chooseLeader (e) {

@@ -101,17 +101,19 @@ public class PlayerController {
 		return ResponseEntity.ok(leader);
 	}
 	
+	//This function is used to show player where he can hire his hero from hand
 	@GetMapping("/get-places")
 	ResponseEntity< List<Hero> > getAvailablePlaces(@RequestParam("id") String gameId, @RequestParam("login") String login) throws NotFoundException, InvalidGameException {
 		Game game = gameService.loadGameService(gameId);
 		return ResponseEntity.ok( playerService.getAvailablePlaces(game, login) );
 	}
 	
+	//This function is used to show opponent's heroes that may be attacked with this hero
 	@GetMapping("/get-targets")
 	ResponseEntity< List<Hero> > getAvailableTargets(@RequestParam("id") String gameId, @RequestParam("login") String login) throws InvalidGameException, NotFoundException {
 		Game game = gameService.loadGameService(gameId);
 		Player secondPlayer = game.findPlayers(login)[1];
-		List<Hero> targets = playerService.getAvailableTargets(secondPlayer);
+		List<Hero> targets = playerService.getAvailableTargets(game, secondPlayer);
 		return ResponseEntity.ok(targets);
 	}
 }

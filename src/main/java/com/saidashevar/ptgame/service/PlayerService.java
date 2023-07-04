@@ -1,5 +1,7 @@
 package com.saidashevar.ptgame.service;
 
+import static com.saidashevar.ptgame.model.GameStatus.*;
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -92,7 +94,7 @@ public class PlayerService {
 	
 	//Next are functions that are used during the game
 	//This method is used when player should see where hiring is possible
-	//Why did i separate game wave and players' waves? who knows...
+	//Why did i separate game wave and players' waves? who knows... It is used somewhere!
 	public List<Hero> getAvailablePlaces(Game game, String login) {
 		List<Hero> places = new ArrayList<>();
 		for (int i = 0; i < 3; i++) {
@@ -102,25 +104,28 @@ public class PlayerService {
 		return places;
 	}
 	
-	public List<Hero> getAvailableTargets(Player player) {
+	public List<Hero> getAvailableTargets(Game game, Player player) { //must add a check that there is no friendly hero in front of attacker!!!
 		List<Hero> heroesOpenedForAttack = new ArrayList<>();
 		
 		//Here we check first unit in each column
 		//And add first heroes of each coloumn to list of available targets.
 		//We think all attacks are melee now...
-		for (int j = 0; j < 3; j++) {
-			for (int i = 0; i < 3; i++) {
-				if (heroRepository.heroOnPlace(player.getLogin(), i, j)) {
-					heroesOpenedForAttack.add(new Hero(i, j));
-					break;
-				}
-				
-				if (i == 0 && j == 1) { //add leader as available target, if nobody covers him
-					heroesOpenedForAttack.add(new Hero(i+1, j));
-					break;
+		if (game.getStatus() != PEACE) {
+			for (int j = 0; j < 3; j++) {
+				for (int i = 0; i < 3; i++) {
+					if (heroRepository.heroOnPlace(player.getLogin(), i, j)) {
+						heroesOpenedForAttack.add(new Hero(i, j));
+						break;
+					}
+					
+					if (i == 0 && j == 1) { //add leader as available target, if nobody covers him
+						heroesOpenedForAttack.add(new Hero(i+1, j));
+						break;
+					}
 				}
 			}
 		}
+
 		
 		return heroesOpenedForAttack;
 	}
