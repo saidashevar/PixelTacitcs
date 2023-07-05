@@ -108,7 +108,7 @@ public class Game {
 					hero.saveEffect(effectRepository.save(new EffectSimple("defeated", 1)));
 			}
 		}
-		//switching to midgame...
+		//switching to midgame... works!
 		nextLeaderStatus();
 		//Next one changes waves
 		if (wave == 2) wave = 0;

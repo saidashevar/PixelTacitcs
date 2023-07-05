@@ -43,6 +43,12 @@ function connectToSocket(fun) {
 				case "STATUS": // actually requires client to update this whole game... i don't remember where it is used
 					requestGame(checkStatus);
 				break;
+				case "TURNS":
+					console.log("got turns! LOOk at them:");
+					console.log(data.info);
+					//youSave = data.info[]
+					reloadTurns();
+				break;
 			}
         });
         if(gameSave.status == "PEACE") requestBoardActionsCards();
@@ -295,24 +301,26 @@ function reloadTurns() {
 } //later
 
 //support function
+//for normal functioning this function must have up to date players' saves!
 function loadTurnImage(player) { //This function loads image of sword and shield to show wave and turn order of players.
 	let i = 2;
 	if (player.login == login) i = 1;
 	
-	if (player.turn.attacking == true) { //maybe i have to avoid such contructions but i don't know how to do this.
-		if (player.turn.actionsLeft == 0) {
-			if (player.turn.wave == 2) {
+	//maybe i have to avoid such contructions but i don't know how to do this.
+	if (player.turn.attacking == true) { //in case we are attacking
+		if (player.turn.actionsLeft == 0) { //we have no actions
+			if (player.turn.wave == 2) { //this is the last wave
 				turnDiv = document.getElementById("0_"+i+"_2");
 				turnDiv.appendChild(createDiv(createCardImage(actionsSrc)));	
-			} else {
+			} else { //this is not last wave
 				turnDiv = document.getElementById("0_"+i+"_" + (player.turn.wave+1));
 				turnDiv.appendChild(createDiv(createCardImage(firstSrc)));
 			}
-		} else {
+		} else { //we are attacking and we have actions
 			youTurnDiv = document.getElementById("0_"+i+"_" + player.turn.wave);
 			youTurnDiv.appendChild(createDiv(createCardImage(firstSrc)));
 		}
-	} else {
+	} else { // we are not attacking
 		youTurnDiv = document.getElementById("0_"+i+"_" + player.turn.wave);
 		youTurnDiv.appendChild(createDiv(createCardImage(secondSrc)));
 	}

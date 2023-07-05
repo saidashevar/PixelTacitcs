@@ -5,6 +5,7 @@ import static com.saidashevar.ptgame.config.response.ResponseTypes.BOARD;
 import static com.saidashevar.ptgame.config.response.ResponseTypes.CARD_COUNT;
 import static com.saidashevar.ptgame.config.response.ResponseTypes.MESSAGE;
 import static com.saidashevar.ptgame.config.response.ResponseTypes.STATUS;
+import static com.saidashevar.ptgame.config.response.ResponseTypes.TURNS;
 import static com.saidashevar.ptgame.model.GameStatus.CHOOSING_LEADERS;
 import static com.saidashevar.ptgame.model.GameStatus.CHOOSING_LEADERS_1LEADER_CHOSEN;
 import static com.saidashevar.ptgame.model.GameStatus.FINISHED;
@@ -27,6 +28,7 @@ import com.saidashevar.ptgame.exception.InvalidGameException;
 import com.saidashevar.ptgame.exception.NotFoundException;
 import com.saidashevar.ptgame.model.Game;
 import com.saidashevar.ptgame.model.Player;
+import com.saidashevar.ptgame.model.Turn;
 import com.saidashevar.ptgame.model.cards.Card;
 import com.saidashevar.ptgame.model.cards.Hero;
 import com.saidashevar.ptgame.repository.CardRepository;
@@ -125,8 +127,8 @@ public class GameService {
 	
 	// Next methods prepare information about game for both players (board, card count)
 	
-	public UniResponse< Set<Hero> > getBoard(String gameId) throws InvalidGameException {
-		Iterator<Player> itr = loadGameService(gameId).getPlayers().iterator();
+	public UniResponse< Set<Hero> > getBoard(Set<Player> players, String gameId) throws InvalidGameException {
+		Iterator<Player> itr = players.iterator();
 		Set<Hero> set = new HashSet<>();
 		while (itr.hasNext()) {
 			set.addAll(itr.next().getBoard());
@@ -134,18 +136,25 @@ public class GameService {
 		return new UniResponse< Set<Hero> >(BOARD, set);
 	}
 	
-	public UniResponse< Map<String, Integer> > getCardCount(String gameId) throws InvalidGameException {
+	public UniResponse< Map<String, Integer> > getCardCount(Set<Player> players, String gameId) throws InvalidGameException {
 		Map<String, Integer> cardCount = new HashMap<>();
-		loadGameService(gameId).getPlayers().stream()
+		players.stream()
 			.forEach(p -> cardCount.put(p.getLogin(), p.getHand().size()));
 		return new UniResponse< Map<String, Integer> >(CARD_COUNT, cardCount);
 	}
 	
-	public UniResponse< Map<String, Byte> > getActionsCount(String gameId) throws InvalidGameException {
+	public UniResponse< Map<String, Byte> > getActionsCount(Set<Player> players, String gameId) throws InvalidGameException {
 		Map<String, Byte> actionsCount = new HashMap<>();
-		loadGameService(gameId).getPlayers().stream()
+		players.stream()
 			.forEach(p -> actionsCount.put(p.getLogin(), p.getTurn().getActionsLeft()));
 		return new UniResponse< Map<String, Byte> >(ACTIONS_COUNT, actionsCount);
+	}
+	
+	public UniResponse< Map<String, Turn> > getTurns(Set<Player> players, String gameId) {
+		Map<String, Turn> sideCardsPlace = new HashMap<>();
+		players.stream()
+			.forEach(p -> sideCardsPlace.put(p.getLogin(), p.getTurn()));
+		return new UniResponse< Map<String, Turn> >(TURNS, sideCardsPlace);
 	}
 	
 	public UniResponse<Game> getGame(Game game) {
