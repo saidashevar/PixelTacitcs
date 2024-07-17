@@ -38,3 +38,8 @@ project while i'm not actually working on it...
 
 11.03.22
 I am still not working on this project... This is really cold here
+
+22.05.24
+So much time passed in a blink of an eye.
+Here is a sad thing: my database seems to be gone. I have updated everything on this laptop, and seems I somehow touched these databases too.
+It is not that bad, because I don't remember that database at all.
