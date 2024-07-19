@@ -225,7 +225,14 @@ function findCardId(placeId) { // returns cardId knowing place of card. Used for
 	let i = id[2];
 	let j = id[4];
 	//i = 1; j = 1 - center of the squad. Leader is there
-	if (i == 1 && j == 1) { return -1 } //Leader case
+	if (i == 1 && j == 1) {
+		//Leader case
+		if (squad == 1) {
+			//Your leader
+			return 
+		} 
+		return -1 
+	}
 	else {
 		for(let x = 0; x < heroesSave.length; x++) {
 			let hero = heroesSave[x];
