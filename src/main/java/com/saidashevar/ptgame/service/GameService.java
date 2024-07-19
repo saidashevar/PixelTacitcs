@@ -1,7 +1,8 @@
 package com.saidashevar.ptgame.service;
 
 import static com.saidashevar.ptgame.config.response.ResponseTypes.ACTIONS_COUNT;
-import static com.saidashevar.ptgame.config.response.ResponseTypes.BOARD;
+import static com.saidashevar.ptgame.config.response.ResponseTypes.HEROES;
+import static com.saidashevar.ptgame.config.response.ResponseTypes.LEADERS;
 import static com.saidashevar.ptgame.config.response.ResponseTypes.CARD_COUNT;
 import static com.saidashevar.ptgame.config.response.ResponseTypes.MESSAGE;
 import static com.saidashevar.ptgame.config.response.ResponseTypes.STATUS;
@@ -31,6 +32,7 @@ import com.saidashevar.ptgame.model.Player;
 import com.saidashevar.ptgame.model.Turn;
 import com.saidashevar.ptgame.model.cards.Card;
 import com.saidashevar.ptgame.model.cards.Hero;
+import com.saidashevar.ptgame.model.cards.Leader;
 import com.saidashevar.ptgame.repository.CardRepository;
 import com.saidashevar.ptgame.repository.GameRepository;
 import com.saidashevar.ptgame.repository.HeroRepository;
@@ -126,6 +128,14 @@ public class GameService {
 	
 	
 	// Next methods prepare information about game for both players (board, card count)
+	public UniResponse< Set<Leader> > getLeaders(Set<Player> players, String gameId) throws InvalidGameException {
+		Iterator<Player> itr = players.iterator();
+		Set<Leader> set = new HashSet<>();
+		while (itr.hasNext()) {
+			set.add(itr.next().getLeader());
+		}
+		return new UniResponse< Set<Leader> >(LEADERS, set);
+	}
 	
 	public UniResponse< Set<Hero> > getHeroes(Set<Player> players, String gameId) throws InvalidGameException {
 		Iterator<Player> itr = players.iterator();
@@ -133,7 +143,7 @@ public class GameService {
 		while (itr.hasNext()) {
 			set.addAll(itr.next().getHeroes());
 		}
-		return new UniResponse< Set<Hero> >(BOARD, set);
+		return new UniResponse< Set<Hero> >(HEROES, set);
 	}
 	
 	public UniResponse< Map<String, Integer> > getCardCount(Set<Player> players, String gameId) throws InvalidGameException {

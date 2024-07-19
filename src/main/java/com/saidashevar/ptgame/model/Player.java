@@ -35,7 +35,7 @@ public class Player {
 	
 	private Boolean isRed; //this Boolean just shows cards' shirts color. Red or blue.
 	
-	@JsonIgnore //It must be hidden before 2-nd round
+	//@JsonIgnore //It must be hidden before 2-nd round             I ignored this line and nothing changed
 	@OneToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "leader", referencedColumnName = "id")
 	private Leader leader;

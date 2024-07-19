@@ -31,11 +31,18 @@ function connectToSocket(fun) {
             
             switch (data.type) { // With response there is type of info from server.
             
-				case "BOARD": //we wanna update info about our heroes and leaders, their hp, buffs and we need to know if they are dead
+				case "HEROES": //we wanna update info about our heroes, their hp, buffs and we need to know if they are dead
 					heroesSave = data.info;
 					cleanBoard(function () {
 						//I am using nested functions, because I need to compile them in that exact order.
 						//I don't know how to do it other way. 
+						loadHeroes();
+						loadLeaders(); 
+					});
+				break;
+				case "LEADERS": //we wanna update info about our leaders, their hp, buffs and we need to know if they are dead
+					console.log("Leaders came");
+					cleanBoard(function () {
 						loadHeroes();
 						loadLeaders(); 
 					});

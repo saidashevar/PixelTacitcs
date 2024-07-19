@@ -23,10 +23,14 @@ public class Support {
 	//Now it is added side card position also (sword and shield)
 	//It is a overwhelming sometimes, but significantly improves code readability
 	public void sendBoardActionsCards(String gameId) throws MessagingException, InvalidGameException {
-		Set<Player> players = gameService.loadGameService(gameId).getPlayers(); //get players here to not run this method anywhere else
-		//We are sending both players board to show them current heroes and their statuses
+		//To start, get players here to not run this method anywhere else
+		Set<Player> players = gameService.loadGameService(gameId).getPlayers(); 
+		//Firstly, we are sending both players all the heroes and their statuses
 		simpMessagingTemplate.convertAndSend("/topic/game-progress/" + gameId,
 												gameService.getHeroes(players, gameId));
+		//Secondly, sending all the leaders main info
+		simpMessagingTemplate.convertAndSend("/topic/game-progress/" + gameId,
+												gameService.getLeaders(players, gameId));
 		//Also players must know card count of each other. No one card from any game edition has any ability to hide this
 		simpMessagingTemplate.convertAndSend("/topic/game-progress/" + gameId,
 				 								gameService.getCardCount(players, gameId));
