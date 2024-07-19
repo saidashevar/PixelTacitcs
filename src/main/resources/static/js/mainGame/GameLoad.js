@@ -27,7 +27,7 @@ function connectToSocket(fun) {
             let data = JSON.parse(response.body);
             console.log(data); //logging everything right now
             
-            reloadTurns(); //if we get some info from server, whatever we get we will update shield and sword
+            reloadSwordAndShield(); //if we get some info from server, whatever we get we will update shield and sword
             
             switch (data.type) { // With response there is type of info from server.
             
@@ -55,7 +55,7 @@ function connectToSocket(fun) {
 					console.log("got turns! LOOk at them:");
 					console.log(data.info);
 					//youSave = data.info[]
-					reloadTurns();
+					reloadSwordAndShield();
 				break;
 			}
         });
@@ -158,7 +158,7 @@ function checkStatus() { //this works very bad, when you enter new game with use
 			requestHand(reloadHand);
 			requestHeroes();
 			loadLeaders();
-			reloadTurns();
+			reloadSwordAndShield();
 		break;
 		default: alert("something went wrong with status packages");
 	}		

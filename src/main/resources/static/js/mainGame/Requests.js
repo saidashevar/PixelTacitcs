@@ -6,9 +6,9 @@ async function requestFullGame(fun) {
         success: function (newGame) {
 			console.log("got info about game from initialization: " + newGame);
 			gameSave = newGame;
-			getOpponent();
+			getPlayers();
 			requestLeader(checkStatus);
-			reloadTurns();			   //shield and sword at right of main board
+			reloadSwordAndShield();			   //shield and sword at right of main board
 			requestHeroes(function() { //i don't understand how does this work. Probably they should be in another order?
 				loadHeroes();		   // anyway, this function is called once while page starts... and it works properly...
 			});
@@ -108,7 +108,7 @@ function requestGame(fun) {
         success: function (newGame) {
 			console.log("Requested game: " + newGame);
 			gameSave = newGame;
-			getOpponent();
+			getPlayers();
 			if (fun != undefined) fun();
         },
         error: function (error) {
