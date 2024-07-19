@@ -101,7 +101,7 @@ public class Game {
 		//Next paragraph check losses
 		Iterator<Player> itr = this.getPlayers().iterator();
 		while (itr.hasNext()) {
-			Iterator<Hero> itr2 = itr.next().getBoard().iterator();
+			Iterator<Hero> itr2 = itr.next().getHeroes().iterator();
 			while (itr2.hasNext()) {
 				var hero = itr2.next();
 				if (hero.getEffectValue("damaged") >= hero.getMaxHealth())

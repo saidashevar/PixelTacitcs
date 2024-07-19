@@ -127,11 +127,11 @@ public class GameService {
 	
 	// Next methods prepare information about game for both players (board, card count)
 	
-	public UniResponse< Set<Hero> > getBoard(Set<Player> players, String gameId) throws InvalidGameException {
+	public UniResponse< Set<Hero> > getHeroes(Set<Player> players, String gameId) throws InvalidGameException {
 		Iterator<Player> itr = players.iterator();
 		Set<Hero> set = new HashSet<>();
 		while (itr.hasNext()) {
-			set.addAll(itr.next().getBoard());
+			set.addAll(itr.next().getHeroes());
 		}
 		return new UniResponse< Set<Hero> >(BOARD, set);
 	}

@@ -1,3 +1,6 @@
+//The main script.
+//I must separate things out of here.
+//Later
 
 //Request functions
 function placeCard(i, j, id) {
@@ -218,7 +221,8 @@ function prepareCardInHandName(cardId) {
 	return cardName;
 }
 
-function findCardId(placeId) { // returns cardId knowing place of card. Used for attacks
+function findCardId(placeId) { 
+	//returns cardId knowing place of card. Used for attacks
 	//in html coordinates of places in squad are like this: 1_1_1, where first number - squad, second and third - place in square
 	let id = placeId.split("");
 	let squad = id[0];
@@ -251,6 +255,7 @@ function findCardId(placeId) { // returns cardId knowing place of card. Used for
 //temporary function... it must be
 function checkIfTargetIsLeader(placeId) {
 	//in html coordinates of places in squad are like this: 1_1_1, where first number - squad, second and third - place in square
+	//just sends 1 if it is leader on this place.
 	let id = placeId.split("");
 	let squad = id[0];
 	let i = id[2];

@@ -75,7 +75,7 @@ public class HeroController {
 	Hero createHero(@RequestBody Hero hero) { return heroRepository.save(hero); }
 	
 	@GetMapping("/get-heroes")
-	ResponseEntity< List<Hero> > getBoard(@RequestParam("id") String gameId, 
+	ResponseEntity< List<Hero> > getHeroes(@RequestParam("id") String gameId, 
 										  @RequestParam("login") String login) throws NotFoundException, InvalidGameException {
 		Game game = gameService.loadGameService(gameId);
 		return ResponseEntity.ok(heroService.getHeroes(game));
@@ -129,7 +129,7 @@ public class HeroController {
 		try {
 			players[0].makeAction(game, players[1], effectRepository, gameRepository);
 			heroService.heroAttacked(request);
-//			var resp = gameService.getBoard(request.getGameId());
+//			var resp = gameService.getHeroes(request.getGameId());
 //			simpMessagingTemplate.convertAndSend("/topic/game-progress/" + request.getGameId(), resp);
 			support.sendBoardActionsCards(request.getGameId());
 			return ResponseEntity.ok("Attack successful!");

@@ -26,7 +26,7 @@ public class Support {
 		Set<Player> players = gameService.loadGameService(gameId).getPlayers(); //get players here to not run this method anywhere else
 		//We are sending both players board to show them current heroes and their statuses
 		simpMessagingTemplate.convertAndSend("/topic/game-progress/" + gameId,
-												gameService.getBoard(players, gameId));
+												gameService.getHeroes(players, gameId));
 		//Also players must know card count of each other. No one card from any game edition has any ability to hide this
 		simpMessagingTemplate.convertAndSend("/topic/game-progress/" + gameId,
 				 								gameService.getCardCount(players, gameId));

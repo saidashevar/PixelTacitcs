@@ -100,7 +100,6 @@ function requestTurn() {
     })
 }
 
-//probably useless...
 function requestGame(fun) {
 	$.ajax({
         url: url + "/games/get-game?id="+gameId+"&login="+login,

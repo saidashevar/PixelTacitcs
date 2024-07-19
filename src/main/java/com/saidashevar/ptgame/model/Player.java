@@ -66,7 +66,7 @@ public class Player {
 	
 	@JsonIgnore
 	@OneToMany(mappedBy = "player", fetch = FetchType.LAZY)
-	private Set<Hero> board = new HashSet<>();
+	private Set<Hero> heroes = new HashSet<>();
 	
 	@JsonIgnore
 	@ManyToMany(fetch = FetchType.LAZY)
@@ -104,7 +104,7 @@ public class Player {
 	}
 	
 	public Player removeCorpseOfHero(Hero hero) {
-		board.remove(hero);
+		heroes.remove(hero);
 		return this;
 	}
 	
@@ -166,16 +166,16 @@ public class Player {
 		return pile;
 	}
 	
-	public Set<Hero> getBoard() {
-		return board;
+	public Set<Hero> getHeroes() {
+		return heroes;
 	}
 
 	public void setDeck(Set<Card> deck) {
 		this.deck = deck;
 	}
 	
-	public void setBoard(Set<Hero> board) {
-		this.board = board;
+	public void setHeroes(Set<Hero> heroes) {
+		this.heroes = heroes;
 	}
 
 	public Turn getTurn() {
