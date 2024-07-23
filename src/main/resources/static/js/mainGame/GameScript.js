@@ -230,14 +230,16 @@ function findCardId(placeId) {
 	let j = id[4];
 	//i = 1; j = 1 - center of the squad. Leader is there
 	if (i == 1 && j == 1) {
-		//Leader case
+		//Leaders case
 		if (squad == 1) {
 			//Your leader
-			return 
-		} 
-		return -1 
-	}
-	else {
+			return yourLeaderSave.id; 
+		} else {
+			//Opponent leader case
+			return enemyLeaderSave.id;
+		}
+	} else {
+		//Hero case
 		for(let x = 0; x < heroesSave.length; x++) {
 			let hero = heroesSave[x];
 			if (hero.coordX == i && hero.coordY == j) {

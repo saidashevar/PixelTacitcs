@@ -42,6 +42,7 @@ function connectToSocket(fun) {
 				break;
 				case "LEADERS": //we wanna update info about our leaders, their hp, buffs and we need to know if they are dead
 					console.log("Leaders came");
+					console.log();
 					cleanBoard(function () {
 						loadHeroes();
 						loadLeaders(); 
@@ -55,7 +56,7 @@ function connectToSocket(fun) {
 					actionsCountSave = data.info;
 					document.getElementById("actionsCounter").textContent = actionsCountSave[youSave.login] - actionsCountSave[opponentSave.login];
 				break;
-				case "STATUS": // actually requires client to update this whole game... i don't remember where it is used
+				case "STATUS": // actually requires client to update this whole game... used while choosing leaders.
 					requestGame(checkStatus);
 				break;
 				case "TURNS":
@@ -71,7 +72,7 @@ function connectToSocket(fun) {
     })
 }
 
-function getPlayers() { 
+function getPlayers(fun) { 
 	//Loads both players, or only your, if second hasn't connected yet.
 	if (gameSave.players.length != 1) {
 		if (gameSave.players[0].login == login) {
@@ -87,10 +88,19 @@ function getPlayers() {
 	console.log("got info about players from initialization!");
 	console.log(opponentSave);
 	console.log(youSave);
+	
+	if (fun != undefined) fun();
 }
 
-//Another support function
-
+function getLeadersFromPlayers() {
+	//must be done AFTER "getPlayers()". You need to initialize players before this function.
+	if (youSave != undefined) {
+		yourLeaderSave = youSave.leader;	
+	}
+	if (opponentSave != undefined) {
+		enemyLeaderSave = opponentSave.leader;	
+	}
+}
 
 function addBackground() {
 	let blackBackground = document.createElement("div");

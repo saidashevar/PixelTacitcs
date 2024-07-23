@@ -6,7 +6,6 @@ loadJS("js/mainGame/parts/LoadingParts.js");
 loadJS("js/mainGame/parts/ReloadingParts.js");
 loadJS("js/mainGame/CardDragAndDrop.js");
 loadJS("js/mainGame/GameLoad.js");
-loadJS("js/mainGame/GamePlay.js");
 loadJS("js/mainGame/GameScript.js");
 loadJS("js/mainGame/GameVariables.js");
 loadJS("js/mainGame/Requests.js");

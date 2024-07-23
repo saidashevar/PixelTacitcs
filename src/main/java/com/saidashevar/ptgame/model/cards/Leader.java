@@ -13,6 +13,7 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 
 @Entity
@@ -25,6 +26,9 @@ public class Leader extends LeaderBasis { // Leader is also hero, maybe this cla
 			joinColumns = @JoinColumn(name = "leader_id"),
 			inverseJoinColumns = @JoinColumn(name = "effect_id"))
 	private Set<EffectBasic> effects = new HashSet<>();
+	
+	@OneToOne
+	private Player player;
 	
 	@Override
 	public EffectSimple takeDamage(int attackValue) {
@@ -54,5 +58,14 @@ public class Leader extends LeaderBasis { // Leader is also hero, maybe this cla
 			leader.getName(),
 			leader.getAttack(),
 			leader.getMaxHealth());
+	}
+	
+	//Getters and setters
+	public Player getPlayer() {
+		return player;
+	}
+	
+	public void setPlayer(Player p) {
+		player = p;
 	}
 }
