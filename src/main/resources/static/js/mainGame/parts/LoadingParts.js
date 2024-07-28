@@ -25,11 +25,11 @@ function loadHeroes(fun) { //this function is my masterpiece of javascripting...
 			//if it is dead we show a shirt of card
 			place.innerHTML = '';
 			if (isYour) {
-				if (youSave.red) place.appendChild(createDiv(createCardImage(redSrc)));
-				else place.appendChild(createDiv(createCardImage(blueSrc)));
+				if (youSave.red) place.appendChild(createCardImage(redSrc));
+				else place.appendChild(createCardImage(blueSrc));
 			} else {
-				if (opponentSave.red) place.appendChild(createDiv(createCardImage(redSrc)));
-				else place.appendChild(createDiv(createCardImage(blueSrc)));
+				if (opponentSave.red) place.appendChild(createCardImage(redSrc));
+				else place.appendChild(createCardImage(blueSrc));
 			}
 			
 			//prepare dragging if we will want to remove corpse
@@ -95,24 +95,24 @@ function loadSwordOrShield(player) {
 		if (player.turn.actionsLeft == 0) { //we have no actions
 			if (player.turn.wave == 2) { //this is the last wave
 				turnDiv = document.getElementById("0_"+i+"_2");
-				turnDiv.appendChild(createDiv(createCardImage(actionsSrc)));	
+				turnDiv.appendChild(createCardImage(actionsSrc));	
 			} else { //this is not last wave
 				turnDiv = document.getElementById("0_"+i+"_" + (player.turn.wave+1));
-				turnDiv.appendChild(createDiv(createCardImage(firstSrc)));
+				turnDiv.appendChild(createCardImage(firstSrc));
 			}
 		} else { //we are attacking and we have actions
 			youTurnDiv = document.getElementById("0_"+i+"_" + player.turn.wave);
-			youTurnDiv.appendChild(createDiv(createCardImage(firstSrc)));
+			youTurnDiv.appendChild(createCardImage(firstSrc));
 		}
 	} else { // we are not attacking
 		youTurnDiv = document.getElementById("0_"+i+"_" + player.turn.wave);
-		youTurnDiv.appendChild(createDiv(createCardImage(secondSrc)));
+		youTurnDiv.appendChild(createCardImage(secondSrc));
 	}
 }
 
 function helpLoadLeaders(leaderDiv, deck, src) { //support function to ease last function
 	leaderDiv.innerHTML = '';
 	deck.innerHTML = '';
-	leaderDiv.appendChild(createDiv(createCardImage(src)));
+	leaderDiv.appendChild(createCardImage(src));
 	deck.appendChild(createCardImage(src));
 }

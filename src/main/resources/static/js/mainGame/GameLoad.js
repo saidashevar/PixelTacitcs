@@ -6,7 +6,7 @@ function sleep(ms) {
 }
 
 function loadPage() {
-	getGameIDandLogin(); //sync function
+	getGameIDandLogin(); // sync function
 	requestFullGame();   //async function
 }
 
